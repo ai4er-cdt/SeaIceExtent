@@ -8,6 +8,10 @@ Boulze, Hugo, Anton Korosov, and Julien Brajard. 2020. "Classification of Sea Ic
 CNN input data was of shape N×K×K×2 where N is number of samples, K is dimension of 50 pixels and 2 is for the hv and hh bands. Used training labeling with one-hot encoding.  Then used nearest neighbor to deal with single pixel anomalies in classifying. Uses 70-30 train test split. 
 “CNN is composed of 2 batch-norm layers, 3 convolutional layers, 2 max-pooling layers, 3 hidden dense layers, 4 dropout layers (used only for the training) and one output layer.” I'm not sure what the CNN description means right now but wanted to note. 
 
+Murashkin, D., Spreen, G., Huntemann, M., & Dierking, W. (2018). Method for detection of leads from Sentinel-1 SAR images. Annals of Glaciology, 59(76pt2), 124-136. doi:10.1017/aog.2018.6
+* MCL: Describes formerly accepted approach of using a random forest or SVM for classification of the sea ice. Problematizes the observation angle of the satellite and the co-polarization reading and describes a method for correction of angle of incidence: corrected backscatter  = backscatter + 0.49*(incidence angle - min(incidence angle)). Used in Wang and Li (2021)
+
+
 Park, J. W., Korosov, A. A., Babiker, M., Sandven, S., & Won, J. S. (2017). Efficient thermal noise removal for Sentinel-1 TOPSAR cross-polarization channel. IEEE Transactions on Geoscience and Remote Sensing, 56(3), 1555-1565.
 * MCL: proposal for further denoising of Sentinel-1 using azimuth descalloping, noise scaling and interswath power balancing, ad local residual noise power compensation. This describes the method used by Boulze et al (2020). 
 
