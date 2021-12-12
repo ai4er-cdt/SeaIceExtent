@@ -16,5 +16,5 @@ Tom, M., Kälin, U., Sütterlin, M., Baltsavias, E., & Schindler, K. (2018). Lak
 
 
 Wang, Y.-R. and Li, X.-M.: Arctic sea ice cover data from spaceborne synthetic aperture radar by deep learning, Earth Syst. Sci. Data, 13, 2723–2742, https://doi.org/10.5194/essd-13-2723-2021, 2021.
-* MCL: Offers justification to use cross polarization instead of co polarization if only using one band. Uses Sun and Li (2020) method for thermal noise reduction and de-scalloping. Downsamples to 400m pixels to shrink file size/make more manageable. Resales HV cross polarization to 0-255 like with optical bands and discards the 2% extremas at both ends of spectrum. Used U-net architecture. 
+* MCL: Offers justification to use cross polarization instead of co polarization if only using one band. Uses Sun and Li (2020) method for thermal noise reduction and de-scalloping. Downsamples to 400m pixels to shrink file size/make more manageable. Resales HV cross polarization to 0-255 like with optical bands and discards the 2% extremas at both ends of spectrum. Used U-net architecture. Reinforces prior observations that very smooth sea ice can have a backscatter similar to the ocean, and high wind sea surface can have backscatter similar to sea ice. 
 
