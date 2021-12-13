@@ -1,15 +1,19 @@
 JR
 
-Level 0: iceExtent
+# Level 0: iceExtent
 
-	Contains trainingImages = our data.
-		 Antarctica_coastline = I think this was just for context - includes 
+## Contains:
 
-Level 1: trainingImages
-	3 folders called calibration, calibration_2 and calibration2013 containing data for the years 2011, 2012 and 2013, respectively.
+- trainingImages = our data.
+- Antarctica_coastline = I think this was just for context - includes 
 
-Level 2: calibration folders
-	final folder: contains a number of different .nc files (.nc = NetCDF) - not sure what these are used for, Martin didn’t seem to have a clear answer.
-	MODIS folder: contains the MODIS imagery. These are as .tifs, .ovr and .xml. The tifs are massive images - >50 MB.
-	Remaining folders (either WSM*, or RS2*: contains the SAR imagery and labels (i.e. the line and shape objects).
+# Level 1: trainingImages
+
+- 3 folders called calibration, calibration_2 and calibration2013 containing data for the years 2011, 2012 and 2013, respectively.
+
+# Level 2: calibration folders
+
+- final folder: contains a number of different .nc files (.nc = NetCDF) - not sure what these are used for, Martin didn’t seem to have a clear answer.
+- MODIS folder: contains the MODIS imagery. These are as .tifs, .ovr and .xml. The tifs are massive images - >50 MB.
+- Remaining folders (either WSM*, or RS2*: contains the SAR imagery and labels (i.e. the line and shape objects).
 
