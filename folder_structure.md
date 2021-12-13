@@ -1,10 +1,10 @@
 JR
 
-Folder structure overview of the provided data directory
+Folder structure overview of the provided data directory. The level increases with depth in the folder structure.
 
 # Level 0: *iceExtent*
 
-## Contains:
+Contains:
 
 - *trainingImages* = our data.
 - *Antarctica_coastline* = I think this was included more to give context. 
