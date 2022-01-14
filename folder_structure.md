@@ -15,7 +15,7 @@ Contains:
 
 # Level 2: calibration folders
 
-- *final* folder: contains a number of different .nc files (.nc = NetCDF) - not sure what these are used for, Martin didn’t seem to have a clear answer.
+- *final* folder: contains a number of different .nc files (.nc = NetCDF) - not sure what these are used for, Martin didn’t seem to have a clear answer. They can be opened and viewed with SNAP.
 - *MODIS* folder: contains the MODIS imagery. These are as .tifs, .ovr and .xml. The tifs are massive images - >50 MB.
 - Remaining folders (either WSM*, or RS2*: contains the SAR imagery and labels (i.e. the line and shape objects).
 
