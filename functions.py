@@ -1,4 +1,5 @@
 from osgeo import ogr, gdal
+import numpy as np
 
 
 def shp2tif(shape_file, sar_raster, output_raster_name):
@@ -36,5 +37,37 @@ Requires 'ogr' and 'gdal' packages from the 'osgeo' library.
     output_raster_ds.GetRasterBand(1).SetNoDataValue(0.0)
     # Not entirely sure what this does, but it's needed.
     output_raster_ds = None
+
+
+def Relabel(filePath):
+# Changes labelled rasters provided with the training data so that the labels distinguish only between water, ice and areas to discard.
+# The function overwrites the file but a copy can be made instead as implemented in the test function.
+
+    # Get the file and get write permission.
+    img = gdal.Open(filePath, gdal.GA_Update)
+
+    # Turn the data into an array.
+    imgArray = img.GetRasterBand(1).ReadAsArray()
+    imgArray = np.array(imgArray)
+
+    # Old format: 0 = no data. 1 = ice free. 2 = sea ice. 9 = on land or ice shelf. 10 = unclassified.        
+    # New format: 0 = ignore (for now). 1 = water. 2 = ice.      
+    imgArray = np.where(imgArray == 10, 0, imgArray)
+    # 1 is already water and 2 is already ice so there is no need to waste time checking or changing them.
+    imgArray = np.where(imgArray == 9, 2, imgArray)
+
+    # These counts can later be used to decide the image's suitability.
+    #contains = np.unique(imgArray, return_counts=True)
+
+    # Replace the file with the new raster.
+    img.GetRasterBand(1).WriteArray(imgArray)
+
+    # The projection and georeference can be changed like this:
+    #img.SetGeoTransform(geotrans)
+    #img.SetProjection(proj)
+
+    # Clean up.
+    img.FlushCache()
+    del img
 
 
