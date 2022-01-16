@@ -1,5 +1,6 @@
 from osgeo import ogr, gdal
 import numpy as np
+import os
 
 
 def shp2tif(shape_file, sar_raster, output_raster_name):
@@ -39,8 +40,20 @@ Requires 'ogr' and 'gdal' packages from the 'osgeo' library.
     output_raster_ds = None
 
 
+def RelabelAll(dataRoot):
+# Passes all labelled rasters into the Relabel function for locally sotred data.
+# Specify the directory containing all the images and pass as the parameter, eg. RelabelAll(r'C:\Users\Sophie\Projects\SeaIce\Data')
+    os.chdir(dataRoot)
+    for folder in os.listdir():
+        os.chdir(folder)
+        if 'raster.tif' in os.listdir(): 
+            rasterFile = (r'{}\{}\raster.tif'.format(dataRoot, folder))
+            Relabel(rasterFile)
+        os.chdir(dataRoot)
+
+
 def Relabel(filePath):
-# Changes labelled rasters provided with the training data so that the labels distinguish only between water, ice and areas to discard.
+# Changes a labelled raster provided with the training data so that the labels distinguish only between water, ice and areas to discard.
 # The function overwrites the file but a copy can be made instead as implemented in the test function.
 
     # Get the file and get write permission.
