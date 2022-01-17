@@ -18,8 +18,10 @@ Requires 'ogr' and 'gdal' packages from the 'osgeo' library.
     shape_file_ds = ogr.Open(shape_file)
     sf_layer = shape_file_ds.GetLayer()
 
-    # Getting the geo metadata from the SAR tiff.
+    # Getting the geo metadata from the SAR tif.
     sar_metadata = sar_raster_ds.GetGeoTransform()
+    # Getting the projection from the SAR tif.
+    sar_projection = sar_raster_ds.GetProjection()
 
     # Setting the new tiff driver to be a geotiff.
     new_tiff_driver = gdal.GetDriverByName("GTiff")
@@ -27,13 +29,15 @@ Requires 'ogr' and 'gdal' packages from the 'osgeo' library.
     # Creating the new tiff from the driver and size from the SAR tiff.
     output_raster_ds = new_tiff_driver.Create(utf8_path=output_raster_name, xsize=sar_raster_ds.RasterXSize,
                                               ysize=sar_raster_ds.RasterYSize, bands=1, eType=gdal.GDT_Float32)
-    # Setting the output raster to have the same metadata as the SAR raster.
+    # Setting the output raster to have the same metadata as the SAR tif.
     output_raster_ds.SetGeoTransform(sar_metadata)
+    # Setting the output raster to have the same projection as the SAR tif.
+    output_raster_ds.SetProjection(sar_projection)
 
     # Rasterising the shapefile polygons and adding to the new raster.
     # Inputs: new raster, band number of new raster (i.e. the only band), the polygon layer, attribute (preserves class
     # labels given as 'type'.
-    gdal.RasterizeLayer(output_raster_ds, [1], sf_layer, options=['ATTRIBUTE=type'])  # , outputType=gdal.GDT_Byte, burnValues=255)
+    gdal.RasterizeLayer(output_raster_ds, [1], sf_layer, options=['ATTRIBUTE=type'])
 
     output_raster_ds.GetRasterBand(1).SetNoDataValue(0.0)
     # Not entirely sure what this does, but it's needed.
