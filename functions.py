@@ -84,3 +84,14 @@ def Relabel(filePath):
     del img
 
 
+# Original tif is file name of raster to be reprojected, tif_target_proj is tif file name with projection to be used, 
+# output_tif is string name of output raster
+def reproj_tif (original_tif, tif_target_proj, output_tif):
+    target_file = gdal.Open(tif_target_proj) 
+    prj_target=sar.GetProjection() # use this target projection information to reproject the input raster
+
+    input_raster = gdal.Open(original_tif)
+
+    # reproject and write the reprojected raster
+    warp = gdal.Warp(output_tif, input_raster, dstSRS = prj_target)
+    warp = None # Closes the files
