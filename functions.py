@@ -1,6 +1,41 @@
 from osgeo import ogr, gdal
 import numpy as np
 import os
+import re
+import shutil
+
+
+def RelabelAll(inPath, outPath):
+# Passes all labelled rasters into the Relabel function for locally sotred data.
+# Specify the directory containing all the images and pass as the 1st parameter.
+# Specify the directory for the outputs to be written to and pass as the 2nd parameter.
+    os.chdir(inPath)
+    for folder in os.listdir():
+        relPath = '{}\{}'.format(inPath, folder)
+        os.chdir(folder)
+        containsSarData = False
+        for item in os.listdir():
+            # RegEx for the names of SAR folders.
+            if re.search('WSM.+', item) or re.search('S1.+', item) or re.search('RS2.+', item):
+                sarRaster = r'{}\{}\ASAR_WSM.dim.tif'.format(relPath, item)
+                containsSarData = True
+                break 
+        # The folder might not contain all the data.
+        if containsSarData:
+            shapeFile = r'{}\shapefile\polygon90.shp'.format(relPath)
+            # Copy sar tif into outpath and name by date.
+            outPathFull = '{}\{}'.format(outPath, folder)
+            outName = r'{}_sar.tif'.format(outPathFull)
+            try:
+                shutil.copyfile(sarRaster, outName)
+                # Convert shapefile to tif.
+                outName = r'{}_labels.tif'.format(outPathFull)
+                shp2tif(shapeFile, sarRaster, outName)
+                # Relabel ice and water.
+                Relabel(outName)
+            except:
+                print('The folder, {}, does not contain all the data.'.format(folder))
+        os.chdir(inPath)
 
 
 def shp2tif(shape_file, sar_raster, output_raster_name):
@@ -44,18 +79,6 @@ Requires 'ogr' and 'gdal' packages from the 'osgeo' library.
     output_raster_ds = None
 
 
-def RelabelAll(dataRoot):
-# Passes all labelled rasters into the Relabel function for locally sotred data.
-# Specify the directory containing all the images and pass as the parameter, eg. RelabelAll(r'C:\Users\Sophie\Projects\SeaIce\Data')
-    os.chdir(dataRoot)
-    for folder in os.listdir():
-        os.chdir(folder)
-        if 'raster.tif' in os.listdir(): 
-            rasterFile = (r'{}\{}\raster.tif'.format(dataRoot, folder))
-            Relabel(rasterFile)
-        os.chdir(dataRoot)
-
-
 def Relabel(filePath):
 # Changes a labelled raster provided with the training data so that the labels distinguish only between water, ice and areas to discard.
 # The function overwrites the file but a copy can be made instead as implemented in the test function.
@@ -73,15 +96,8 @@ def Relabel(filePath):
     # 1 is already water and 2 is already ice so there is no need to waste time checking or changing them.
     imgArray = np.where(imgArray == 9, 2, imgArray)
 
-    # These counts can later be used to decide the image's suitability.
-    #contains = np.unique(imgArray, return_counts=True)
-
     # Replace the file with the new raster.
     img.GetRasterBand(1).WriteArray(imgArray)
-
-    # The projection and georeference can be changed like this:
-    #img.SetGeoTransform(geotrans)
-    #img.SetProjection(proj)
 
     # Clean up.
     img.FlushCache()
