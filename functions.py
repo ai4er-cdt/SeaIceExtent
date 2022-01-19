@@ -88,7 +88,6 @@ def Relabel(filePath):
 
     # Turn the data into an array.
     imgArray = img.GetRasterBand(1).ReadAsArray()
-    imgArray = np.array(imgArray)
 
     # Old format: 0 = no data. 1 = ice free. 2 = sea ice. 9 = on land or ice shelf. 10 = unclassified.        
     # New format: 0 = ignore (for now). 1 = water. 2 = ice.      
