@@ -3,6 +3,7 @@ import numpy as np
 import os
 import re
 import shutil
+from PIL import Image
 
 
 def RelabelAll(inPath, outPath):
@@ -77,6 +78,66 @@ Requires 'ogr' and 'gdal' packages from the 'osgeo' library.
     output_raster_ds.GetRasterBand(1).SetNoDataValue(0.0)
     # Not entirely sure what this does, but it's needed.
     output_raster_ds = None
+
+
+def tile_image(sar_tif, labelled_tif, output_directory, tile_size_x, tile_size_y, step_x, step_y,
+               sea_ice_discard_proportion, verbose):
+    """GTC Code To tile up a SAR-label tif pair according to the specified window sizes and save the tiles as
+    .npy files. Any tile containing unclassified/no-data classes is rejected (not saved), as are tiles containing a
+    disproportionate amount of a single class (water or ice). Set verbose to True to print the tiling metrics for each
+    run."""
+
+    # Tifs
+    sar_tif = Image.open(sar_tif)
+    label_tif = Image.open(labelled_tif)
+
+    # Image Arrays
+    sar_tif_array = np.asarray(sar_tif)
+    label_tif_array = np.asarray(label_tif)
+
+    # Defining sliding windows
+    window_view_sar = np.lib.stride_tricks.sliding_window_view(x=sar_tif_array, window_shape=
+                                                               (tile_size_x, tile_size_y))[::step_y, ::step_x]
+    window_view_label = np.lib.stride_tricks.sliding_window_view(x=label_tif_array,window_shape=
+                                                                 (tile_size_x, tile_size_y))[::step_y, ::step_x]
+    num = window_view_sar.shape[1]
+
+    # Checking the sliding windows are the same dimensions
+    if window_view_sar.shape != window_view_label.shape:
+        raise Exception(f'SAR TIF and Labelled TIF dimensions do not match with dimensions of '
+                        f'{window_view_sar.shape} and {window_view_label.shape} respectively.')
+
+    # Initialising counters
+    n_unclassified = 0
+    n_similar = 0
+
+    # Simultaneously iterating through each SAR and labelled tile and saving as a .npy file
+    for count1, (row_sar, row_label) in enumerate(zip(window_view_sar, window_view_label)):
+        for count2, (tile_sar, tile_label) in enumerate(zip(row_sar, row_label)):
+
+            n = num * count1 + count2
+
+            if count1 == 0 and count2 == 0:
+                n_pixels = tile_label.size
+
+            # Check if the label tile contains any unclassified / no data
+            if np.amin(tile_label) == 0:
+                n_unclassified += 1
+                continue
+
+            # Check ice/water is not disproportionate
+            n_water = np.count_nonzero(tile_label == 1)
+            n_ice = np.count_nonzero(tile_label == 2)
+            if (n_water / n_pixels) > sea_ice_discard_proportion or (n_ice / n_pixels) > sea_ice_discard_proportion:
+                n_similar += 1
+                continue
+
+            np.save(output_directory + str(n) + '_sar.npy', tile_sar)
+            np.save(output_directory + str(n) + '_label.npy', tile_label)
+
+    if verbose:
+        print(f'Tiling complete \nTotal Tiles: {str(n)}\nAccepted Tiles: {str(n - n_unclassified - n_similar)}'
+              f'\nRejected Tiles (Unclassified): {str(n_unclassified)}\nRejected Tiles (Too Similar): {str(n_similar)}')
 
 
 def Relabel(filePath):
