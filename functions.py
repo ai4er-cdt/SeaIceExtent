@@ -63,7 +63,7 @@ Requires 'ogr' and 'gdal' packages from the 'osgeo' library.
 
     # Creating the new tiff from the driver and size from the SAR tiff.
     output_raster_ds = new_tiff_driver.Create(utf8_path=output_raster_name, xsize=sar_raster_ds.RasterXSize,
-                                              ysize=sar_raster_ds.RasterYSize, bands=1, eType=gdal.GDT_Float32)
+                                              ysize=sar_raster_ds.RasterYSize, bands=1, eType=gdal.GDT_Byte)
     # Setting the output raster to have the same metadata as the SAR tif.
     output_raster_ds.SetGeoTransform(sar_metadata)
     # Setting the output raster to have the same projection as the SAR tif.
@@ -94,6 +94,8 @@ def Relabel(filePath):
     imgArray = np.where(imgArray == 10, 0, imgArray)
     # 1 is already water and 2 is already ice so there is no need to waste time checking or changing them.
     imgArray = np.where(imgArray == 9, 2, imgArray)
+    # Scale up the grey pixels' intensity.
+    imgArray = imagArray * 100
 
     # Replace the file with the new raster.
     img.GetRasterBand(1).WriteArray(imgArray)
