@@ -156,7 +156,7 @@ def Relabel(filePath):
     # 1 is already water and 2 is already ice so there is no need to waste time checking or changing them.
     imgArray = np.where(imgArray == 9, 2, imgArray)
     # Scale up the grey pixels' intensity.
-    imgArray = imagArray * 100
+    imgArray = imgArray * 100
 
     # Replace the file with the new raster.
     img.GetRasterBand(1).WriteArray(imgArray)
