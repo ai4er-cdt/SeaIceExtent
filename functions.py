@@ -3,10 +3,12 @@ import numpy as np
 import os
 import re
 import shutil
+import json
 from PIL import Image
 
 
 def RelabelAll(inPath, outPath):
+# Sophie Turner
 # Passes all labelled rasters into the Relabel function for locally sotred data.
 # Specify the directory containing all the images and pass as the 1st parameter.
 # Specify the directory for the outputs to be written to and pass as the 2nd parameter.
@@ -132,15 +134,34 @@ def tile_image(sar_tif, labelled_tif, output_directory, tile_size_x, tile_size_y
                 n_similar += 1
                 continue
 
-            np.save(output_directory + str(n) + '_sar.npy', tile_sar)
-            np.save(output_directory + str(n) + '_label.npy', tile_label)
+            np.save(output_directory + str(n) + '\_sar.npy', tile_sar)
+            np.save(output_directory + str(n) + '\_label.npy', tile_label)
+
+            GenerateMetadata(output_directory, output_directory + str(n), count1, count2, sar_tif, n_water, n_ice)
 
     if verbose:
         print(f'Tiling complete \nTotal Tiles: {str(n)}\nAccepted Tiles: {str(n - n_unclassified - n_similar)}'
               f'\nRejected Tiles (Unclassified): {str(n_unclassified)}\nRejected Tiles (Too Similar): {str(n_similar)}')
 
 
+def GenerateMetadata(jsonDirectory, tile, row, col, img, n_water, n_ice):
+# Sophie Turner
+# Adds or overwrites metadata for a tile in a JSON file.
+# Called by the tile_image function and could be incorporated into that function, but is initially separate for clarity and testing.
+    jsonPath = jsonDirectory + r"\metadata.json"
+    tileInfo = {"tile name" : str(tile),
+                "parent image name" : str(img),
+                "water pixels" : n_water,
+                "ice pixels" : n_ice,
+                "latitude" : row,
+                "longitude" : col}            
+    obj = json.dumps(tileInfo, indent = 4)
+    with open(jsonPath, "w") as jsonFile:
+        jsonFile.write(obj)       
+
+
 def Relabel(filePath):
+# Sophie Turner
 # Changes a labelled raster provided with the training data so that the labels distinguish only between water, ice and areas to discard.
 # The function overwrites the file but a copy can be made instead as implemented in the test function.
 
@@ -177,3 +198,10 @@ def reproj_tif (original_tif, tif_target_proj, output_tif):
     # reproject and write the reprojected raster
     warp = gdal.Warp(output_tif, input_raster, dstSRS = prj_target)
     warp = None # Closes the files
+
+
+#tile_image(r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\raw\2011-01-13_021245_sar.tif", 
+#           r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\raw\2011-01-13_021245_labels.tif", 
+#           r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled", 
+#           128, 128, 32, 32, 1, False)
+#GenerateMetadata("1", "0", "0", "22/3/12")
