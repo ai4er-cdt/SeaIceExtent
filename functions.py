@@ -153,29 +153,43 @@ def tile_image(sar_tif, labelled_tif, output_directory, image_name, tile_size_x,
             np.save(output_directory + '\{}_sar.npy'.format(str(n)), tile_sar)
             np.save(output_directory + '\{}_label.npy'.format(str(n)), tile_label)
 
-            GenerateMetadata(output_directory, n, count1, count2, image_name, n_water, n_ice, n_unclassified)
+            GenerateMetadata(output_directory, n, count1, count2, step_x, step_y, image_name, n_water, n_ice, n_unclassified)
 
     if verbose:
         print(f'Tiling complete \nTotal Tiles: {str(n)}\nAccepted Tiles: {str(n - n_unclassified - n_similar)}'
               f'\nRejected Tiles (Unclassified): {str(n_unclassified)}\nRejected Tiles (Too Similar): {str(n_similar)}')
 
 
-def GenerateMetadata(jsonDirectory, tile, row, col, img, water, ice, unclassified):
-# Sophie Turner
-# Adds or overwrites metadata for a tile in a JSON file.
-# Unfinished function - used for testing.
-    jsonPath = jsonDirectory + r"\metadata.json"
-    tileInfo = {"tile name" : tile,
-                "parent image name" : img,
-                "water pixels" : water,
-                "ice pixels" : ice,
+def GenerateMetadata(jsonDirectory, tile, row, col, step_x, step_y, img, n_water, n_ice, n_unclassified):
+# Sophie Turner and Maddy Lisaius
+# Adds metadata for a tile to a JSON file.
+    jsonPath = jsonDirectory + "metadata.json"
+    print(jsonPath)
+    tileInfo = {"tile name" : str(tile),
+                "parent image name" : str(img),
+                "water pixels" : n_water,
+                "ice pixels" : n_ice,
                 "unclassified pixels" : unclassified,
-                "latitude" : row,
-                "longitude" : col}            
-    obj = json.dumps(tileInfo, indent = 4)
-    with open(jsonPath, "w") as jsonFile:
-        jsonFile.write(obj)       
+                "top left corner row in orig. SAR" : (row * step_x),
+                "top left corner col in orig. SAR" : (col * step_y)} 
+    
+    emptyList = []
+    if not os.path.isfile(jsonPath):
+        print(jsonPath + " did not exist.")
+        emptyList.append(tileInfo)
+        with open(jsonPath, mode='w') as jsonFile:
+            jsonFile.write(json.dumps(emptyList, indent=4))
+    else:
+        print(jsonPath + " did exist.")
+        with open(jsonPath) as feedsjson:
+            feeds = json.load(feedsjson)
 
+        feeds.append(tileInfo)
+        print(feeds)
+        with open(jsonPath, mode='w') as jsonFile:
+            jsonFile.write(json.dumps(feeds, indent=4))
+            print("Appended data.")
+        
 
 def Relabel(filePath):
 # Sophie Turner
