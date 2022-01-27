@@ -41,6 +41,21 @@ def RelabelAll(inPath, outPath):
         os.chdir(inPath)
 
 
+def TileAll(inPath, outPath):
+# Sophie Turner
+# Create tiles from all SAR images and generate their metadata.
+# Assumes images have already been through the RelabelAll function and placed in the raw training data directory.
+     os.chdir(inPath)
+     for item in os.listdir():
+         # Avoid doubling the necessary number of string operations because they are in pairs.
+         if item.endswith("labels.tif"):
+             # The first 18 chars are the same for each pair.
+             imageName = item[0:17]
+             labelsPath = "{}\{}".format(inPath, item)
+             sarPath = "{}\{}_sar.tif".format(inPath, imageName)
+             tile_image(sarPath, labelsPath, outPath, imageName, 128, 128, 32, 32, 1, False)
+
+
 def shp2tif(shape_file, sar_raster, output_raster_name):
     """GTC Code to rasterise an input shapefile. Requires as inputs: shapefile, reference tiff, output raster name.
 Adapted from: https://opensourceoptions.com/blog/use-python-to-convert-polygons-to-raster-with-gdal-rasterizelayer/
@@ -82,8 +97,9 @@ Requires 'ogr' and 'gdal' packages from the 'osgeo' library.
     output_raster_ds = None
 
 
-def tile_image(sar_tif, labelled_tif, output_directory, tile_size_x, tile_size_y, step_x, step_y,
+def tile_image(sar_tif, labelled_tif, output_directory, image_name, tile_size_x, tile_size_y, step_x, step_y,
                sea_ice_discard_proportion, verbose):
+    # Jonny and Sophie
     """GTC Code To tile up a SAR-label tif pair according to the specified window sizes and save the tiles as
     .npy files. Any tile containing unclassified/no-data classes is rejected (not saved), as are tiles containing a
     disproportionate amount of a single class (water or ice). Set verbose to True to print the tiling metrics for each
@@ -138,21 +154,21 @@ def tile_image(sar_tif, labelled_tif, output_directory, tile_size_x, tile_size_y
             np.save(output_directory + '\{}_sar.npy'.format(str(n)), tile_sar)
             np.save(output_directory + '\{}_label.npy'.format(str(n)), tile_label)
 
-            GenerateMetadata(output_directory, str(n), count1, count2, img_name, n_water, n_ice)
+            GenerateMetadata(output_directory, n, count1, count2, image_name, n_water, n_ice)
 
     if verbose:
         print(f'Tiling complete \nTotal Tiles: {str(n)}\nAccepted Tiles: {str(n - n_unclassified - n_similar)}'
               f'\nRejected Tiles (Unclassified): {str(n_unclassified)}\nRejected Tiles (Too Similar): {str(n_similar)}')
 
 
-def GenerateMetadata(jsonDirectory, tile, row, col, img, n_water, n_ice):
+def GenerateMetadata(jsonDirectory, tile, row, col, img, water, ice):
 # Sophie Turner
 # Adds or overwrites metadata for a tile in a JSON file.
     jsonPath = jsonDirectory + r"\metadata.json"
     tileInfo = {"tile name" : str(tile),
                 "parent image name" : str(img),
-                "water pixels" : n_water,
-                "ice pixels" : n_ice,
+                "water pixels" : water,
+                "ice pixels" : ice,
                 "latitude" : row,
                 "longitude" : col}            
     obj = json.dumps(tileInfo, indent = 4)
@@ -204,4 +220,5 @@ def reproj_tif (original_tif, tif_target_proj, output_tif):
 #           r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\raw\2011-01-13_021245_labels.tif", 
 #           r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled", 
 #           128, 128, 32, 32, 1, False)
-#GenerateMetadata("1", "0", "0", "22/3/12")
+
+#TileAll(r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\raw", r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled")
