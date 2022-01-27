@@ -218,7 +218,7 @@ def Relabel(filePath):
     del img
 
 
-def reproj_tif (original_tif, tif_target_proj, output_tif):
+def ReprojTif (original_tif, tif_target_proj, output_tif):
     # Maddy
     """Original tif is file name of raster to be reprojected, tif_target_proj is tif file name with projection to be used, 
     output_tif is string name of output raster"""
