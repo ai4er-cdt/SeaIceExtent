@@ -169,7 +169,7 @@ def GenerateMetadata(jsonDirectory, tile, row, col, step_x, step_y, img, n_water
                 "parent image name" : str(img),
                 "water pixels" : n_water,
                 "ice pixels" : n_ice,
-                "unclassified pixels" : unclassified,
+                "unclassified pixels" : n_unclassified,
                 "top left corner row in orig. SAR" : (row * step_x),
                 "top left corner col in orig. SAR" : (col * step_y)} 
     
@@ -240,4 +240,4 @@ def ReprojTif (original_tif, tif_target_proj, output_tif):
 #           r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled", 
 #           128, 128, 32, 32, 1, False)
 
-#TileAll(r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\raw", r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled")
+TileAll(r"\mnt\d\Shared drives\2021-gtc-sea-ice\trainingdata\raw", r"\mnt\c\Users\madel\Desktop\code\seaice\tiles")
