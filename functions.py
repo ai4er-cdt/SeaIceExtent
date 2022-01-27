@@ -164,7 +164,6 @@ def GenerateMetadata(jsonDirectory, tile, row, col, step_x, step_y, img, n_water
 # Sophie Turner and Maddy Lisaius
 # Adds metadata for a tile to a JSON file.
     jsonPath = jsonDirectory + "metadata.json"
-    print(jsonPath)
     tileInfo = {"tile name" : str(tile),
                 "parent image name" : str(img),
                 "water pixels" : n_water,
@@ -175,20 +174,16 @@ def GenerateMetadata(jsonDirectory, tile, row, col, step_x, step_y, img, n_water
     
     emptyList = []
     if not os.path.isfile(jsonPath):
-        print(jsonPath + " did not exist.")
         emptyList.append(tileInfo)
         with open(jsonPath, mode='w') as jsonFile:
             jsonFile.write(json.dumps(emptyList, indent=4))
     else:
-        print(jsonPath + " did exist.")
         with open(jsonPath) as feedsjson:
             feeds = json.load(feedsjson)
 
         feeds.append(tileInfo)
-        print(feeds)
         with open(jsonPath, mode='w') as jsonFile:
             jsonFile.write(json.dumps(feeds, indent=4))
-            print("Appended data.")
         
 
 def Relabel(filePath):
