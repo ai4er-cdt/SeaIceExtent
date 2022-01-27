@@ -218,17 +218,21 @@ def Relabel(filePath):
     del img
 
 
-# Original tif is file name of raster to be reprojected, tif_target_proj is tif file name with projection to be used, 
-# output_tif is string name of output raster
 def reproj_tif (original_tif, tif_target_proj, output_tif):
+    # Maddy
+    """Original tif is file name of raster to be reprojected, tif_target_proj is tif file name with projection to be used, 
+    output_tif is string name of output raster"""
+    
     target_file = gdal.Open(tif_target_proj) 
-    prj_target=target_file.GetProjection() # use this target projection information to reproject the input raster
+    # Use the defined target projection information to reproject the input raster to be modified
+    prj_target=target_file.GetProjection() 
 
     input_raster = gdal.Open(original_tif)
 
-    # reproject and write the reprojected raster
+    # Reproject and write the reprojected raster
     warp = gdal.Warp(output_tif, input_raster, dstSRS = prj_target)
-    warp = None # Closes the files
+    # Closes the files
+    warp = None 
 
 
 #tile_image(r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\raw\2011-01-13_021245_sar.tif", 
