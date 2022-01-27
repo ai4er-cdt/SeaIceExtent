@@ -104,7 +104,6 @@ def tile_image(sar_tif, labelled_tif, output_directory, image_name, tile_size_x,
     .npy files. Any tile containing unclassified/no-data classes is rejected (not saved), as are tiles containing a
     disproportionate amount of a single class (water or ice). Set verbose to True to print the tiling metrics for each
     run."""
-    img_name = sar_tif
 
     # Tifs
     sar_tif = Image.open(sar_tif)
@@ -154,21 +153,23 @@ def tile_image(sar_tif, labelled_tif, output_directory, image_name, tile_size_x,
             np.save(output_directory + '\{}_sar.npy'.format(str(n)), tile_sar)
             np.save(output_directory + '\{}_label.npy'.format(str(n)), tile_label)
 
-            GenerateMetadata(output_directory, n, count1, count2, image_name, n_water, n_ice)
+            GenerateMetadata(output_directory, n, count1, count2, image_name, n_water, n_ice, n_unclassified)
 
     if verbose:
         print(f'Tiling complete \nTotal Tiles: {str(n)}\nAccepted Tiles: {str(n - n_unclassified - n_similar)}'
               f'\nRejected Tiles (Unclassified): {str(n_unclassified)}\nRejected Tiles (Too Similar): {str(n_similar)}')
 
 
-def GenerateMetadata(jsonDirectory, tile, row, col, img, water, ice):
+def GenerateMetadata(jsonDirectory, tile, row, col, img, water, ice, unclassified):
 # Sophie Turner
 # Adds or overwrites metadata for a tile in a JSON file.
+# Unfinished function - used for testing.
     jsonPath = jsonDirectory + r"\metadata.json"
-    tileInfo = {"tile name" : str(tile),
-                "parent image name" : str(img),
+    tileInfo = {"tile name" : tile,
+                "parent image name" : img,
                 "water pixels" : water,
                 "ice pixels" : ice,
+                "unclassified pixels" : unclassified,
                 "latitude" : row,
                 "longitude" : col}            
     obj = json.dumps(tileInfo, indent = 4)
