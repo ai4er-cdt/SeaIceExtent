@@ -41,8 +41,8 @@ def RelabelAll(inPath, outPath):
         os.chdir(inPath)
 
 
-def TileAll(inPath, outPath):
-# Sophie Turner
+def TileAll(inPath, outPath, tile_size_x, tile_size_y, step_x, step_y):
+# Sophie Turner 
 # Create tiles from all SAR images and generate their metadata.
 # Assumes images have already been through the RelabelAll function and placed in the raw training data directory.
      os.chdir(inPath)
@@ -53,7 +53,7 @@ def TileAll(inPath, outPath):
              imageName = item[0:17]
              labelsPath = "{}\{}".format(inPath, item)
              sarPath = "{}\{}_sar.tif".format(inPath, imageName)
-             tile_image(sarPath, labelsPath, outPath, imageName, 128, 128, 32, 32, 1, False)
+             tile_image(sarPath, labelsPath, outPath, imageName, tile_size_x, tile_size_y, step_x, step_y, 1, False)
 
 
 def shp2tif(shape_file, sar_raster, output_raster_name):
@@ -144,8 +144,8 @@ def tile_image(sar_tif, labelled_tif, output_directory, image_name, tile_size_x,
                 continue
 
             # Check ice/water is not disproportionate
-            n_water = np.count_nonzero(tile_label == 1)
-            n_ice = np.count_nonzero(tile_label == 2)
+            n_water = np.count_nonzero(tile_label == 100)
+            n_ice = np.count_nonzero(tile_label == 200)
             if (n_water / n_pixels) > sea_ice_discard_proportion or (n_ice / n_pixels) > sea_ice_discard_proportion:
                 n_similar += 1
                 continue
@@ -153,14 +153,14 @@ def tile_image(sar_tif, labelled_tif, output_directory, image_name, tile_size_x,
             np.save(output_directory + '\{}_sar.npy'.format(str(n)), tile_sar)
             np.save(output_directory + '\{}_label.npy'.format(str(n)), tile_label)
 
-            GenerateMetadata(output_directory, n, count1, count2, step_x, step_y, image_name, n_water, n_ice, n_unclassified)
+            GenerateMetadata(output_directory, n, count1, count2, step_x, step_y, image_name, n_water, n_ice)
 
     if verbose:
         print(f'Tiling complete \nTotal Tiles: {str(n)}\nAccepted Tiles: {str(n - n_unclassified - n_similar)}'
               f'\nRejected Tiles (Unclassified): {str(n_unclassified)}\nRejected Tiles (Too Similar): {str(n_similar)}')
 
 
-def GenerateMetadata(jsonDirectory, tile, row, col, step_x, step_y, img, n_water, n_ice, n_unclassified):
+def GenerateMetadata(jsonDirectory, tile, row, col, step_x, step_y, img, n_water, n_ice):
 # Sophie Turner and Maddy Lisaius
 # Adds metadata for a tile to a JSON file.
     jsonPath = jsonDirectory + "metadata.json"
@@ -168,7 +168,6 @@ def GenerateMetadata(jsonDirectory, tile, row, col, step_x, step_y, img, n_water
                 "parent image name" : str(img),
                 "water pixels" : n_water,
                 "ice pixels" : n_ice,
-                "unclassified pixels" : n_unclassified,
                 "top left corner row in orig. SAR" : (row * step_x),
                 "top left corner col in orig. SAR" : (col * step_y)} 
     
@@ -235,4 +234,4 @@ def ReprojTif (original_tif, tif_target_proj, output_tif):
 #           r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled", 
 #           128, 128, 32, 32, 1, False)
 
-TileAll(r"\mnt\d\Shared drives\2021-gtc-sea-ice\trainingdata\raw", r"\mnt\c\Users\madel\Desktop\code\seaice\tiles")
+#TileAll(r"\mnt\d\Shared drives\2021-gtc-sea-ice\trainingdata\raw", r"\mnt\c\Users\madel\Desktop\code\seaice\tiles", 512, 512, 384, 384)
