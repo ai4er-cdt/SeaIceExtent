@@ -164,14 +164,20 @@ def generate_metadata(json_directory, tile, image, n_water, n_ice, n_unclassifie
 # Sophie Turner and Maddy Lisaius
 # Adds metadata for a tile to a JSON file.
     json_path = json_directory + "\metadata.json"
+    total_pixels = n_ice + n_water + n_unclassified
+    water_percent = (n_water/total_pixels)*100
+    ice_percent = (n_ice/total_pixels)*100
+    unclassified_percent = (n_unclassified/total_pixels)*100
     tile_info = {"tile name" : str(tile),
                 "parent image name" : str(image),
-                "water pixels" : n_water,
-                "ice pixels" : n_ice,
-                "unclassified pixels" : n_unclassified,
+                "total pixels" : total_pixels,
+                "water pixels" : "{} pixels, {:.2f} % of total pixels".format(n_water, water_percent),
+                "ice pixels" : "{} pixels, {:.2f} % of total pixels".format(n_ice, ice_percent),
+                "unclassified pixels" : "{} pixels, {:.2f} % of total pixels".format(n_unclassified, unclassified_percent),
                 "top left corner row in orig. SAR" : (row * step_x),
                 "top left corner col in orig. SAR" : (col * step_y),
-                "tile size" : "{} x {} pixels".format(tile_size, tile_size)}  
+                "tile size" : "{} x {} pixels".format(tile_size, tile_size),
+                "extra pixels": total_pixels - tile_size * tile_size}  
     
     tile_list = []
     if not os.path.isfile(json_path):
