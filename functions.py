@@ -99,7 +99,7 @@ Requires 'ogr' and 'gdal' packages from the 'osgeo' library.
 
 def tile_image(sar_tif, labelled_tif, output_directory, image_name, tile_size_x, tile_size_y, step_x, step_y,
                sea_ice_discard_proportion, verbose):
-    # Jonny and Sophie
+    # Jonny Roberts and Sophie Turner
     """GTC Code To tile up a SAR-label tif pair according to the specified window sizes and save the tiles as
     .npy files. Any tile containing unclassified/no-data classes is rejected (not saved), as are tiles containing a
     disproportionate amount of a single class (water or ice). Set verbose to True to print the tiling metrics for each
@@ -153,23 +153,25 @@ def tile_image(sar_tif, labelled_tif, output_directory, image_name, tile_size_x,
             np.save(output_directory + '\{}_sar.npy'.format(str(n)), tile_sar)
             np.save(output_directory + '\{}_label.npy'.format(str(n)), tile_label)
 
-            generate_metadata(output_directory, n, count1, count2, step_x, step_y, image_name, n_water, n_ice)
+            generate_metadata(output_directory, n, image_name, n_water, n_ice, n_unclassified, count1, step_x, count2, step_y, tile_size_x)
 
     if verbose:
         print(f'Tiling complete \nTotal Tiles: {str(n)}\nAccepted Tiles: {str(n - n_unclassified - n_similar)}'
               f'\nRejected Tiles (Unclassified): {str(n_unclassified)}\nRejected Tiles (Too Similar): {str(n_similar)}')
 
 
-def generate_metadata(json_directory, tile, row, col, step_x, step_y, image, n_water, n_ice):
+def generate_metadata(json_directory, tile, image, n_water, n_ice, n_unclassified, row, step_x, col, step_y, tile_size):
 # Sophie Turner and Maddy Lisaius
 # Adds metadata for a tile to a JSON file.
-    json_path = json_directory + "metadata.json"
+    json_path = json_directory + "\metadata.json"
     tile_info = {"tile name" : str(tile),
                 "parent image name" : str(image),
                 "water pixels" : n_water,
                 "ice pixels" : n_ice,
+                "unclassified pixels" : n_unclassified,
                 "top left corner row in orig. SAR" : (row * step_x),
-                "top left corner col in orig. SAR" : (col * step_y)} 
+                "top left corner col in orig. SAR" : (col * step_y),
+                "tile size" : "{} x {} pixels".format(tile_size, tile_size)}  
     
     tile_list = []
     if not os.path.isfile(json_path):
