@@ -7,53 +7,53 @@ import json
 from PIL import Image
 
 
-def RelabelAll(inPath, outPath):
+def relabel_all(in_path, out_path):
 # Sophie Turner
 # Passes all labelled rasters into the Relabel function for locally sotred data.
 # Specify the directory containing all the images and pass as the 1st parameter.
 # Specify the directory for the outputs to be written to and pass as the 2nd parameter.
-    os.chdir(inPath)
+    os.chdir(in_path)
     for folder in os.listdir():
-        relPath = '{}\{}'.format(inPath, folder)
+        rel_path = '{}\{}'.format(in_path, folder)
         os.chdir(folder)
-        containsSarData = False
+        contains_sar_data = False
         for item in os.listdir():
             # RegEx for the names of SAR folders.
             if re.search('WSM.+', item) or re.search('S1.+', item) or re.search('RS2.+', item):
-                sarRaster = r'{}\{}\ASAR_WSM.dim.tif'.format(relPath, item)
-                containsSarData = True
+                sar_raster = r'{}\{}\ASAR_WSM.dim.tif'.format(rel_path, item)
+                contains_sar_data = True
                 break 
         # The folder might not contain all the data.
-        if containsSarData:
-            shapeFile = r'{}\shapefile\polygon90.shp'.format(relPath)
+        if contains_sar_data:
+            shape_file = r'{}\shapefile\polygon90.shp'.format(rel_path)
             # Copy sar tif into outpath and name by date.
-            outPathFull = '{}\{}'.format(outPath, folder)
-            outName = r'{}_sar.tif'.format(outPathFull)
+            out_path_full = '{}\{}'.format(out_path, folder)
+            out_name = r'{}_sar.tif'.format(out_path_full)
             try:
-                shutil.copyfile(sarRaster, outName)
+                shutil.copyfile(sar_raster, out_name)
                 # Convert shapefile to tif.
-                outName = r'{}_labels.tif'.format(outPathFull)
-                shp2tif(shapeFile, sarRaster, outName)
+                out_name = r'{}_labels.tif'.format(out_path_full)
+                shp2tif(shape_file, sar_raster, out_name)
                 # Relabel ice and water.
-                Relabel(outName)
+                relabel(out_name)
             except:
                 print('The folder, {}, does not contain all the data.'.format(folder))
-        os.chdir(inPath)
+        os.chdir(in_path)
 
 
-def TileAll(inPath, outPath, tile_size_x, tile_size_y, step_x, step_y):
+def tile_all(in_path, out_path, tile_size_x, tile_size_y, step_x, step_y):
 # Sophie Turner 
 # Create tiles from all SAR images and generate their metadata.
 # Assumes images have already been through the RelabelAll function and placed in the raw training data directory.
-     os.chdir(inPath)
+     os.chdir(in_path)
      for item in os.listdir():
          # Avoid doubling the necessary number of string operations because they are in pairs.
          if item.endswith("labels.tif"):
              # The first 18 chars are the same for each pair.
-             imageName = item[0:17]
-             labelsPath = "{}\{}".format(inPath, item)
-             sarPath = "{}\{}_sar.tif".format(inPath, imageName)
-             tile_image(sarPath, labelsPath, outPath, imageName, tile_size_x, tile_size_y, step_x, step_y, 1, False)
+             image_name = item[0:17]
+             labels_path = "{}\{}".format(in_path, item)
+             sar_path = "{}\{}_sar.tif".format(in_path, image_name)
+             tile_image(sar_path, labels_path, out_path, image_name, tile_size_x, tile_size_y, step_x, step_y, 1, False)
 
 
 def shp2tif(shape_file, sar_raster, output_raster_name):
@@ -153,63 +153,63 @@ def tile_image(sar_tif, labelled_tif, output_directory, image_name, tile_size_x,
             np.save(output_directory + '\{}_sar.npy'.format(str(n)), tile_sar)
             np.save(output_directory + '\{}_label.npy'.format(str(n)), tile_label)
 
-            GenerateMetadata(output_directory, n, count1, count2, step_x, step_y, image_name, n_water, n_ice)
+            generate_metadata(output_directory, n, count1, count2, step_x, step_y, image_name, n_water, n_ice)
 
     if verbose:
         print(f'Tiling complete \nTotal Tiles: {str(n)}\nAccepted Tiles: {str(n - n_unclassified - n_similar)}'
               f'\nRejected Tiles (Unclassified): {str(n_unclassified)}\nRejected Tiles (Too Similar): {str(n_similar)}')
 
 
-def GenerateMetadata(jsonDirectory, tile, row, col, step_x, step_y, img, n_water, n_ice):
+def generate_metadata(json_directory, tile, row, col, step_x, step_y, image, n_water, n_ice):
 # Sophie Turner and Maddy Lisaius
 # Adds metadata for a tile to a JSON file.
-    jsonPath = jsonDirectory + "metadata.json"
-    tileInfo = {"tile name" : str(tile),
-                "parent image name" : str(img),
+    json_path = json_directory + "metadata.json"
+    tile_info = {"tile name" : str(tile),
+                "parent image name" : str(image),
                 "water pixels" : n_water,
                 "ice pixels" : n_ice,
                 "top left corner row in orig. SAR" : (row * step_x),
                 "top left corner col in orig. SAR" : (col * step_y)} 
     
-    emptyList = []
-    if not os.path.isfile(jsonPath):
-        emptyList.append(tileInfo)
-        with open(jsonPath, mode='w') as jsonFile:
-            jsonFile.write(json.dumps(emptyList, indent=4))
+    tile_list = []
+    if not os.path.isfile(json_path):
+        tile_list.append(tile_info)
+        with open(json_path, mode='w') as json_file:
+            json_file.write(json.dumps(tile_list, indent=4))
     else:
-        with open(jsonPath) as feedsjson:
-            feeds = json.load(feedsjson)
+        with open(json_path) as feeds_json:
+            feeds = json.load(feeds_json)
 
-        feeds.append(tileInfo)
-        with open(jsonPath, mode='w') as jsonFile:
-            jsonFile.write(json.dumps(feeds, indent=4))
+        feeds.append(tile_info)
+        with open(json_path, mode='w') as json_file:
+            json_file.write(json.dumps(feeds, indent=4))
         
 
-def Relabel(filePath):
+def relabel(file_path):
 # Sophie Turner
 # Changes a labelled raster provided with the training data so that the labels distinguish only between water, ice and areas to discard.
 # The function overwrites the file but a copy can be made instead as implemented in the test function.
 
     # Get the file and get write permission.
-    img = gdal.Open(filePath, gdal.GA_Update)
+    image = gdal.Open(file_path, gdal.GA_Update)
 
     # Turn the data into an array.
-    imgArray = img.GetRasterBand(1).ReadAsArray()
+    image_array = image.GetRasterBand(1).ReadAsArray()
 
     # Old format: 0 = no data. 1 = ice free. 2 = sea ice. 9 = on land or ice shelf. 10 = unclassified.        
     # New format: 0 = ignore (for now). 1 = water. 2 = ice.      
-    imgArray = np.where(imgArray == 10, 0, imgArray)
+    image_array = np.where(image_array == 10, 0, image_array)
     # 1 is already water and 2 is already ice so there is no need to waste time checking or changing them.
-    imgArray = np.where(imgArray == 9, 2, imgArray)
+    image_array = np.where(image_array == 9, 2, image_array)
     # Scale up the grey pixels' intensity.
-    imgArray = imgArray * 100
+    image_array = image_array * 100
 
     # Replace the file with the new raster.
-    img.GetRasterBand(1).WriteArray(imgArray)
+    image.GetRasterBand(1).WriteArray(image_array)
 
     # Clean up.
-    img.FlushCache()
-    del img
+    image.FlushCache()
+    del image
 
 
 def ReprojTif (original_tif, tif_target_proj, output_tif):
@@ -229,9 +229,9 @@ def ReprojTif (original_tif, tif_target_proj, output_tif):
     warp = None 
 
 
-#tile_image(r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\raw\2011-01-13_021245_sar.tif", 
-#           r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\raw\2011-01-13_021245_labels.tif", 
-#           r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled", 
-#           128, 128, 32, 32, 1, False)
 
-#TileAll(r"\mnt\d\Shared drives\2021-gtc-sea-ice\trainingdata\raw", r"\mnt\c\Users\madel\Desktop\code\seaice\tiles", 512, 512, 384, 384)
+# Maddy's tests:
+#tile_all(r"\mnt\d\Shared drives\2021-gtc-sea-ice\trainingdata\raw", r"\mnt\c\Users\madel\Desktop\code\seaice\tiles", 512, 512, 384, 384)
+
+# Sophie's tests:
+#tile_all(r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\raw", r"C:\Users\sophi\test", 512, 512, 384, 384)
