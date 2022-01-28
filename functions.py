@@ -153,31 +153,27 @@ def tile_image(sar_tif, labelled_tif, output_directory, image_name, tile_size_x,
             np.save(output_directory + '\{}_sar.npy'.format(str(n)), tile_sar)
             np.save(output_directory + '\{}_label.npy'.format(str(n)), tile_label)
 
-            generate_metadata(output_directory, n, image_name, n_water, n_ice, n_unclassified, count1, step_x, count2, step_y, tile_size_x)
+            generate_metadata(output_directory, n, image_name, n_water, n_ice, count1, step_x, count2, step_y, tile_size_x)
 
     if verbose:
         print(f'Tiling complete \nTotal Tiles: {str(n)}\nAccepted Tiles: {str(n - n_unclassified - n_similar)}'
               f'\nRejected Tiles (Unclassified): {str(n_unclassified)}\nRejected Tiles (Too Similar): {str(n_similar)}')
 
 
-def generate_metadata(json_directory, tile, image, n_water, n_ice, n_unclassified, row, step_x, col, step_y, tile_size):
+def generate_metadata(json_directory, tile, image, n_water, n_ice, row, step_x, col, step_y, tile_size):
 # Sophie Turner and Maddy Lisaius
 # Adds metadata for a tile to a JSON file.
     json_path = json_directory + "\metadata.json"
-    total_pixels = n_ice + n_water + n_unclassified
+    total_pixels = n_ice + n_water
     water_percent = (n_water/total_pixels)*100
     ice_percent = (n_ice/total_pixels)*100
-    unclassified_percent = (n_unclassified/total_pixels)*100
     tile_info = {"tile name" : str(tile),
                 "parent image name" : str(image),
-                "total pixels" : total_pixels,
                 "water pixels" : "{} pixels, {:.2f} % of total pixels".format(n_water, water_percent),
                 "ice pixels" : "{} pixels, {:.2f} % of total pixels".format(n_ice, ice_percent),
-                "unclassified pixels" : "{} pixels, {:.2f} % of total pixels".format(n_unclassified, unclassified_percent),
                 "top left corner row in orig. SAR" : (row * step_x),
                 "top left corner col in orig. SAR" : (col * step_y),
-                "tile size" : "{} x {} pixels".format(tile_size, tile_size),
-                "extra pixels": total_pixels - tile_size * tile_size}  
+                "tile size" : "{} x {} pixels".format(tile_size, tile_size)}  
     
     tile_list = []
     if not os.path.isfile(json_path):
