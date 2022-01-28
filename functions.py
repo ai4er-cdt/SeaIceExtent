@@ -53,7 +53,12 @@ def tile_all(in_path, out_path, tile_size_x, tile_size_y, step_x, step_y):
              image_name = item[0:17]
              labels_path = "{}\{}".format(in_path, item)
              sar_path = "{}\{}_sar.tif".format(in_path, image_name)
-             tile_image(sar_path, labels_path, out_path, image_name, tile_size_x, tile_size_y, step_x, step_y, 1, False)
+             # Get the geo info from the SAR tif.
+             sar_data = gdal.Open(sar_path)
+             geography = sar_data.GetGeoTransform()
+             top_left = geography[0], geography[3] 
+
+             tile_image(sar_path, labels_path, out_path, image_name, top_left, tile_size_x, tile_size_y, step_x, step_y, 1, False)
 
 
 def shp2tif(shape_file, sar_raster, output_raster_name):
@@ -73,8 +78,10 @@ Requires 'ogr' and 'gdal' packages from the 'osgeo' library.
 
     # Getting the geo metadata from the SAR tif.
     sar_metadata = sar_raster_ds.GetGeoTransform()
+    print(sar_metadata)
     # Getting the projection from the SAR tif.
     sar_projection = sar_raster_ds.GetProjection()
+    print(sar_projection)
 
     # Setting the new tiff driver to be a geotiff.
     new_tiff_driver = gdal.GetDriverByName("GTiff")
@@ -97,7 +104,7 @@ Requires 'ogr' and 'gdal' packages from the 'osgeo' library.
     output_raster_ds = None
 
 
-def tile_image(sar_tif, labelled_tif, output_directory, image_name, tile_size_x, tile_size_y, step_x, step_y,
+def tile_image(sar_tif, labelled_tif, output_directory, image_name, top_left, tile_size_x, tile_size_y, step_x, step_y,
                sea_ice_discard_proportion, verbose):
     # Jonny Roberts and Sophie Turner
     """GTC Code To tile up a SAR-label tif pair according to the specified window sizes and save the tiles as
@@ -153,14 +160,14 @@ def tile_image(sar_tif, labelled_tif, output_directory, image_name, tile_size_x,
             np.save(output_directory + '\{}_sar.npy'.format(str(n)), tile_sar)
             np.save(output_directory + '\{}_label.npy'.format(str(n)), tile_label)
 
-            generate_metadata(output_directory, n, image_name, n_water, n_ice, count1, step_x, count2, step_y, tile_size_x)
+            generate_metadata(output_directory, n, image_name, n_water, n_ice, top_left, count1, step_x, count2, step_y, tile_size_x)
 
     if verbose:
         print(f'Tiling complete \nTotal Tiles: {str(n)}\nAccepted Tiles: {str(n - n_unclassified - n_similar)}'
               f'\nRejected Tiles (Unclassified): {str(n_unclassified)}\nRejected Tiles (Too Similar): {str(n_similar)}')
 
 
-def generate_metadata(json_directory, tile, image, n_water, n_ice, row, step_x, col, step_y, tile_size):
+def generate_metadata(json_directory, tile, image, n_water, n_ice, coordinates, row, step_x, col, step_y, tile_size):
 # Sophie Turner and Maddy Lisaius
 # Adds metadata for a tile to a JSON file.
     json_path = json_directory + "\metadata.json"
@@ -171,8 +178,9 @@ def generate_metadata(json_directory, tile, image, n_water, n_ice, row, step_x, 
                 "parent image name" : str(image),
                 "water pixels" : "{} pixels, {:.2f} % of total pixels".format(n_water, water_percent),
                 "ice pixels" : "{} pixels, {:.2f} % of total pixels".format(n_ice, ice_percent),
-                "top left corner row in orig. SAR" : (row * step_x),
-                "top left corner col in orig. SAR" : (col * step_y),
+                "top left co-ordinates of parent image" : "{}, {}".format(coordinates[0], coordinates[1]),
+                "top left corner row of parent image" : (row * step_x),
+                "top left corner col of parent image" : (col * step_y),
                 "tile size" : "{} x {} pixels".format(tile_size, tile_size)}  
     
     tile_list = []
