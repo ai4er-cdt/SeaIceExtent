@@ -71,6 +71,7 @@ def upsample_all(in_path, out_path, new_resolution):
                 new_name_path = "{}\{}_modis.tif".format(out_path, folder)
                 # Change the resolution.
                 gdal.Warp(new_name_path, item, xRes=new_resolution, yRes=new_resolution)
+                break
 
 
 def shp2tif(shape_file, sar_raster, output_raster_name):
@@ -249,6 +250,39 @@ def ReprojTif (original_tif, tif_target_proj, output_tif):
     warp = None 
 
 
+def relabel_modis(in_path, out_path):
+    # Create labels for modis images which do not have an associated sar image.
+    # Adaptation of the relabel_all function. Could combine these two functions for concision but that could mean running the whole thing again.
+    os.chdir(in_path)
+    for folder in os.listdir():
+        rel_path = '{}\{}'.format(in_path, folder)
+        os.chdir(folder)
+        contains_sar = False
+        for item in os.listdir():
+            # Find folders which do not contain sar images.
+            if item.startswith("WSM") or item.startswith("S1") or item.startswith("RS2"):
+                os.chdir(item)
+                for each_file in os.listdir():
+                    if each_file.endswith(".tif"):
+                        contains_sar = True
+                        break
+                if contains_sar == False:
+                    shape_file = r'{}\shapefile\polygon90.shp'.format(rel_path)
+                    # Name by date.
+                    out_path_full = '{}\{}'.format(out_path, folder)
+                    out_name = r'{}_labels.tif'.format(out_path_full)
+                    # Find modis raster.
+                    modis_folder = "{}\MODIS".format(rel_path)
+                    os.chdir(modis_folder)
+                    for modis_file in os.listdir():
+                        if modis_file.endswith("250m.tif"):
+                            # Convert shape file to tif.
+                            shp2tif(shape_file, modis_file, out_name)
+                            # Relabel ice and water.
+                            relabel(out_name)
+                            break
+        os.chdir(in_path)
+
 
 # test
-#upsample_all(r"G:\Shared drives\2021-gtc-sea-ice\data", r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\raw", 40)
+#relabel_modis(r'G:\Shared drives\2021-gtc-sea-ice\data', r"C:\Users\sophi\test")
