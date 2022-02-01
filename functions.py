@@ -6,6 +6,7 @@ import shutil
 import json
 from PIL import Image
 import glob
+from torch.utils.data import Dataset
 
 
 def relabel_all(in_path, out_path):
@@ -77,8 +78,8 @@ def upsample_all(in_path, out_path, new_resolution):
 
 def shp2tif(shape_file, sar_raster, output_raster_name):
     """GTC Code to rasterise an input shapefile. Requires as inputs: shapefile, reference tiff, output raster name.
-Adapted from: https://opensourceoptions.com/blog/use-python-to-convert-polygons-to-raster-with-gdal-rasterizelayer/
-Requires 'ogr' and 'gdal' packages from the 'osgeo' library.
+    Adapted from: https://opensourceoptions.com/blog/use-python-to-convert-polygons-to-raster-with-gdal-rasterizelayer/
+    Requires 'ogr' and 'gdal' packages from the 'osgeo' library.
     """
 
     # Note: throughout ds = 'dataset'
@@ -198,6 +199,25 @@ def list_npy_filenames(image_directory, flag_check_matching):
     return sar_names, label_names
 
 
+class SarLabelDataset(torch.utils.data.Dataset):
+    """GTC Code for a dataset class. The class is instantiated with list of filenames within a directory (created using
+    the list_npy_filenames function). The __getitem__ method pairs up corresponding sar-label .npy file pairs. This
+    dataset can then be input to a dataloader."""
+
+    def __init__(self, sar_filenames, label_filenames):
+        self.sar_names = sar_filenames
+        self.label_names = label_filenames
+
+    def __len__(self):
+        return len(self.sar_names)
+
+    def __getitem__(self, idx):
+        sar = np.int16(np.load(self.sar_names[idx]))
+        label = np.int16(np.load(self.label_names[idx]))
+
+        return sar, label
+
+
 def generate_metadata(json_directory, tile, image, n_water, n_ice, coordinates, row, step_x, col, step_y, tile_size):
 # Adds metadata for a tile to a JSON file.
     json_path = json_directory + "\metadata.json"
@@ -301,7 +321,6 @@ def relabel_modis(in_path, out_path):
                             relabel(out_name)
                             break
         os.chdir(in_path)
-
 
 # test
 #relabel_modis(r'G:\Shared drives\2021-gtc-sea-ice\data', r"C:\Users\sophi\test")
