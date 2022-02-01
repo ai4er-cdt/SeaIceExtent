@@ -120,7 +120,7 @@ Requires 'ogr' and 'gdal' packages from the 'osgeo' library.
 
 def tile_image(sar_tif, labelled_tif, output_directory, image_name, top_left, tile_size_x, tile_size_y, step_x, step_y,
                sea_ice_discard_proportion, verbose):
-    """GTC Code To tile up a SAR-label tif pair according to the specified window sizes and save the tiles as
+    """GTC Code to tile up a SAR-label tif pair according to the specified window sizes and save the tiles as
     .npy files. Any tile containing unclassified/no-data classes is rejected (not saved), as are tiles containing a
     disproportionate amount of a single class (water or ice). Set verbose to True to print the tiling metrics for each
     run."""
@@ -170,6 +170,7 @@ def tile_image(sar_tif, labelled_tif, output_directory, image_name, top_left, ti
                 n_similar += 1
                 continue
 
+            # There is scope here to use the numpy.savez_compressed function to improve efficiency.
             np.save(output_directory + '\{}_sar.npy'.format(str(n)), tile_sar)
             np.save(output_directory + '\{}_label.npy'.format(str(n)), tile_label)
 
