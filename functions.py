@@ -10,9 +10,9 @@ from torch.utils.data import Dataset
 
 
 def relabel_all(in_path, out_path):
-# Passes all labelled rasters into the Relabel function for locally sotred data.
-# Specify the directory containing all the images and pass as the 1st parameter.
-# Specify the directory for the outputs to be written to and pass as the 2nd parameter.
+    # Passes all labelled rasters into the Relabel function for locally stored data.
+    # Specify the directory containing all the images and pass as the 1st parameter.
+    # Specify the directory for the outputs to be written to and pass as the 2nd parameter.
     os.chdir(in_path)
     for folder in os.listdir():
         rel_path = '{}\{}'.format(in_path, folder)
@@ -43,22 +43,23 @@ def relabel_all(in_path, out_path):
 
 
 def tile_all(in_path, out_path, tile_size_x, tile_size_y, step_x, step_y):
-# Create tiles from all SAR images and generate their metadata.
-# Assumes images have already been through the RelabelAll function and placed in the raw training data directory.
-     os.chdir(in_path)
-     for item in os.listdir():
-         # Avoid doubling the necessary number of string operations because they are in pairs.
-         if item.endswith("labels.tif"):
-             # The first 18 chars are the same for each pair.
-             image_name = item[0:17]
-             labels_path = "{}\{}".format(in_path, item)
-             sar_path = "{}\{}_sar.tif".format(in_path, image_name)
-             # Get the geo info from the SAR tif.
-             sar_data = gdal.Open(sar_path)
-             geography = sar_data.GetGeoTransform()
-             top_left = geography[0], geography[3] 
+    # Create tiles from all SAR images and generate their metadata.
+    # Assumes images have already been through the RelabelAll function and placed in the raw training data directory.
+    os.chdir(in_path)
+    for item in os.listdir():
+        # Avoid doubling the necessary number of string operations because they are in pairs.
+        if item.endswith("labels.tif"):
+            # The first 18 chars are the same for each pair.
+            image_name = item[0:17]
+            labels_path = "{}\{}".format(in_path, item)
+            sar_path = "{}\{}_sar.tif".format(in_path, image_name)
+            # Get the geo info from the SAR tif.
+            sar_data = gdal.Open(sar_path)
+            geography = sar_data.GetGeoTransform()
+            top_left = geography[0], geography[3]
 
-             tile_image(sar_path, labels_path, out_path, image_name, top_left, tile_size_x, tile_size_y, step_x, step_y, 1, False)
+            tile_image(sar_path, labels_path, out_path, image_name, top_left, tile_size_x, tile_size_y, step_x, step_y,
+                       1, False)
 
 
 def upsample_all(in_path, out_path, new_resolution):
@@ -175,7 +176,8 @@ def tile_image(sar_tif, labelled_tif, output_directory, image_name, top_left, ti
             np.save(output_directory + '\{}_sar.npy'.format(str(n)), tile_sar)
             np.save(output_directory + '\{}_label.npy'.format(str(n)), tile_label)
 
-            generate_metadata(output_directory, n, image_name, n_water, n_ice, top_left, count1, step_x, count2, step_y, tile_size_x)
+            generate_metadata(output_directory, n, image_name, n_water, n_ice, top_left, count1, step_x, count2, step_y,
+                              tile_size_x)
 
     if verbose:
         print(f'Tiling complete \nTotal Tiles: {str(n)}\nAccepted Tiles: {str(n - n_unclassified - n_similar)}'
@@ -219,7 +221,7 @@ class SarLabelDataset(torch.utils.data.Dataset):
 
 
 def generate_metadata(json_directory, tile, image, n_water, n_ice, coordinates, row, step_x, col, step_y, tile_size):
-# Adds metadata for a tile to a JSON file.
+    # Adds metadata for a tile to a JSON file.
     json_path = json_directory + "\metadata.json"
     total_pixels = n_ice + n_water
     water_percent = (n_water/total_pixels)*100
@@ -248,8 +250,9 @@ def generate_metadata(json_directory, tile, image, n_water, n_ice, coordinates, 
         
 
 def relabel(file_path):
-# Changes a labelled raster provided with the training data so that the labels distinguish only between water, ice and areas to discard.
-# The function overwrites the file but a copy can be made instead as implemented in the test function.
+    # Changes a labelled raster provided with the training data so that the labels distinguish only between water, ice
+    # and areas to discard. The function overwrites the file but a copy can be made instead as implemented in the test
+    # function.
 
     # Get the file and get write permission.
     image = gdal.Open(file_path, gdal.GA_Update)
@@ -273,9 +276,9 @@ def relabel(file_path):
     del image
 
 
-def ReprojTif (original_tif, tif_target_proj, output_tif):
-    """Original tif is file name of raster to be reprojected, tif_target_proj is tif file name with projection to be used, 
-    output_tif is string name of output raster"""
+def ReprojTif(original_tif, tif_target_proj, output_tif):
+    """Original tif is file name of raster to be reprojected, tif_target_proj is tif file name with projection to be
+    used, output_tif is string name of output raster"""
     
     target_file = gdal.Open(tif_target_proj) 
     # Use the defined target projection information to reproject the input raster to be modified
@@ -291,7 +294,8 @@ def ReprojTif (original_tif, tif_target_proj, output_tif):
 
 def relabel_modis(in_path, out_path):
     # Create labels for modis images which do not have an associated sar image.
-    # Adaptation of the relabel_all function. Could combine these two functions for concision but that could mean running the whole thing again.
+    # Adaptation of the relabel_all function. Could combine these two functions for concision but that could mean
+    # running the whole thing again.
     os.chdir(in_path)
     for folder in os.listdir():
         rel_path = '{}\{}'.format(in_path, folder)
