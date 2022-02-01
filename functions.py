@@ -59,11 +59,18 @@ def tile_all(in_path, out_path, tile_size_x, tile_size_y, step_x, step_y):
              tile_image(sar_path, labels_path, out_path, image_name, top_left, tile_size_x, tile_size_y, step_x, step_y, 1, False)
 
 
-def upsample(in_path, out_path, new_resolution):
-    gdal.Warp(out_path, in_path, xRes = new_resolution, yRes = new_resolution)
-    new_image = gdal.Open(out_path)
-    print(new_image.GetGeoTransform()[1])
-
+def upsample_all(in_path, out_path, new_resolution):
+    os.chdir(in_path)
+    for folder in os.listdir():
+        # Find the right input file.
+        modis_folder = "{}\{}\MODIS".format(in_path, folder)
+        os.chdir(modis_folder)
+        for item in os.listdir():
+            if item.endswith("250m.tif"):
+                # Name the new file.
+                new_name_path = "{}\{}_modis.tif".format(out_path, folder)
+                # Change the resolution.
+                gdal.Warp(new_name_path, item, xRes=new_resolution, yRes=new_resolution)
 
 
 def shp2tif(shape_file, sar_raster, output_raster_name):
@@ -244,5 +251,4 @@ def ReprojTif (original_tif, tif_target_proj, output_tif):
 
 
 # test
-upsample(r"G:\Shared drives\2021-gtc-sea-ice\data\2011-01-18_122137\MODIS\Antarctica_r04c01.2011018.terra.367.250m.tif", 
-         r"C:\Users\sophi\test\testRes.tif", 40)
+#upsample_all(r"G:\Shared drives\2021-gtc-sea-ice\data", r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\raw", 40)
