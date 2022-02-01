@@ -8,7 +8,6 @@ from PIL import Image
 
 
 def relabel_all(in_path, out_path):
-# Sophie Turner
 # Passes all labelled rasters into the Relabel function for locally sotred data.
 # Specify the directory containing all the images and pass as the 1st parameter.
 # Specify the directory for the outputs to be written to and pass as the 2nd parameter.
@@ -42,7 +41,6 @@ def relabel_all(in_path, out_path):
 
 
 def tile_all(in_path, out_path, tile_size_x, tile_size_y, step_x, step_y):
-# Sophie Turner 
 # Create tiles from all SAR images and generate their metadata.
 # Assumes images have already been through the RelabelAll function and placed in the raw training data directory.
      os.chdir(in_path)
@@ -106,7 +104,6 @@ Requires 'ogr' and 'gdal' packages from the 'osgeo' library.
 
 def tile_image(sar_tif, labelled_tif, output_directory, image_name, top_left, tile_size_x, tile_size_y, step_x, step_y,
                sea_ice_discard_proportion, verbose):
-    # Jonny Roberts and Sophie Turner
     """GTC Code To tile up a SAR-label tif pair according to the specified window sizes and save the tiles as
     .npy files. Any tile containing unclassified/no-data classes is rejected (not saved), as are tiles containing a
     disproportionate amount of a single class (water or ice). Set verbose to True to print the tiling metrics for each
@@ -168,7 +165,6 @@ def tile_image(sar_tif, labelled_tif, output_directory, image_name, top_left, ti
 
 
 def generate_metadata(json_directory, tile, image, n_water, n_ice, coordinates, row, step_x, col, step_y, tile_size):
-# Sophie Turner and Maddy Lisaius
 # Adds metadata for a tile to a JSON file.
     json_path = json_directory + "\metadata.json"
     total_pixels = n_ice + n_water
@@ -198,7 +194,6 @@ def generate_metadata(json_directory, tile, image, n_water, n_ice, coordinates, 
         
 
 def relabel(file_path):
-# Sophie Turner
 # Changes a labelled raster provided with the training data so that the labels distinguish only between water, ice and areas to discard.
 # The function overwrites the file but a copy can be made instead as implemented in the test function.
 
@@ -225,7 +220,6 @@ def relabel(file_path):
 
 
 def ReprojTif (original_tif, tif_target_proj, output_tif):
-    # Maddy
     """Original tif is file name of raster to be reprojected, tif_target_proj is tif file name with projection to be used, 
     output_tif is string name of output raster"""
     
