@@ -59,6 +59,20 @@ def tile_all(in_path, out_path, tile_size_x, tile_size_y, step_x, step_y):
              tile_image(sar_path, labels_path, out_path, image_name, top_left, tile_size_x, tile_size_y, step_x, step_y, 1, False)
 
 
+def upsample_all(in_path, out_path, new_resolution):
+    os.chdir(in_path)
+    for folder in os.listdir():
+        # Find the right input file.
+        modis_folder = "{}\{}\MODIS".format(in_path, folder)
+        os.chdir(modis_folder)
+        for item in os.listdir():
+            if item.endswith("250m.tif"):
+                # Name the new file.
+                new_name_path = "{}\{}_modis.tif".format(out_path, folder)
+                # Change the resolution.
+                gdal.Warp(new_name_path, item, xRes=new_resolution, yRes=new_resolution)
+
+
 def shp2tif(shape_file, sar_raster, output_raster_name):
     """GTC Code to rasterise an input shapefile. Requires as inputs: shapefile, reference tiff, output raster name.
 Adapted from: https://opensourceoptions.com/blog/use-python-to-convert-polygons-to-raster-with-gdal-rasterizelayer/
@@ -236,8 +250,5 @@ def ReprojTif (original_tif, tif_target_proj, output_tif):
 
 
 
-# Maddy's tests:
-#tile_all(r"\mnt\d\Shared drives\2021-gtc-sea-ice\trainingdata\raw", r"\mnt\c\Users\madel\Desktop\code\seaice\tiles", 512, 512, 384, 384)
-
-# Sophie's tests:
-#tile_all(r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\raw", r"C:\Users\sophi\test", 512, 512, 384, 384)
+# test
+#upsample_all(r"G:\Shared drives\2021-gtc-sea-ice\data", r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\raw", 40)
