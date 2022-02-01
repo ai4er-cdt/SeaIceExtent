@@ -251,9 +251,17 @@ def ReprojTif (original_tif, tif_target_proj, output_tif):
     warp = None 
 
 
-def clip_two(image_small, image_large, out_path):
+def clip_two(polygon, image_large, image_small, out_path):
 # Clips images to the same bounds.    
-    gdal.Warp(out_path, image_large, cutlineDSName=image_small, cropToCutline=True, dstNodata=0)
+    gdal.Warp(out_path, image_large, cutlineDSName=polygon, cropToCutline=True, dstNodata=0)
+    # Make the image the same size too.
+    small_image = gdal.Open(image_small)
+    width, length = small_image.RasterXSize, small_image.RasterYSize
+    name = '{}_resized.tif'.format(out_path)
+    gdal.Translate(name, out_path, width=width, height=length)
+    # Clean up.
+    small_image.FlushCache()
+    del small_image
 
 
 def relabel_modis(in_path, out_path):
@@ -292,6 +300,4 @@ def relabel_modis(in_path, out_path):
 
 # test
 #relabel_modis(r'G:\Shared drives\2021-gtc-sea-ice\data', r"C:\Users\sophi\test")
-clip_two(r'G:\Shared drives\2021-gtc-sea-ice\raw\2011-01-13_021245_labels.tif',
-    r'G:\Shared drives\2021-gtc-sea-ice\raw\2011-01-13_021245_modis.tif',
-     r"C:\Users\sophi\test\clipped_modis.tif")
+#clip_two(r"C:\Users\sophi\test\polygon90.shp", r"C:\Users\sophi\test\modis.tif", r"C:\Users\sophi\test\labels.tif", r"C:\Users\sophi\test\clipped_modis.tif")
