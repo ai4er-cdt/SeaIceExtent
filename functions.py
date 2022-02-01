@@ -60,6 +60,7 @@ def tile_all(in_path, out_path, tile_size_x, tile_size_y, step_x, step_y):
 
 
 def upsample_all(in_path, out_path, new_resolution):
+# Copies all MODIS images with a different resolution.
     os.chdir(in_path)
     for folder in os.listdir():
         # Find the right input file.
@@ -250,6 +251,11 @@ def ReprojTif (original_tif, tif_target_proj, output_tif):
     warp = None 
 
 
+def clip_two(image_small, image_large, out_path):
+# Clips images to the same bounds.    
+    gdal.Warp(out_path, image_large, cutlineDSName=image_small, cropToCutline=True, dstNodata=0)
+
+
 def relabel_modis(in_path, out_path):
     # Create labels for modis images which do not have an associated sar image.
     # Adaptation of the relabel_all function. Could combine these two functions for concision but that could mean running the whole thing again.
@@ -286,3 +292,6 @@ def relabel_modis(in_path, out_path):
 
 # test
 #relabel_modis(r'G:\Shared drives\2021-gtc-sea-ice\data', r"C:\Users\sophi\test")
+clip_two(r'G:\Shared drives\2021-gtc-sea-ice\raw\2011-01-13_021245_labels.tif',
+    r'G:\Shared drives\2021-gtc-sea-ice\raw\2011-01-13_021245_modis.tif',
+     r"C:\Users\sophi\test\clipped_modis.tif")
