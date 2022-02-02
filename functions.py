@@ -1,7 +1,6 @@
 from osgeo import ogr, gdal
 import numpy as np
-import os
-import re
+import os, re
 import shutil
 import json
 from PIL import Image
