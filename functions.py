@@ -6,6 +6,8 @@ import shutil
 import json
 from PIL import Image
 import glob
+import torch
+import subprocess
 from torch.utils.data import Dataset
 
 
@@ -297,8 +299,13 @@ def clip(polygon, image_large, image_small, out_path):
 # Clips images to the same bounds.    
     small_image = gdal.Open(image_small)
     # Make the image the same size too.
-    width, length = small_image.RasterXSize, small_image.RasterYSize    
-    gdal.Warp(out_path, image_large, cutlineDSName=polygon, cropToCutline=True, dstNodata=0, width=width, height=length, warpOptions="--config GDALWARP_IGNORE_BAD_CUTLINE YES")
+    width, length = small_image.RasterXSize, small_image.RasterYSize   
+    # Some of the supplied polygon shapefiles have problems which cause self-intersection errors.
+    # There are more available options in the shell version.
+    command_string = "gdalwarp --config GDALWARP_IGNORE_BAD_CUTLINE YES -ts {} {} -dstnodata 0 -cutline {} {} {} -crop_to_cutline"\
+                     .format(width, length, polygon, image_large, out_path)
+    subprocess.call(command_string, shell=True)
+    # Clean up.
     small_image.FlushCache()
     del small_image
 
@@ -338,5 +345,4 @@ def relabel_modis(in_path, out_path):
         os.chdir(in_path)
 
 # test
-#relabel_modis(r'G:\Shared drives\2021-gtc-sea-ice\data', r"C:\Users\sophi\test")
 #clip(r"C:\Users\sophi\test\polygon90.shp", r"C:\Users\sophi\test\modis.tif", r"C:\Users\sophi\test\labels.tif", r"C:\Users\sophi\test\clipped_modis.tif")
