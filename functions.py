@@ -183,10 +183,10 @@ def tile_image(sar_tif, labelled_tif, output_directory, image_name, top_left, ti
               f'\nRejected Tiles (Unclassified): {str(n_unclassified)}\nRejected Tiles (Too Similar): {str(n_similar)}')
 
 
-def list_npy_filenames(image_directory, flag_check_matching):
-    """GTC Code for a function that returns a sorted list of the names of the SAR and labelled .npy files in a
-    directory. These lists can then be used as an argument for the Dataset class instantiation. The function also
-    (loosely) checks that the specified directory contains matching sar/labelled pairs."""
+def create_npy_list(image_directory, flag_check_matching):
+    """A function that returns a list of the names of the SAR and labelled .npy files in a directory. These lists can
+    then be used as an argument for the Dataset class instantiation. The function also (loosely) checks that
+    the specified directory contains matching sar/labelled pairs."""
 
     sar_names = sorted(glob.glob(image_directory + '/*_sar.npy'))
     label_names = sorted(glob.glob(image_directory + '/*_label.npy'))
@@ -197,7 +197,7 @@ def list_npy_filenames(image_directory, flag_check_matching):
             raise Exception(f'Number of sar and label .npy files does not match with dimensions of '
                             f'{len(sar_names)} and {len(label_names)} respectively.')
 
-    return sar_names, label_names
+    return list(zip(sar_names, label_names))
 
 
 class SarLabelDataset(torch.utils.data.Dataset):
