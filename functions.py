@@ -200,25 +200,6 @@ def list_npy_filenames(image_directory, flag_check_matching):
     return sar_names, label_names
 
 
-class SarLabelDataset(torch.utils.data.Dataset):
-    """GTC Code for a dataset class. The class is instantiated with list of filenames within a directory (created using
-    the list_npy_filenames function). The __getitem__ method pairs up corresponding sar-label .npy file pairs. This
-    dataset can then be input to a dataloader."""
-
-    def __init__(self, sar_filenames, label_filenames):
-        self.sar_names = sar_filenames
-        self.label_names = label_filenames
-
-    def __len__(self):
-        return len(self.sar_names)
-
-    def __getitem__(self, idx):
-        sar = np.int16(np.load(self.sar_names[idx]))
-        label = np.int16(np.load(self.label_names[idx]))
-
-        return sar, label
-
-
 def generate_metadata(json_directory, tile, image, n_water, n_ice, coordinates, row, step_x, col, step_y, tile_size):
     # Adds metadata for a tile to a JSON file.
     json_path = json_directory + "\metadata.json"
