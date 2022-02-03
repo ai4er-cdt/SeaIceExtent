@@ -295,6 +295,25 @@ def ReprojTif(original_tif, tif_target_proj, output_tif):
     warp = None 
 
 
+def clip_all(in_path_shapefiles, in_path_images, out_path):
+# Finds all the right files from specified directories and sends them to the clip function. 
+# Assumes naming by date and assumes modis will be clipped to the size of labels.
+    os.chdir(in_path_shapefiles)
+    for folder in os.listdir():
+        path_images = "{}\{}_".format(in_path_images, folder)
+        path_shapefiles = "{}\{}".format(in_path_shapefiles, folder) 
+        modis = "{}modis.tif".format(path_images)
+        labels = "{}labels.tif".format(path_images)
+        out_name = "{}\{}_modis.tif".format(out_path, folder)
+        # Not all the folders contain an 'orig'. 
+        os.chdir("{}\shapefile".format(path_shapefiles))
+        if "orig" in os.listdir():
+            shapefile = "{}\shapefile\orig\polygon90_orig.shp".format(path_shapefiles)
+        else:
+            shapefile = "{}\shapefile\polygon90.shp".format(path_shapefiles)
+        clip(shapefile, modis, labels, out_name)
+
+
 def clip(polygon, image_large, image_small, out_path):
 # Clips images to the same bounds.    
     small_image = gdal.Open(image_small)
@@ -344,5 +363,7 @@ def relabel_modis(in_path, out_path):
                             break
         os.chdir(in_path)
 
-# test
-#clip(r"C:\Users\sophi\test\polygon90.shp", r"C:\Users\sophi\test\modis.tif", r"C:\Users\sophi\test\labels.tif", r"C:\Users\sophi\test\clipped_modis.tif")
+
+clip_all("G:\Shared drives\2021-gtc-sea-ice\data", 
+         "G:\Shared drives\2021-gtc-sea-ice\trainingdata\raw", 
+         "G:\Shared drives\2021-gtc-sea-ice\trainingdata\clipped")
