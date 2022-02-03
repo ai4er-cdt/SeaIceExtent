@@ -6,6 +6,11 @@ import shutil
 import json
 from PIL import Image
 import glob
+import torch
+import subprocess
+import rasterio
+import rasterio.mask
+import fiona
 from torch.utils.data import Dataset
 
 
@@ -63,6 +68,7 @@ def tile_all(in_path, out_path, tile_size_x, tile_size_y, step_x, step_y):
 
 
 def upsample_all(in_path, out_path, new_resolution):
+# Copies all MODIS images with a different resolution.
     os.chdir(in_path)
     for folder in os.listdir():
         # Find the right input file.
@@ -292,6 +298,49 @@ def ReprojTif(original_tif, tif_target_proj, output_tif):
     warp = None 
 
 
+
+def clip_set(in_path_shapefiles, in_path_images, large_names, small_names, temp_path, out_path):
+# Finds all the right files from specified directories and sends them to the clip function. 
+# Assumes naming by date and assumes a larger image will be clipped to the size of a smaller image.
+# Names = "modis", "labels" or "sar" for our dataset.
+    os.chdir(in_path_shapefiles)
+    for folder in os.listdir():
+        path_images = "{}\{}_".format(in_path_images, folder)
+        path_shapefiles = "{}\{}".format(in_path_shapefiles, folder) 
+        large = "{}{}.tif".format(path_images, large_names)
+        small = "{}{}.tif".format(path_images, small_names)
+        out_name = "{}\{}_modis.tif".format(out_path, folder)
+        # Not all the folders contain an 'orig'. 
+        os.chdir("{}\shapefile".format(path_shapefiles))
+        if "orig" in os.listdir():
+            shapefile = "{}\shapefile\orig\polygon90_orig.shp".format(path_shapefiles)
+        else:
+            shapefile = "{}\shapefile\polygon90.shp".format(path_shapefiles)
+        clip(shapefile, large, small, temp_path, out_name)
+
+
+def clip(shapefile, image_large, image_small, temp_path, out_path):
+# Clips images to the same bounds. Had to combine rasterio and gdal to deal with broken shapefiles and bugs in gdal. 
+    # Get the bounding box from the polygon file.
+    with fiona.open(shapefile, "r") as polygon:
+        shapes = [feature["geometry"] for feature in polygon]
+    # Clip the large image to the bounding box.
+    with rasterio.open(image_large) as large_image:
+        out_image, out_transform = rasterio.mask.mask(large_image, shapes, crop=True)
+        out_meta = large_image.meta
+    out_meta.update({"driver": "GTiff", "transform": out_transform})
+    with rasterio.open(temp_path, "w", **out_meta) as overwrite:
+        overwrite.write(out_image)
+    # Resize the clipped large image to match the small image.
+    small_image = gdal.Open(image_small)
+    width, length = small_image.RasterXSize, small_image.RasterYSize 
+    gdal.Translate(out_path, temp_path, width=width, height=length)
+    # Clean up.
+    small_image.FlushCache()
+    del small_image
+    os.remove(temp_path)
+
+
 def relabel_modis(in_path, out_path):
     # Create labels for modis images which do not have an associated sar image.
     # Adaptation of the relabel_all function. Could combine these two functions for concision but that could mean
@@ -326,5 +375,9 @@ def relabel_modis(in_path, out_path):
                             break
         os.chdir(in_path)
 
-# test
-#relabel_modis(r'G:\Shared drives\2021-gtc-sea-ice\data', r"C:\Users\sophi\test")
+
+clip_set(r"G:\Shared drives\2021-gtc-sea-ice\data",
+         r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\raw",
+         "modis", "labels",
+         r"C:\users\sophi\test\2011-01-13_021245_modis.tif",
+         r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\clipped")
