@@ -47,15 +47,12 @@ def relabel_all(in_path, out_path):
 def stitch_all(in_path, out_path):
 # Find and merge all the modis images which overlap with labels when stuck together. 
     folders = find_overlaps(in_path)
-    print("\nfolders:\n", folders)
     for index in range(0, len(folders), 2):
         folder = folders[index]
         images = folders[index+1]
-        print("\nfolder:\n", folder)
         image_paths = []
         out_name = "{}\{}_modis.tif".format(out_path, folder)
         for image in images:
-            print("\nimage:\n", image)
             image_path = "{}\{}\MODIS\{}".format(in_path, folder, image)
             image_paths.append(image_path)
         stitch(image_paths, out_name)
@@ -406,4 +403,11 @@ def relabel_modis(in_path, out_path):
                             break
         os.chdir(in_path)
 
+
+raw = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\raw"
+test = r"C:\Users\sophi\test"
+testbuffer = r"C:\Users\sophi\testbuffer"
+data = r"G:\Shared drives\2021-gtc-sea-ice\data"
+clipped = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\clipped"
+tiled = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled"
 
