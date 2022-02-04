@@ -4,9 +4,6 @@ import os, re
 import shutil
 import json
 from PIL import Image
-import glob
-import torch
-import subprocess
 import rasterio
 import rasterio.mask
 import fiona
@@ -304,6 +301,45 @@ def clip(shapefile, image_large, image_small, temp_path, out_path):
     os.remove(temp_path)
 
 
+def check_overlap(in_path):
+# Checks to see whether modis images overlap with shapefile bounds. 
+# If > 1 modis image in a folder overlap with shapefile bounds, they can be stitched together.
+    os.chdir(in_path)
+    folders = []
+    for folder in os.listdir():
+        folder_path = "{}\{}".format(in_path, folder)
+        shapefile = "{}\shapefile\polygon90.shp".format(folder_path)
+        # Get the bounds.
+        try:
+            with fiona.open(shapefile, "r") as polygon:
+                shapes = [feature["geometry"] for feature in polygon]
+        except:
+            continue
+        # Check each image in the modis folder against the polygon bounds.
+        try:
+            os.chdir("{}\MODIS".format(folder_path))
+        except:
+            continue
+        overlaps, hasOverlaps = [], 0
+        for modis_file in os.listdir():
+            if modis_file.endswith("250m.tif"):
+                # See if they fit together.
+                with rasterio.open(modis_file) as image:
+                    try:
+                        rasterio.mask.mask(image, shapes, crop=True)
+                        overlaps.append(modis_file)
+                        hasOverlaps += 1
+                    except:
+                        pass
+        if hasOverlaps > 1:
+            if hasOverlaps == 2:
+                folders.append(folder)
+            folders.append(overlaps)
+    print("MODIS images which overlap with shapefile bounds if stitched together:")
+    for listed_folder in folders:
+        print(listed_folder)
+
+
 def relabel_modis(in_path, out_path):
     # Create labels for modis images which do not have an associated sar image.
     # Adaptation of the relabel_all function. Could combine these two functions for concision but that could mean
@@ -339,8 +375,3 @@ def relabel_modis(in_path, out_path):
         os.chdir(in_path)
 
 
-clip_set(r"G:\Shared drives\2021-gtc-sea-ice\data",
-         r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\raw",
-         "modis", "labels",
-         r"C:\users\sophi\test\2011-01-13_021245_modis.tif",
-         r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\clipped")
