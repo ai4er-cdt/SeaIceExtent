@@ -6,6 +6,7 @@ import json
 from PIL import Image
 import rasterio
 import rasterio.mask
+import rasterio.merge
 import fiona
 from torch.utils.data import Dataset
 
@@ -43,6 +44,39 @@ def relabel_all(in_path, out_path):
         os.chdir(in_path)
 
 
+def stitch_all(in_path, out_path):
+# Find and merge all the modis images which overlap with labels when stuck together. 
+    folders = find_overlaps(in_path)
+    print("\nfolders:\n", folders)
+    for index in range(0, len(folders), 2):
+        folder = folders[index]
+        images = folders[index+1]
+        print("\nfolder:\n", folder)
+        image_paths = []
+        out_name = "{}\{}_modis.tif".format(out_path, folder)
+        for image in images:
+            print("\nimage:\n", image)
+            image_path = "{}\{}\MODIS\{}".format(in_path, folder, image)
+            image_paths.append(image_path)
+        stitch(image_paths, out_name)
+
+
+def upsample_all(in_path, out_path, new_resolution):
+# Copies all MODIS images with a different resolution.
+    os.chdir(in_path)
+    for folder in os.listdir():
+        # Find the right input file.
+        modis_folder = "{}\{}\MODIS".format(in_path, folder)
+        os.chdir(modis_folder)
+        for item in os.listdir():
+            if item.endswith("250m.tif"):
+                # Name the new file.
+                new_name_path = "{}\{}_modis.tif".format(out_path, folder)
+                # Change the resolution.
+                gdal.Warp(new_name_path, item, xRes=new_resolution, yRes=new_resolution)
+                break
+
+
 def tile_all(in_path, out_path, tile_size_x, tile_size_y, step_x, step_y):
     # Create tiles from all SAR images and generate their metadata.
     # Assumes images have already been through the RelabelAll function and placed in the raw training data directory.
@@ -61,22 +95,6 @@ def tile_all(in_path, out_path, tile_size_x, tile_size_y, step_x, step_y):
 
             tile_image(sar_path, labels_path, out_path, image_name, top_left, tile_size_x, tile_size_y, step_x, step_y,
                        1, False)
-
-
-def upsample_all(in_path, out_path, new_resolution):
-# Copies all MODIS images with a different resolution.
-    os.chdir(in_path)
-    for folder in os.listdir():
-        # Find the right input file.
-        modis_folder = "{}\{}\MODIS".format(in_path, folder)
-        os.chdir(modis_folder)
-        for item in os.listdir():
-            if item.endswith("250m.tif"):
-                # Name the new file.
-                new_name_path = "{}\{}_modis.tif".format(out_path, folder)
-                # Change the resolution.
-                gdal.Warp(new_name_path, item, xRes=new_resolution, yRes=new_resolution)
-                break
 
 
 def shp2tif(shape_file, sar_raster, output_raster_name):
@@ -289,8 +307,8 @@ def clip(shapefile, image_large, image_small, temp_path, out_path):
         out_image, out_transform = rasterio.mask.mask(large_image, shapes, crop=True)
         out_meta = large_image.meta
     out_meta.update({"driver": "GTiff", "transform": out_transform})
-    with rasterio.open(temp_path, "w", **out_meta) as overwrite:
-        overwrite.write(out_image)
+    with rasterio.open(temp_path, "w", **out_meta) as destination:
+        destination.write(out_image)
     # Resize the clipped large image to match the small image.
     small_image = gdal.Open(image_small)
     width, length = small_image.RasterXSize, small_image.RasterYSize 
@@ -301,7 +319,7 @@ def clip(shapefile, image_large, image_small, temp_path, out_path):
     os.remove(temp_path)
 
 
-def check_overlap(in_path):
+def find_overlaps(in_path):
 # Checks to see whether modis images overlap with shapefile bounds. 
 # If > 1 modis image in a folder overlap with shapefile bounds, they can be stitched together.
     os.chdir(in_path)
@@ -335,9 +353,23 @@ def check_overlap(in_path):
             if hasOverlaps == 2:
                 folders.append(folder)
             folders.append(overlaps)
-    print("MODIS images which overlap with shapefile bounds if stitched together:")
-    for listed_folder in folders:
-        print(listed_folder)
+    return folders
+
+
+def stitch(image_portions, out_path):
+    # Stick images together.
+    open_portions = []
+    for portion in image_portions:
+        opened = rasterio.open(portion) 
+        open_portions.append(opened)
+    full_image, transform = rasterio.merge.merge(open_portions)    
+    # New metadata.
+    out_meta = opened.meta.copy()
+    out_meta.update({"driver": "GTiff", "height": full_image.shape[1], 
+                     "width": full_image.shape[2], "transform": transform})
+    # Write to directory.
+    with rasterio.open(out_path, "w", **out_meta) as destination:
+        destination.write(full_image)
 
 
 def relabel_modis(in_path, out_path):
