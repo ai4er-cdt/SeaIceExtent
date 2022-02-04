@@ -1,7 +1,6 @@
 from osgeo import ogr, gdal
 import numpy as np
-import os
-import re
+import os, re
 import shutil
 import json
 from PIL import Image
@@ -188,42 +187,6 @@ def tile_image(sar_tif, labelled_tif, output_directory, image_name, top_left, ti
     if verbose:
         print(f'Tiling complete \nTotal Tiles: {str(n)}\nAccepted Tiles: {str(n - n_unclassified - n_similar)}'
               f'\nRejected Tiles (Unclassified): {str(n_unclassified)}\nRejected Tiles (Too Similar): {str(n_similar)}')
-
-
-def list_npy_filenames(image_directory, flag_check_matching):
-    """GTC Code for a function that returns a sorted list of the names of the SAR and labelled .npy files in a
-    directory. These lists can then be used as an argument for the Dataset class instantiation. The function also
-    (loosely) checks that the specified directory contains matching sar/labelled pairs."""
-
-    sar_names = sorted(glob.glob(image_directory + '/*_sar.npy'))
-    label_names = sorted(glob.glob(image_directory + '/*_label.npy'))
-
-    if flag_check_matching:
-
-        if len(sar_names) != len(label_names):
-            raise Exception(f'Number of sar and label .npy files does not match with dimensions of '
-                            f'{len(sar_names)} and {len(label_names)} respectively.')
-
-    return sar_names, label_names
-
-
-class SarLabelDataset(torch.utils.data.Dataset):
-    """GTC Code for a dataset class. The class is instantiated with list of filenames within a directory (created using
-    the list_npy_filenames function). The __getitem__ method pairs up corresponding sar-label .npy file pairs. This
-    dataset can then be input to a dataloader."""
-
-    def __init__(self, sar_filenames, label_filenames):
-        self.sar_names = sar_filenames
-        self.label_names = label_filenames
-
-    def __len__(self):
-        return len(self.sar_names)
-
-    def __getitem__(self, idx):
-        sar = np.int16(np.load(self.sar_names[idx]))
-        label = np.int16(np.load(self.label_names[idx]))
-
-        return sar, label
 
 
 def generate_metadata(json_directory, tile, image, n_water, n_ice, coordinates, row, step_x, col, step_y, tile_size):
