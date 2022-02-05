@@ -83,31 +83,38 @@ def tile_all(in_path, modis_path, out_path, tile_size, step_size):
         if item.endswith("labels.tif"):
             # The first chars are the same for each pair.
             date_name = item.split('_l')[0]
-            labels_path = "{}\{}".format(in_path, item)
-            sar_path = "{}\{}_sar.tif".format(in_path, date_name)
-            modis_path = "{}\{}_modis.tif".format(modis_path, date_name)
+            labels_path_name = "{}\{}".format(in_path, item)
+            sar_path_name = "{}\{}_sar.tif".format(in_path, date_name)
+            modis_path_name = "{}\{}_modis.tif".format(modis_path, date_name)
             # Get the geo info from the SAR tif. Not all dates have a SAR image associated with them.
             try:
-                image_data = gdal.Open(modis_path)
+                image_data = gdal.Open(modis_path_name)
                 has_modis = True
+                print("Found the modis image")
             except:
                 has_modis = False
+                print("Did not find the modis image")
             try:
-                image_data = gdal.Open(sar_path)
+                image_data = gdal.Open(sar_path_name)
                 has_sar = True
+                print("Found the sar image")
             except:
                 has_sar = False
+                print("Did not find the sar image")
             geography = image_data.GetGeoTransform()
             top_left = geography[0], geography[3]
             image_data.FlushCache()
             del image_data
             if has_modis and has_sar:
-                tile_triplet(modis_path, sar_path, labels_path, date_name, top_left, tile_size, step_size)
+                print("Tiling triplet")
+                tile_triplet(modis_path_name, sar_path_name, labels_path_name, out_path, date_name, top_left, tile_size, step_size)
             elif has_modis:
-                tile_pair(modis_path, labels_path, out_path, date_name, "modis", top_left, tile_size, tile_size, step_size, step_size,
+                print("Tiling modis")
+                tile_pair(modis_path_name, labels_path_name, out_path, date_name, "modis", top_left, tile_size, tile_size, step_size, step_size,
                 1, False)
             elif has_sar:
-                tile_pair(sar_path, labels_path, out_path, date_name, "sar", top_left, tile_size, tile_size, step_size, step_size,
+                print("Tiling sar")
+                tile_pair(sar_path_name, labels_path_name, out_path, date_name, "sar", top_left, tile_size, tile_size, step_size, step_size,
                 1, False)
 
 
@@ -155,23 +162,31 @@ def shp2tif(shape_file, sar_raster, output_raster_name):
 
 
 def tile_triplet(modis_path, sar_path, labels_path, out_path, date_name, top_left, tile_size, step_size):
-    modis_window = tif_to_window(modis_path, tile_size, step_size)
-    sar_window = tif_to_window(sar_path, tile_size, step_size)
-    labels_window = tif_to_window(labels_path, tile_size, step_size)
+    print("Setting sliding windows")
+    # Modis has RGB channels so needs a different window shape to the other images.
+    window_shape = (tile_size, tile_size, 3)
+    modis_window = tif_to_window(modis_path, window_shape, step_size)
+    window_shape = (tile_size, tile_size)
+    sar_window = tif_to_window(sar_path, window_shape, step_size)
+    labels_window = tif_to_window(labels_path, window_shape, step_size)
+    print("Checking dimensions")
     num_shape = sar_window.shape[1]
     if modis_window.shape != sar_window.shape != labels_window.shape:
         raise Exception(f'MODIS, SAR and label dimensions do not match with dimensions of '
                         f'{modis_window.shape} and {sar_window.shape} and {labels_window.shape} respectively.')
     out_path_full = "{}\{}".format(out_path, date_name)
+    print("Creating tiles")
     for row_count, (row_modis, row_sar, row_labels) in enumerate(zip(modis_window, sar_window, labels_window)):
         for tile_count, (tile_modis, tile_sar, tile_labels) in enumerate(zip(row_modis, row_sar, row_labels)):
             tile_num = num_shape * row_count + tile_count
+            print(tile_num)
             # Check if the label tile contains any unclassified / no data. Discard them if so.
             if np.amin(tile_labels) == 0:
                 continue
             n_water = np.count_nonzero(tile_labels == 100)
             n_ice = np.count_nonzero(tile_labels == 200)
             # Save the tiles.
+            print("Saving tile triplet")
             modis_name = "{}_tile{}_modis.npy".format(out_path_full, tile_num)
             sar_name = "{}_tile{}_sar.npy".format(out_path_full, tile_num)
             labels_name = "{}_tile{}_labels.npy".format(out_path_full, tile_num)
@@ -179,16 +194,20 @@ def tile_triplet(modis_path, sar_path, labels_path, out_path, date_name, top_lef
             np.save(sar_name, tile_sar)
             np.save(labels_name, tile_labels)
             # Update metadata.
+            print("updating metadata")
             generate_metadata(out_path, tile_num, date_name, n_water, n_ice, top_left, row_count, step_size, tile_count, step_size, tile_size)
+    print("Set of tile triplets complete")
 
 
-def tif_to_window(tif_path, tile_size, step_size):
+def tif_to_window(tif_path, window_shape, step_size):
     image_tif = Image.open(tif_path)
+    print("Converting to array")
     image_array = np.asarray(image_tif)
-    image_tif.FlushCache()
+    print(image_array)
+    print("shape of image array:", image_array.shape)
     del image_tif
-    image_window = np.lib.stride_tricks.sliding_window_view(x=image_array, window_shape=
-                                                           (tile_size, tile_size))[::step_size, ::step_size]
+    print("Constructing sliding window")
+    image_window = np.lib.stride_tricks.sliding_window_view(x=image_array, window_shape=(tile_size, tile_size))[::step_size, ::step_size]
     return image_window
 
 
@@ -200,22 +219,15 @@ def tile_pair(image_tif, labelled_tif, output_directory, image_name, image_type,
     run."""
     # image_type = "sar" or "modis"
 
-    # Tifs
-    image_tif = Image.open(image_tif)
-    label_tif = Image.open(labelled_tif)
-
-    # Image Arrays
-    image_tif_array = np.asarray(image_tif)
-    label_tif_array = np.asarray(label_tif)
-
-    # Defining sliding windows
-    window_view_image = np.lib.stride_tricks.sliding_window_view(x=image_tif_array, window_shape=
-                                                               (tile_size_x, tile_size_y))[::step_y, ::step_x]
-    window_view_label = np.lib.stride_tricks.sliding_window_view(x=label_tif_array,window_shape=
-                                                                 (tile_size_x, tile_size_y))[::step_y, ::step_x]
+    print("Defining sliding windows")
+    window_shape = (tile_size_x, tile_size_y)
+    window_view_label = tif_to_window(labelled_tif, window_shape, step_x)
+    if image_type == "modis":
+        window_shape = (tile_size_x, tile_size_y, 3)
+    window_view_image = tif_to_window(image_tif, window_shape, step_x)
     num = window_view_image.shape[1]
 
-    # Checking the sliding windows are the same dimensions
+    print("Checking the sliding windows are the same dimensions")
     if window_view_image.shape != window_view_label.shape:
         raise Exception(f'Image TIF and Labelled TIF dimensions do not match with dimensions of '
                         f'{window_view_image.shape} and {window_view_label.shape} respectively.')
@@ -227,6 +239,7 @@ def tile_pair(image_tif, labelled_tif, output_directory, image_name, image_type,
     out_path_full = "{}\{}".format(output_directory, image_name)
 
     # Simultaneously iterating through each SAR and labelled tile and saving as a .npy file
+    print("Creating tiles")
     for count1, (row_image, row_label) in enumerate(zip(window_view_image, window_view_label)):
         for count2, (tile_image, tile_label) in enumerate(zip(row_image, row_label)):
 
@@ -248,17 +261,19 @@ def tile_pair(image_tif, labelled_tif, output_directory, image_name, image_type,
                 continue
 
             # There is scope here to use the numpy.savez_compressed function to improve efficiency.
+            print("Saving tile pair")
             image_name = "{}_tile{}_{}.npy".format(out_path_full, str(n), image_type)
             labels_name = "{}_tile{}_labels.npy".format(out_path_full, str(n))
             np.save(image_name, tile_image)
             np.save(labels_name, tile_label)
-
+            print("updating metadata")
             generate_metadata(output_directory, n, image_name, n_water, n_ice, top_left, count1, step_x, count2, step_y,
                               tile_size_x)
 
     if verbose:
         print(f'Tiling complete \nTotal Tiles: {str(n)}\nAccepted Tiles: {str(n - n_unclassified - n_similar)}'
               f'\nRejected Tiles (Unclassified): {str(n_unclassified)}\nRejected Tiles (Too Similar): {str(n_similar)}')
+    print("Set of tile pairs complete")
 
 
 def generate_metadata(json_directory, tile, image, n_water, n_ice, coordinates, row, step_x, col, step_y, tile_size):
@@ -471,6 +486,4 @@ data = r"G:\Shared drives\2021-gtc-sea-ice\data"
 clipped = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\clipped"
 tiled = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled"
 
-#opening the modis image
-#ERROR 4: G:\Shared drives\2021-gtc-sea-ice\trainingdata\clipped\2011-01-13_021245_modis.tif\2011-01-14_063311_modis.tif\2011-01-15_055843_modis.tif\2011-01-18_122137_modis.tif\2011-01-23_060458_modis.tif\2011-01-24_134238_modis.tif\2011-01-28_030409_modis.tif\2011-01-29_072859_modis.tif\2011-02-10_032730_modis.tif\2011-02-14_024135_modis.tif\2011-03-01_033109_modis.tif\2011-03-13_025215_modis.tif\2011-03-14_021541_modis.tif\2011-03-15_031817_modis.tif\2011-03-26_063245_modis.tif\2011-03-30_022935_modis.tif\2012-11-14_080136_modis.tif\2012-11-11_074900_modis.tif\2012-12-25_080637_modis.tif\2012-10-09_071140_modis.tif\2012-12-24_221605_modis.tif\2012-11-14_080243_modis.tif\2012-12-27_035034_modis.tif\2012-10-10_064110_modis.tif\2013-01-31_234751_modis.tif\2013-02-06_035454_modis.tif: No such file or directory
-#No modis image found
+tile_all(raw, clipped, tiled, 512, 384)
