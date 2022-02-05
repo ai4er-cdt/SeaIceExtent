@@ -200,14 +200,14 @@ def tile_triplet(modis_path, sar_path, labels_path, out_path, date_name, top_lef
 
 
 def tif_to_window(tif_path, window_shape, step_size):
+    print("path:", tif_path)
     image_tif = Image.open(tif_path)
     print("Converting to array")
     image_array = np.asarray(image_tif)
-    print(image_array)
     print("shape of image array:", image_array.shape)
     del image_tif
     print("Constructing sliding window")
-    image_window = np.lib.stride_tricks.sliding_window_view(x=image_array, window_shape=(tile_size, tile_size))[::step_size, ::step_size]
+    image_window = np.lib.stride_tricks.sliding_window_view(x=image_array, window_shape=(window_shape))[::step_size, ::step_size]
     return image_window
 
 
@@ -262,9 +262,9 @@ def tile_pair(image_tif, labelled_tif, output_directory, image_name, image_type,
 
             # There is scope here to use the numpy.savez_compressed function to improve efficiency.
             print("Saving tile pair")
-            image_name = "{}_tile{}_{}.npy".format(out_path_full, str(n), image_type)
+            new_image_name = "{}_tile{}_{}.npy".format(out_path_full, str(n), image_type)
             labels_name = "{}_tile{}_labels.npy".format(out_path_full, str(n))
-            np.save(image_name, tile_image)
+            np.save(new_image_name, tile_image)
             np.save(labels_name, tile_label)
             print("updating metadata")
             generate_metadata(output_directory, n, image_name, n_water, n_ice, top_left, count1, step_x, count2, step_y,
@@ -486,4 +486,4 @@ data = r"G:\Shared drives\2021-gtc-sea-ice\data"
 clipped = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\clipped"
 tiled = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled"
 
-tile_all(raw, clipped, tiled, 512, 384)
+#tile_all(raw, clipped, tiled, 512, 384)
