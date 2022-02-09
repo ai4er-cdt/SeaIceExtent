@@ -1,6 +1,6 @@
 # Code which we run specifically on our dataset, which would not be applicable to others.
 # This code is not really reuseable unless given as an example.
-from preprocessing import stitching, resizing
+from preprocessing import stitching, resizing, clipping, relabelling, tiling
 from preprocessing.data_handling import *
 
 raw = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\raw"
@@ -9,9 +9,10 @@ testbuffer = r"C:\Users\sophi\testbuffer"
 data = r"G:\Shared drives\2021-gtc-sea-ice\data"
 clipped = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\clipped"
 tiled = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled"
-temp = r"preprocessing\temporary_files"
 
 all_folder_names, all_folder_paths = get_contents(data, None, None)
+
+# Put the for loop here, once all is done and tested.
 
 # Look in the first folder
 folder_name, folder_path = all_folder_names[0], all_folder_paths[0]
@@ -44,8 +45,16 @@ if has_modis:
         modis_file_path = save_tiff(modis_array, modis_metadata, "temp", folder_name)
     else:
         modis_file_path = modis_file_paths[0]
-    # Upsample modis images
-    resizing.change_resolution(modis_file_path, "buffer", folder_name, 40)
-    # Clip modis images
+    # Upsample modis image
+    upsampled_modis_path = name_file("buffer", folder_name, ".tif")
+    resizing.change_resolution(modis_file_path, upsampled_modis_path, 40)
+    # Clip modis image
+    modis_clipped, modis_metadata = clipping.clip(shape_file_path, upsampled_modis_path)
+    # Relabel the manually classified samples
+
+
+delete_temp_files()
+
+
 
 

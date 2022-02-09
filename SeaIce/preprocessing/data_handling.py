@@ -13,7 +13,6 @@ def get_contents(in_directory, search_terms, string_position):
             full_paths.append("{}\{}".format(in_directory, item))
         else:
             for term in search_terms:
-                term_length = len(term)
                 if string_position == "prefix":
                     if item.startswith(term):
                         items.append(item)

@@ -1,11 +1,9 @@
 from preprocessing.shared import *
-from preprocessing.data_handling import name_file
 
 
-def change_resolution(in_path, out_path, out_name, new_resolution):
+def change_resolution(in_path, out_path, new_resolution):
 # Change the resolution.
-    file_name = name_file(out_path, out_name, ".tif")
-    gdal.Warp(file_name, in_path, xRes=new_resolution, yRes=new_resolution)
+    gdal.Warp(out_path, in_path, xRes=new_resolution, yRes=new_resolution)
     
 
 def resize_to_match(image_to_change, image_to_match, out_path):
