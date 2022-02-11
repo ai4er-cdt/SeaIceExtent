@@ -58,7 +58,8 @@ if has_modis:
     if has_sar:
         resized_modis_path = name_file("temp", "resized", ".tif")
         resize_to_match(modis_clipped_path, sar_file_path, resized_modis_path)
-
+else:
+    modis_file_path = None
 
 # These will be applied to either modis or sar, depending on which we have.
 # We might not have either.
@@ -67,6 +68,7 @@ labels_path = name_file("temp", "labels", ".tif")
 if has_sar:  
     relabelling.shp_to_tif(shape_file_path, sar_file_path, labels_path)
 else:
+    sar_file_path = None
     relabelling.shp_to_tif(shape_file_path, sar_file_path, labels_path)
 
 # Old format: 0 = no data. 1 = ice free. 2 = sea ice. 9 = on land or ice shelf. 10 = unclassified.        
@@ -75,8 +77,9 @@ else:
 relabelling.relabel(labels_path, [10, 9], [0, 2], 100)
 
 # Tile    
-   
-
+tiled_path = name_file("buffer", folder_name, "")
+print("tiled path:", tiled_path)
+tiling.tile_images(modis_file_path, sar_file_path, labels_path, tiled_path, 512, 384, folder_name)
 
 delete_temp_files()
 

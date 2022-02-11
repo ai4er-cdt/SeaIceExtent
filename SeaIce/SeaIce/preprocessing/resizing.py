@@ -1,5 +1,4 @@
-from preprocessing.shared import *
-
+from preprocessing.data_handling import *
 
 def change_resolution(in_path, out_path, new_resolution):
 # Change the resolution.

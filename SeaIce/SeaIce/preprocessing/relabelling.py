@@ -1,6 +1,4 @@
-from preprocessing.shared import *
-import numpy as np
-
+from preprocessing.data_handling import *
 
 def shp_to_tif(shape_file_path, image_file_path, out_path):
     """GTC Code to rasterise an input shapefile. Requires as inputs: shapefile, reference tiff, output raster name.
@@ -43,13 +41,10 @@ def relabel(labels_path, replace, replace_with, scale):
     image = gdal.Open(labels_path, gdal.GA_Update)
     # Turn the data into an array.
     image_array = image.GetRasterBand(1).ReadAsArray()
-    
-    
+    # Change pixel values.
     for index in range(len(replace)):
         replace_num, replace_with_num = replace[index], replace_with[index]
         image_array = np.where(image_array == replace_num, replace_with_num, image_array)
-        
-
     # Scale up the grey pixels' intensity.
     image_array = image_array * scale
     # Replace the file with the new raster.

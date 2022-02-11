@@ -1,0 +1,69 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>5e78ea69-d416-4c58-87a4-80df02d3afd5</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>SeaIce\our_code.py</StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>SeaIce</Name>
+    <RootNamespace>SeaIce</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="SeaIce\" />
+    <Folder Include="SeaIce\temp\" />
+    <Folder Include="SeaIce\preprocessing\" />
+    <Folder Include="SeaIce\temp\temporary_buffer\" />
+    <Folder Include="SeaIce\temp\temporary_files\" />
+    <Folder Include="SeaIce\unet\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="SeaIce\our_code.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SeaIce\preprocessing\data_handling.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SeaIce\preprocessing\clipping.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SeaIce\preprocessing\controller.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SeaIce\preprocessing\tiling.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SeaIce\preprocessing\resizing.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SeaIce\preprocessing\relabelling.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SeaIce\preprocessing\stitching.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SeaIce\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+  <!-- Uncomment the CoreCompile target to enable the Build command in
+       Visual Studio and specify your pre- and post-build commands in
+       the BeforeBuild and AfterBuild targets below. -->
+  <!--<Target Name="CoreCompile" />-->
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+</Project>
