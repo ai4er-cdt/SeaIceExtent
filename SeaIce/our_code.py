@@ -78,7 +78,6 @@ relabelling.relabel(labels_path, [10, 9], [0, 2], 100)
 
 # Tile    
 tiled_path = name_file("buffer", folder_name, "")
-print("tiled path:", tiled_path)
 tiling.tile_images(modis_file_path, sar_file_path, labels_path, tiled_path, 512, 384, folder_name)
 
 delete_temp_files()

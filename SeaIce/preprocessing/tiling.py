@@ -30,7 +30,6 @@ def tile_images(modis_path, sar_path, labels_path, out_path, tile_size, step_siz
         for row_count, (row_modis, row_sar, row_labels) in enumerate(zip(modis_window, sar_window, labels_window)):
             for tile_count, (tile_modis, tile_sar, tile_labels) in enumerate(zip(row_modis, row_sar, row_labels)):
                 tile_num = num_shape * row_count + tile_count
-                print("tile num:", tile_num)
                 # Check if the label tile contains any unclassified / no data. Discard them if so.
                 if np.amin(tile_labels) == 0:
                     print("No labels found")
@@ -39,18 +38,14 @@ def tile_images(modis_path, sar_path, labels_path, out_path, tile_size, step_siz
                 n_ice = np.count_nonzero(tile_labels == 200)
                 # Save the tiles.        
                 modis_name = "{}_tile{}_modis.npy".format(out_path, tile_num)
-                print("modis path:", modis_name)
                 np.save(modis_name, tile_modis)
                 
                 sar_name = "{}_tile{}_sar.npy".format(out_path, tile_num)
-                print("sar path:", sar_name)
                 np.save(sar_name, tile_sar)
 
-                labels_name = "{}_tile{}_labels.npy".format(out_path, tile_num)           
-                print("labels path:", labels_name)
+                labels_name = "{}_tile{}_labels.npy".format(out_path, tile_num)    
                 np.save(labels_name, tile_labels)
                 # Update metadata.
-                print("metadata location:", out_path)
                 generate_metadata(out_path, tile_num, date_name, n_water, n_ice, top_left, row_count, tile_count, step_size, tile_size)
 
     else:
@@ -67,36 +62,23 @@ def tile_images(modis_path, sar_path, labels_path, out_path, tile_size, step_siz
                     continue
                 n_water = np.count_nonzero(tile_labels == 100)
                 n_ice = np.count_nonzero(tile_labels == 200)
-                # Save the tiles.
-                print("Saving tiles")         
+                # Save the tiles.       
                 if modis_path != None:
                     modis_name = "{}_tile{}_modis.npy".format(out_path, tile_num)
-                    print("modis path:", modis_name)
                     np.save(modis_name, tile_image)
                 elif sar_path != None:
                     sar_name = "{}_tile{}_sar.npy".format(out_path, tile_num)
-                    print("sar path:", sar_name)
                     np.save(sar_name, tile_image)
 
-                labels_name = "{}_tile{}_labels.npy".format(out_path, tile_num)           
-                print("labels path:", labels_name)
+                labels_name = "{}_tile{}_labels.npy".format(out_path, tile_num)   
                 np.save(labels_name, tile_labels)
                 # Update metadata.
-                print("updating metadata")
-                print("metadata location:", out_path)
                 generate_metadata(out_path, tile_num, date_name, n_water, n_ice, top_left, row_count, tile_count, step_size, tile_size)
-   
-
-    print("Set of tile triplets complete")
 
 
 def tif_to_window(tif_path, window_shape, step_size):
     image_tif = Image.open(tif_path)
-    print("Converting to array")
     image_array = np.asarray(image_tif)
-    print("shape of image array:", image_array.shape)
     del image_tif
-    print("Constructing sliding window")
     image_window = np.lib.stride_tricks.sliding_window_view(x=image_array, window_shape=(window_shape))[::step_size, ::step_size]
     return image_window
-
