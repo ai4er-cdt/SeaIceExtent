@@ -32,7 +32,7 @@ def tile_images(modis_path, sar_path, labels_path, out_path, tile_size, step_siz
                 tile_num = num_shape * row_count + tile_count
                 # Check if the label tile contains any unclassified / no data. Discard them if so.
                 if np.amin(tile_labels) == 0:
-                    print("No labels found")
+                    print("Invalid label")
                     continue
                 n_water = np.count_nonzero(tile_labels == 100)
                 n_ice = np.count_nonzero(tile_labels == 200)
@@ -82,3 +82,4 @@ def tif_to_window(tif_path, window_shape, step_size):
     del image_tif
     image_window = np.lib.stride_tricks.sliding_window_view(x=image_array, window_shape=(window_shape))[::step_size, ::step_size]
     return image_window
+

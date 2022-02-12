@@ -32,6 +32,17 @@ def shp_to_tif(shape_file_path, image_file_path, out_path):
     labelled_tif = None
 
 
+def unique(list1):
+    uniques = []
+    for row in list1:
+        for element in row:
+            if element in uniques:
+                continue
+            else:
+                uniques.append(element)
+    print("contains:", uniques)
+
+
 def relabel(labels_path, replace, replace_with, scale):
     # Changes a labelled raster provided with the training data so that the labels distinguish only between water, ice
     # and areas to discard. The function overwrites the file but a copy can be made instead as implemented in the test
