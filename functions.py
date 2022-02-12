@@ -479,6 +479,93 @@ def relabel_modis(in_path, out_path):
         os.chdir(in_path)
 
 
+class AugmentedImageDataset(Dataset):
+    """GTC Code for Augmented Image Dataset. This is similar to the CustomImageAugmentDataset class and carries out the
+    same augmentations. However, when this class is paired up with the augment_dataset function, an image database
+    is created that contains all of the original images as well as the original images with each possible augmentation
+    and with each possible combination of augmentations. This produces a dataset that is of length:
+    len(original_dataset) * (2 ** a), where a is the number of different augmentations."""
+
+    torch.manual_seed(2022)  # Setting random seed so that augmentations can be reproduced.
+
+    def __init__(self, image_pairs, augmentation):
+        self.image_pairs = image_pairs
+        self.augmentation = augmentation
+
+    def __len__(self):
+        return len(self.image_pairs)
+
+    def __getitem__(self, index):
+
+        image = self.image_pairs[index]['image']
+        mask = self.image_pairs[index]['mask']
+
+        if self.augmentation == 'HORIZONTAL_FLIP':
+
+            augment_function = transforms.RandomHorizontalFlip(p=1)
+            augmented_image, augmented_mask = augment_function(image), augment_function(mask)
+
+        elif self.augmentation == 'VERTICAL_FLIP':
+
+            augment_function = transforms.RandomVerticalFlip(p=1)
+            augmented_image, augmented_mask = augment_function(image), augment_function(mask)
+
+        elif self.augmentation == 'ROTATE_90':
+
+            augmented_image = torch.rot90(image, k=1, dims=[1, 2])
+            augmented_mask = torch.rot90(mask, k=1, dims=[0, 1])
+
+        elif self.augmentation == 'ROTATE_180':
+
+            augmented_image = torch.rot90(image, k=2, dims=[1, 2])
+            augmented_mask = torch.rot90(mask, k=2, dims=[0, 1])
+
+        elif self.augmentation == 'ROTATE_270':
+
+            augmented_image = torch.rot90(image, k=-1, dims=[1, 2])
+            augmented_mask = torch.rot90(mask, k=-1, dims=[0, 1])
+
+        elif self.augmentation == 'RANDOM_CROP':
+
+            augment_function = transforms.Compose([transforms.RandomCrop(size=256), transforms.Resize(512)])
+            augmented_image, augmented_mask = augment_function(image), augment_function(mask)
+
+        else:
+
+            raise Exception('Invalid augmentation name detected')
+
+        augmented_image_pair = {'image': augmented_image, 'mask': augmented_mask}
+
+        return augmented_image_pair
+
+
+def augment_dataset(original_dataset, flip_hor, flip_ver, rotate_90, rotate_180, rotate_270, random_crop):
+
+    augmentations = []
+    if flip_hor:
+        augmentations.append('HORIZONTAL_FLIP')
+    if flip_ver:
+        augmentations.append('VERTICAL_FLIP')
+    if rotate_90:
+        augmentations.append('ROTATE_90')
+    if rotate_180:
+        augmentations.append('ROTATE_180')
+    if rotate_270:
+        augmentations.append('ROTATE_270')
+    if random_crop:
+        augmentations.append('RANDOM_CROP')
+
+    augmented_dataset = original_dataset
+
+    for augmentation in augmentations:
+        newly_augmented_dataset = AugmentedImageDataset(augmented_dataset, augmentation) # Create augmented dataset
+        # Concatenate new dataset with exisiting dataset
+        augmented_dataset = torch.utils.data.ConcatDataset([augmented_dataset, newly_augmented_dataset])
+
+    return augmented_dataset
+
+
+
 raw = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\raw"
 test = r"C:\Users\sophi\test"
 testbuffer = r"C:\Users\sophi\testbuffer"
