@@ -540,7 +540,10 @@ class AugmentedImageDataset(Dataset):
 
 
 def augment_dataset(original_dataset, flip_hor, flip_ver, rotate_90, rotate_180, rotate_270, random_crop):
-
+    """GTC Code for a function to repeatedly create AugmentedImageDatasets and concatenate them into a single image
+    dataset. True or False flags for each augmentation type are taken as the arguments to this function. On each
+    successive round of augmentation, all the preceding augmented images are input, so the dataset grows exponentially.
+    """
     augmentations = []
     if flip_hor:
         augmentations.append('HORIZONTAL_FLIP')
@@ -559,11 +562,10 @@ def augment_dataset(original_dataset, flip_hor, flip_ver, rotate_90, rotate_180,
 
     for augmentation in augmentations:
         newly_augmented_dataset = AugmentedImageDataset(augmented_dataset, augmentation) # Create augmented dataset
-        # Concatenate new dataset with exisiting dataset
+        # Concatenate new dataset with existing dataset
         augmented_dataset = torch.utils.data.ConcatDataset([augmented_dataset, newly_augmented_dataset])
 
     return augmented_dataset
-
 
 
 raw = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\raw"
