@@ -1,9 +1,12 @@
 from preprocessing.data_handling import *
 
 def shp_to_tif(shape_file_path, image_file_path, out_path):
-    """GTC Code to rasterise an input shapefile. Requires as inputs: shapefile, reference tiff, output raster name.
+    """GTC Code to rasterise an input shapefile.
     Adapted from: https://opensourceoptions.com/blog/use-python-to-convert-polygons-to-raster-with-gdal-rasterizelayer/
     Requires 'ogr' and 'gdal' packages from the 'osgeo' library.
+    Parameters: shape_file_path: (string) file path to .shp file. 
+                image_file_path: (string) file path to image.
+                out_path: (string) full file path to write new .tif file.
     """
 
     # Reading in the template raster data (i.e. the SAR tiff).
@@ -44,10 +47,13 @@ def unique(list1):
 
 
 def relabel(labels_path, replace, replace_with, scale):
-    # Changes a labelled raster provided with the training data so that the labels distinguish only between water, ice
-    # and areas to discard. The function overwrites the file but a copy can be made instead as implemented in the test
-    # function.
-
+    """Changes a labelled raster provided with the training data so that the labels distinguish only between water, ice
+       and areas to discard. The function overwrites the file but a copy can be made instead as implemented in the test
+       function.
+       Parameters: labels_path: (string) file path to labelled .tif.
+                   replace and replace_with: lists of numbers to replace and their new values.
+                   scale: (numerical) the multiplier for pixels. 
+    """
     # Get the file and get write permission.
     image = gdal.Open(labels_path, gdal.GA_Update)
     # Turn the data into an array.

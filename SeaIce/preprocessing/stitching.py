@@ -2,7 +2,10 @@ import rasterio.merge
 
 
 def stitch(image_portions):
-    # Stick images together.
+    """Stick images together.
+       Parameters: image_portions: (list of strings) all the images to be joined to form a mosaic.
+       Returns: full_image: open rasterio raster of joined images. out_meta: metadata for the new image.
+    """
     open_portions = []
     for portion in image_portions:
         opened = rasterio.open(portion) 

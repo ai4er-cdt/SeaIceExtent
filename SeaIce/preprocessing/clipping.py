@@ -4,7 +4,10 @@ import fiona
 
 
 def clip(shapefile, image):
-# Clips images to the same bounds. Had to combine rasterio and gdal to deal with broken shapefiles and bugs in gdal. 
+    """ Clips images to the same bounds. Had to combine rasterio and gdal to deal with broken shapefiles and bugs in gdal. 
+        Parameters: shapefile: the file path to a .shp file for the image. image: the file path to the optical image.  
+        Returns: out_image: the open, cropped image. out_meta: the metadata for this image.
+    """
     # Get the bounding box from the polygon file.
     with fiona.open(shapefile, "r") as polygon:
         shapes = [feature["geometry"] for feature in polygon]

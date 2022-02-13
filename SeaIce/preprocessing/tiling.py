@@ -3,7 +3,14 @@ from preprocessing.data_handling import *
 
 
 def tile_images(modis_path, sar_path, labels_path, out_path, tile_size, step_size, date_name): 
-
+    """Divide associated images into tiles and save the tiles and their metadata.
+       Parameters: modis_path: (string) file path of 3 band optical image, or None.
+                   sar_path: (string) file path of radar image, or None.
+                   labels_path: (string) file path of labelled raster.
+                   tile_size: (int) number of pixels in length or width of square tile.
+                   step_size: (int) number of pixels to move.
+                   date_name: (string) the date the images were colelcted.
+    """
     has_modis, has_sar = False, False
 
     window_shape = (tile_size, tile_size)
