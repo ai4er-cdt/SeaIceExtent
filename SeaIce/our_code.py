@@ -1,9 +1,7 @@
 # Code which we run specifically on our dataset, which would not be applicable to others.
 # This code is not really reuseable unless given as an example.
 from preprocessing import controller
-from preprocessing.data_handling import *
-
-help(generate_metadata)
+from preprocessing.data_handling import get_contents
 
 raw = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\raw"
 test = r"C:\Users\sophi\test"

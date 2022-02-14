@@ -46,7 +46,7 @@ def unique(list1):
     print("contains:", uniques)
 
 
-def relabel(labels_path, replace, replace_with, scale):
+def relabel(labels_path, replace, replace_with, scale = 1):
     """Changes a labelled raster provided with the training data so that the labels distinguish only between water, ice
        and areas to discard. The function overwrites the file but a copy can be made instead as implemented in the test
        function.

@@ -10,7 +10,7 @@ temp_folder = r"{}\SeaIce\temp\temporary_files".format(program_path)
 temp_buffer = r"{}\SeaIce\temp\temporary_buffer".format(program_path)
 
 
-def get_contents(in_directory, search_terms, string_position):
+def get_contents(in_directory, search_terms = None, string_position = None):
     """Traverses a directory to find a specified file or sub-directory.
        Parameters: in_directory: (string) the directory in which to look. search_term: None or list of search terms.
                    string_position: (string) "prefix", "suffix" or None.
@@ -36,7 +36,7 @@ def get_contents(in_directory, search_terms, string_position):
     return items, full_paths
 
 
-def name_file(out_path, out_name, file_type):
+def name_file(out_path = "temp", out_name, file_type):
     """Construct the full path for a new file.
        Parameters: out_path: (string) the path to the folder in which to place the new item, or "temp" or "buffer"
                    to store it temporarily with the program files for the duration of the run-time.
@@ -61,7 +61,7 @@ def delete_temp_files():
             os.remove(temp_file)
 
 
-def save_tiff(image_array, image_metadata, out_path, out_name):
+def save_tiff(image_array, image_metadata, out_path = "temp", out_name):
     """Write a tiff image to a directory. 
        Parameters: image_array: (array) the pixel values of the image. 
                    image_metadata: the metadata for the image. out_path: (string) the directory in which to save the image.
@@ -75,7 +75,7 @@ def save_tiff(image_array, image_metadata, out_path, out_name):
     return file_name
 
 
-def generate_metadata(json_directory, tile, image, n_water, n_ice, coordinates, row, col, step_size, tile_size):
+def generate_metadata(json_directory = "temp", tile, image, n_water, n_ice, coordinates, row, col, step_size, tile_size):
     """Adds metadata for a tile to a JSON file.
        Parameters: json_directory: (string) the folder containing the metadata file or in which to place a new one.
                    tile: (numerical type or string) the tile number. image: (string) the name of the image that the tile came from.

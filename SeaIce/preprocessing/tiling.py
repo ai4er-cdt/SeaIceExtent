@@ -2,11 +2,12 @@ from PIL import Image
 from preprocessing.data_handling import *
 
 
-def tile_images(modis_path, sar_path, labels_path, out_path, tile_size, step_size, date_name): 
+def tile_images(modis_path = None, sar_path = None, labels_path, out_path = "buffer", tile_size, step_size, date_name): 
     """Divide associated images into tiles and save the tiles and their metadata.
        Parameters: modis_path: (string) file path of 3 band optical image, or None.
                    sar_path: (string) file path of radar image, or None.
                    labels_path: (string) file path of labelled raster.
+                   out_path: (string) path to directory to write output.
                    tile_size: (int) number of pixels in length or width of square tile.
                    step_size: (int) number of pixels to move.
                    date_name: (string) the date the images were colelcted.

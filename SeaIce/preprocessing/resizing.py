@@ -15,7 +15,7 @@ def resize_to_match(image_to_change, image_to_match, out_path):
     del template_image
 
 
-def change_resolution(in_path, out_path, new_resolution):
+def change_resolution(in_path, out_path, new_resolution = 40):
 # Change the resolution.
     gdal.Warp(out_path, in_path, xRes=new_resolution, yRes=new_resolution)
     

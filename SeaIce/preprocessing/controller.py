@@ -1,7 +1,8 @@
 from preprocessing.data_handling import *
 from preprocessing import stitching, resizing, clipping, relabelling, tiling
 
-def preprocess(modis_paths, sar_path, shape_file_path, out_path, folder_name, resolution, relabel_from, relabel_to, relabel_scale, tile_size, step_size):
+def preprocess(modis_paths = None, sar_path = None, shape_file_path, out_path = "temp", folder_name, resolution = 40, 
+               relabel_from = [0], relabel_to = [0], relabel_scale = 1, tile_size = 512, step_size = 384):
    """
    Handles the sequence of performing all the preprocessing functions.
    Parameters: modis_paths: a list of file paths to adjoining optical images which can be empty if there are none. 
