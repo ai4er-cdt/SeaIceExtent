@@ -5,16 +5,23 @@ def preprocess(shape_file_path, folder_name, modis_paths = None, sar_path = None
                relabel_from = [0], relabel_to = [0], relabel_scale = 1, tile_size = 512, step_size = 384):
    """
    Handles the sequence of performing all the preprocessing functions.
-   Parameters: modis_paths: a list of file paths to adjoining optical images which can be empty if there are none. 
-               sar_path: the file path to the radar image, set to None if there isn't one.
-               shape_file_path: the file path to the .shp file associated with the images.
-               out_path: the directory in which output is to be written. folder_name: the date that the images were collected.
-               resolution: desired resolution of modis images. relabel_from and relabel_to: a pair of lists containing numbers to change
-               labels from and to, respectively. relabel_scale: multiplier for all labelled pixel values. 
-               tile_size: number of pixels of the length or width of square tiles.
-               step_size: number of pixels to move along.
-   Output: Tiles of whichever images are passed to the function, named by their date and image type, and a metadata entry.           
+   Parameters: modis_paths: (list of strings) file paths to adjoining optical images which can be empty if there are none. 
+               sar_path: (string) the file path to the radar image, set to None if there isn't one.
+               shape_file_path: (string) the file path to the .shp file associated with the images.
+               out_path: (string) the directory in which output is to be written. folder_name: the date that the images were collected.
+               resolution: (int) desired resolution of modis images. 
+               relabel_from and relabel_to: (lists of ints) a pair of lists containing numbers to change labels from and to, respectively. 
+               relabel_scale: (int) multiplier for all labelled pixel values. 
+               tile_size: (int) number of pixels of the length or width of square tiles.
+               step_size: (int) number of pixels to move along.
+   Output: Numpy array tiles of whichever images are passed to the function, named by their date and image type, and a metadata entry.           
    """
+   try:
+       fiona.open(shape_file_path)
+   except:
+       raise Exception(help(preprocess), "Shapefile could not be opened. A .shp file must be provided.")
+   if modis_path == None and sar_path == None:
+       raise Exception(help(preprocess), "No optical or radar image provided. The file path to least one of these must be supplied.")
    if len(modis_paths) != 0:
         if len(modis_paths) > 1:
             # Stitch the modis images together
@@ -33,6 +40,7 @@ def preprocess(shape_file_path, folder_name, modis_paths = None, sar_path = None
         if sar_path != None:
             resized_modis_path = name_file("resized", ".tif", "temp")
             resizing.resize_to_match(modis_clipped_path, sar_path, resized_modis_path)
+            modis_file_path = resized_modis_path
    else:
         modis_file_path = None
 
@@ -47,8 +55,7 @@ def preprocess(shape_file_path, folder_name, modis_paths = None, sar_path = None
    relabelling.relabel(labels_path, relabel_from, relabel_to, relabel_scale)
 
     # Tile    
-   tiled_path = name_file(folder_name, "", out_path)
-   tiling.tile_images(labels_path, tile_size, step_size, folder_name, modis_file_path, sar_path, tiled_path)
+   tiling.tile_images(labels_path, out_path, tile_size, step_size, folder_name, modis_file_path, sar_path)
 
    delete_temp_files()
 
