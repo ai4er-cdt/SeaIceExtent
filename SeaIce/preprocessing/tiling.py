@@ -2,14 +2,15 @@ from PIL import Image
 from preprocessing.data_handling import *
 
 
-def tile_images(modis_path, sar_path, labels_path, out_path, tile_size, step_size, date_name): 
+def tile_images(labels_path, tile_size, step_size, date_name, modis_path = None, sar_path = None, out_path = "buffer"): 
     """Divide associated images into tiles and save the tiles and their metadata.
        Parameters: modis_path: (string) file path of 3 band optical image, or None.
                    sar_path: (string) file path of radar image, or None.
                    labels_path: (string) file path of labelled raster.
+                   out_path: (string) path to directory to write output.
                    tile_size: (int) number of pixels in length or width of square tile.
                    step_size: (int) number of pixels to move.
-                   date_name: (string) the date the images were colelcted.
+                   date_name: (string) the date the images were collected.
     """
     has_modis, has_sar = False, False
 
@@ -53,7 +54,7 @@ def tile_images(modis_path, sar_path, labels_path, out_path, tile_size, step_siz
                 labels_name = "{}_tile{}_labels.npy".format(out_path, tile_num)    
                 np.save(labels_name, tile_labels)
                 # Update metadata.
-                generate_metadata(out_path, tile_num, date_name, n_water, n_ice, top_left, row_count, tile_count, step_size, tile_size)
+                generate_metadata(tile_num, date_name, n_water, n_ice, top_left, row_count, tile_count, step_size, tile_size, out_path)
 
     else:
         try:
@@ -80,7 +81,7 @@ def tile_images(modis_path, sar_path, labels_path, out_path, tile_size, step_siz
                 labels_name = "{}_tile{}_labels.npy".format(out_path, tile_num)   
                 np.save(labels_name, tile_labels)
                 # Update metadata.
-                generate_metadata(out_path, tile_num, date_name, n_water, n_ice, top_left, row_count, tile_count, step_size, tile_size)
+                generate_metadata(tile_num, date_name, n_water, n_ice, top_left, row_count, tile_count, step_size, tile_size, out_path)
 
 
 def tif_to_window(tif_path, window_shape, step_size):

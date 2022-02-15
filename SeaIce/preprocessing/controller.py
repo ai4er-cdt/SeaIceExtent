@@ -1,7 +1,8 @@
 from preprocessing.data_handling import *
 from preprocessing import stitching, resizing, clipping, relabelling, tiling
 
-def preprocess(modis_paths, sar_path, shape_file_path, out_path, folder_name, resolution, relabel_from, relabel_to, relabel_scale, tile_size, step_size):
+def preprocess(shape_file_path, folder_name, modis_paths = None, sar_path = None, out_path = "temp", resolution = 40, 
+               relabel_from = [0], relabel_to = [0], relabel_scale = 1, tile_size = 512, step_size = 384):
    """
    Handles the sequence of performing all the preprocessing functions.
    Parameters: modis_paths: a list of file paths to adjoining optical images which can be empty if there are none. 
@@ -19,25 +20,25 @@ def preprocess(modis_paths, sar_path, shape_file_path, out_path, folder_name, re
             # Stitch the modis images together
             modis_array, modis_metadata = stitching.stitch(modis_paths)
             # Save the full image in temporary folder
-            modis_file_path = save_tiff(modis_array, modis_metadata, "temp", "stitched")
+            modis_file_path = save_tiff(modis_array, modis_metadata, "stitched", "temp")
         else:
             modis_file_path = modis_paths[0]
         # Upsample modis image
-        upsampled_modis_path = name_file("temp", "upsampled", ".tif")
+        upsampled_modis_path = name_file("upsampled", ".tif", "temp")
         resizing.change_resolution(modis_file_path, upsampled_modis_path, resolution)
         # Clip modis image
         modis_clipped, modis_metadata = clipping.clip(shape_file_path, upsampled_modis_path)
-        modis_clipped_path = save_tiff(modis_clipped, modis_metadata, "temp", "clipped")
+        modis_clipped_path = save_tiff(modis_clipped, modis_metadata, "clipped", "temp")
         # Resize the modis image to match the sar image
         if sar_path != None:
-            resized_modis_path = name_file("temp", "resized", ".tif")
+            resized_modis_path = name_file("resized", ".tif", "temp")
             resizing.resize_to_match(modis_clipped_path, sar_path, resized_modis_path)
    else:
         modis_file_path = None
 
     # These will be applied to either modis or sar, depending on which we have.
     # Relabel. Sar images are faster to work with. 
-   labels_path = name_file("temp", "labels", ".tif") 
+   labels_path = name_file("labels", ".tif", "temp") 
    if sar_path != None:
         relabelling.shp_to_tif(shape_file_path, sar_path, labels_path)
    else:
@@ -46,8 +47,8 @@ def preprocess(modis_paths, sar_path, shape_file_path, out_path, folder_name, re
    relabelling.relabel(labels_path, relabel_from, relabel_to, relabel_scale)
 
     # Tile    
-   tiled_path = name_file(out_path, folder_name, "")
-   tiling.tile_images(modis_file_path, sar_path, labels_path, tiled_path, tile_size, step_size, folder_name)
+   tiled_path = name_file(folder_name, "", out_path)
+   tiling.tile_images(labels_path, tile_size, step_size, folder_name, modis_file_path, sar_path, tiled_path)
 
    delete_temp_files()
 
