@@ -36,8 +36,8 @@ else:
     sar_file_path = None
 # Old format: 0 = no data. 1 = ice free. 2 = sea ice. 9 = on land or ice shelf. 10 = unclassified.        
 # New format: 0 = ignore (for now). 1 = water. 2 = ice.
-# 1 is already water and 2 is already ice so there is no need to waste time checking or changing these
-controller.preprocess(modis_file_paths, sar_file_path, shape_file_path, "buffer", folder_name, 40, [10, 9], [0, 2], 100, 512, 384)
+# 1 is already water and 2 is already ice so there is no need to waste time checking or changing these.
+controller.preprocess(shape_file_path, folder_name, modis_file_paths, sar_file_path, "buffer", 40, [10, 9], [0, 2], 100, 512, 384)
 
 
 

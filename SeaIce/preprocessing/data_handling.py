@@ -36,7 +36,7 @@ def get_contents(in_directory, search_terms = None, string_position = None):
     return items, full_paths
 
 
-def name_file(out_path = "temp", out_name, file_type):
+def name_file(out_name, file_type, out_path = "temp"):
     """Construct the full path for a new file.
        Parameters: out_path: (string) the path to the folder in which to place the new item, or "temp" or "buffer"
                    to store it temporarily with the program files for the duration of the run-time.
@@ -61,7 +61,7 @@ def delete_temp_files():
             os.remove(temp_file)
 
 
-def save_tiff(image_array, image_metadata, out_path = "temp", out_name):
+def save_tiff(image_array, image_metadata, out_name, out_path = "temp"):
     """Write a tiff image to a directory. 
        Parameters: image_array: (array) the pixel values of the image. 
                    image_metadata: the metadata for the image. out_path: (string) the directory in which to save the image.
@@ -69,13 +69,13 @@ def save_tiff(image_array, image_metadata, out_path = "temp", out_name):
                    out_name: (string) the name of the new image.
        Returns: file_name: (string) the path to the newly created file.
     """
-    file_name = name_file(out_path, out_name, ".tif")
+    file_name = name_file(out_name, ".tif", out_path)
     with rasterio.open(file_name, "w", **image_metadata) as destination:
         destination.write(image_array) 
     return file_name
 
 
-def generate_metadata(json_directory = "temp", tile, image, n_water, n_ice, coordinates, row, col, step_size, tile_size):
+def generate_metadata(tile, image, n_water, n_ice, coordinates, row, col, step_size, tile_size, json_directory = "temp"):
     """Adds metadata for a tile to a JSON file.
        Parameters: json_directory: (string) the folder containing the metadata file or in which to place a new one.
                    tile: (numerical type or string) the tile number. image: (string) the name of the image that the tile came from.
@@ -85,7 +85,7 @@ def generate_metadata(json_directory = "temp", tile, image, n_water, n_ice, coor
                    tile_size: (numerical type) number of pixels of height or width of square tile.
        Outputs: A .json file if none exists, or adds metadata to an existing .json file.
     """
-    json_path = name_file(json_directory, "metadata", ".json")
+    json_path = name_file("metadata", ".json", json_directory)
     total_pixels = n_ice + n_water
     water_percent = (n_water/total_pixels)*100
     ice_percent = (n_ice/total_pixels)*100
