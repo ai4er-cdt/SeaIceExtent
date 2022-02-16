@@ -1,6 +1,4 @@
-
 import rasterio.mask
-import fiona
 
 
 def clip(shapefile, image):

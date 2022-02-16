@@ -2,6 +2,7 @@
 import json
 import rasterio
 import os
+import fiona
 import numpy as np
 from osgeo import ogr, gdal
 
