@@ -57,10 +57,12 @@ class CustomImageDataset(Dataset):
         #assert image.size == mask.size, \
         #    'Image and mask {name} should be the same size, but are {img.size} and {mask.size}'
         
-        return {
-            'image': image,
-            'mask': mask
-        }
+        #return {
+        #    'image': image,
+        #    'mask': mask
+        #}
+
+        return image, mask
 
     def __len__(self):
         return len(self.paths) 
