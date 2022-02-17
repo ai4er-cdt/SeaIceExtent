@@ -1,5 +1,5 @@
 """ Parts of the U-Net model """
-from unet.shared import * 
+from SeaIce.unet.shared import * 
 
 
 class DoubleConv(nn.Module):
@@ -72,7 +72,6 @@ class OutConv(nn.Module):
 
     def forward(self, x):
         return self.conv(x)
-
 
 """ Full assembly of the parts to form the complete network """
 

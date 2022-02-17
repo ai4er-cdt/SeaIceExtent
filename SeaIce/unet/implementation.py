@@ -1,6 +1,9 @@
 """ Implementation of model """
 
-from unet.shared import *
+from SeaIce.unet.shared import *
+from SeaIce.unet.evaluation import evaluate, dice_loss
+from SeaIce.unet.dataset_preparation import CustomImageDataset, create_npy_list
+from SeaIce.unet.network_structure import UNet
 
 import argparse
 import logging
@@ -11,12 +14,11 @@ from torch import optim
 from torch.utils.data import DataLoader, random_split
 
 
-dir_img = Path('/mnt/g/Shared drives/2021-gtc-sea-ice/trainingdata/tiled/')
-dir_checkpoint = Path('/mnt/g/Shared drives/2021-gtc-sea-ice/model/checkpoints/unet-modis/')
+dir_img = Path('G:/Shared drives/2021-gtc-sea-ice/trainingdata/tiled/')
+dir_checkpoint = Path('G:/Shared drives/2021-gtc-sea-ice/model/checkpoints/unet-modis/')
 
 
-def train_net(net,
-              device,
+def train_net(net, device, image_type,
               epochs: int = 1,
               batch_size: int = 10,
               learning_rate: float = 0.001,
@@ -25,7 +27,7 @@ def train_net(net,
               img_scale: float = 0.5,
               amp: bool = False):
     # 1. Create dataset
-    img_list = create_npy_list(dir_img)
+    img_list = create_npy_list(dir_img, image_type)
     dataset = CustomImageDataset(img_list, False)
     
     # 2. Split into train / validation partitions
@@ -176,6 +178,7 @@ if __name__ == '__main__':
     try:
         train_net(net=net,
                   epochs=args.epochs,
+                  image_type="modis",
                   batch_size=args.batch_size,
                   learning_rate=args.lr,
                   device=device,

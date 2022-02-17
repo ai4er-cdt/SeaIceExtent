@@ -1,5 +1,5 @@
 """ Model evaluation functions and Dice Loss scoring functions """
-from unet.shared import *
+from SeaIce.unet.shared import *
 
 
 def evaluate(net, dataloader, device):
