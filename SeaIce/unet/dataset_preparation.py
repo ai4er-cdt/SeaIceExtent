@@ -34,6 +34,18 @@ def create_npy_list(image_directory, img_string):
     return img_label_pairs
 
 
+def split_data(val_percent, batch_size, workers):
+    # Split into train / validation partitions
+    n_val = int(len(dataset) * val_percent)
+    n_train = len(dataset) - n_val
+    train_set, val_set = random_split(dataset, [n_train, n_val], generator=torch.Generator().manual_seed(0))
+    # Create data loaders
+    loader_args = dict(batch_size=batch_size, num_workers=workers, pin_memory=True)
+    train_loader = DataLoader(train_set, shuffle=True, **loader_args)
+    val_loader = DataLoader(val_set, shuffle=False, drop_last=True, **loader_args)
+    return train_loader, val_loader
+
+
 class CustomImageDataset(Dataset):
     """GTC Code for a dataset class. The class is instantiated with list of filenames within a directory (created using
     the list_npy_filenames function). The __getitem__ method pairs up corresponding image-label .npy file pairs. This
