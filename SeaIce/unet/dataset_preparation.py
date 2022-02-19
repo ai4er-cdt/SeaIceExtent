@@ -49,32 +49,32 @@ def split_data(dataset, val_percent, batch_size, workers):
 class CustomImageDataset(Dataset):
     """GTC Code for a dataset class. The class is instantiated with list of filenames within a directory (created using
     the list_npy_filenames function). The __getitem__ method pairs up corresponding image-label .npy file pairs. This
-    dataset can then be input to a dataloader."""
+    dataset can then be input to a dataloader. return_type = "values" or "dict"."""
     
-    def __init__(self, paths, isSingleBand = True):
+    def __init__(self, paths, is_single_band, return_type):
         self.paths = paths
-        self.isSingleBand = isSingleBand
+        self.is_single_band = is_single_band
+        self.return_type = return_type
     
     def __getitem__(self, index):
         image = torch.from_numpy(np.vstack(np.load(self.paths[index][0])).astype(float))
-        if self.isSingleBand:
+        if self.is_single_band:
             image = image[None,:]
         else:
-            image = torch.permute(image, (2,0,1))
+            #image = torch.permute(image, (3, 1, 2, 0))
+            image = torch.permute(image, (2, 0, 1))
         mask_raw = (np.load(self.paths[index][1]))
         maskremap100 = np.where(mask_raw == 100, 0, mask_raw)
         maskremap200 = np.where(maskremap100 == 200, 1, maskremap100)
         mask = torch.from_numpy(np.vstack(maskremap200).astype(float))
-        
+
         #assert image.size == mask.size, \
         #    'Image and mask {name} should be the same size, but are {img.size} and {mask.size}'
-        
-        return {
-            'image': image,
-            'mask': mask
-        }
-
-        #return image, mask
+        if self.return_type == "dict":
+            return {'image': image, 'mask': mask}
+        elif self.return_type == "values":
+            mask = mask[None, :]
+            return image, mask
 
 
     def __len__(self):

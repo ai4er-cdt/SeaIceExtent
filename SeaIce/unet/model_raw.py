@@ -26,7 +26,7 @@ def train_net(net, device, image_type,
     
     # Create dataset
     img_list = create_npy_list(dir_img, image_type)
-    dataset = CustomImageDataset(img_list, False)
+    dataset = CustomImageDataset(img_list, False, "dict")
     
     n_val, n_train, train_loader, val_loader = split_data(dataset, val_percent, batch_size, 4)
 

@@ -7,28 +7,34 @@ from SeaIce.unet.dataset_preparation import *
 
 torch.manual_seed(2022)  # Setting random seed so that augmentations can be reproduced.
 
+imagery = "sar"
 val_percent = 0.1
 batch_size = 1
 
 # Create dataset
-img_list = create_npy_list(dir_img, r"sar")
-dataset = CustomImageDataset(img_list, True)
+img_list = create_npy_list(dir_img, imagery)
 
-_, _, train_loader, val_loader = split_data(dataset, val_percent, batch_size, 4)
+if imagery == "sar":
+    single_channel = True
+    n_channels = 1
+elif imagery == "modis":
+    single_channel = False
+    n_channels = 3
+
+dataset = CustomImageDataset(img_list, single_channel, "values")
+
+_, _, train_loader, val_loader = split_data(dataset, val_percent, batch_size, 2)
 
 loss = smp.utils.losses.DiceLoss()
 metrics = [
     smp.utils.metrics.IoU(threshold=0.5),
 ]
 # Can also specify number of UNet steps and channel numbers.
-model = smp.Unet(encoder_name='resnet18', encoder_weights='imagenet', decoder_use_batchnorm=True,
-                 decoder_attention_type=None, in_channels=1, classes=1,
-                 activation='sigmoid', aux_params={'classes': 1,'pooling': 'max'})
+model = smp.Unet(encoder_name='resnet34', encoder_weights='imagenet', decoder_use_batchnorm=True,
+                 decoder_attention_type=None, in_channels=n_channels, classes=1, encoder_depth=5)
 model = model.double()
 
-optimizer = torch.optim.Adam([
-    dict(params=model.parameters(), lr=0.0001),
-])
+optimizer = torch.optim.Adam([dict(params=model.parameters(), lr=0.0001),])
 
 train_epoch = smp.utils.train.TrainEpoch(
     model,
