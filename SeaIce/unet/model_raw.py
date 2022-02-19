@@ -24,11 +24,11 @@ def train_net(net, device, image_type,
               img_scale: float = 0.5,
               amp: bool = False):
     
-    # 1. Create dataset
+    # Create dataset
     img_list = create_npy_list(dir_img, image_type)
     dataset = CustomImageDataset(img_list, False)
     
-    train_loader, val_loader = split_data(val_percent, batch_size, 4)
+    n_val, n_train, train_loader, val_loader = split_data(dataset, val_percent, batch_size, 4)
 
     # Initialize logging
     experiment = wandb.init(project='U-Net', resume='allow', anonymous='must')
@@ -48,17 +48,19 @@ def train_net(net, device, image_type,
         Mixed Precision: {amp}
     ''')
 
-    # 4. Set up the optimizer, the loss, the learning rate scheduler and the loss scaling for AMP
+    # Set up the optimizer, the loss, the learning rate scheduler and the loss scaling for AMP
     optimizer = optim.RMSprop(net.parameters(), lr=learning_rate, weight_decay=1e-8, momentum=0.9)
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'max', patience=2)  # goal: maximize Dice score
     grad_scaler = torch.cuda.amp.GradScaler(enabled=amp)
     criterion = nn.CrossEntropyLoss()
     global_step = 0
     
-    # 5. Begin training
+    # Begin training
     for epoch in range(epochs):
         net.train()
         epoch_loss = 0
+        print(type(train_loader))
+        print(train_loader)
         with tqdm(total=n_train, desc=f'Epoch {epoch + 1}/{epochs}', unit='img') as pbar:
             for batch in train_loader:
                 images = batch['image']
@@ -147,7 +149,6 @@ if __name__ == '__main__':
     args = get_args()
 
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
-    processor = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     logging.info(f'Using device {processor}')
 
     # Change here to adapt to your data
@@ -167,11 +168,12 @@ if __name__ == '__main__':
     net.to(device=processor)
     try:
         train_net(net=net,
-                  epochs=args.epochs,
+                  #epochs=args.epochs, 
+                  epochs = 1,
                   image_type="modis",
                   batch_size=args.batch_size,
                   learning_rate=args.lr,
-                  device=device,
+                  device=processor,
                   img_scale=args.scale,
                   val_percent=args.val / 100,
                   amp=args.amp)

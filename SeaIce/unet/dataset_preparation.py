@@ -34,7 +34,7 @@ def create_npy_list(image_directory, img_string):
     return img_label_pairs
 
 
-def split_data(val_percent, batch_size, workers):
+def split_data(dataset, val_percent, batch_size, workers):
     # Split into train / validation partitions
     n_val = int(len(dataset) * val_percent)
     n_train = len(dataset) - n_val
@@ -43,7 +43,7 @@ def split_data(val_percent, batch_size, workers):
     loader_args = dict(batch_size=batch_size, num_workers=workers, pin_memory=True)
     train_loader = DataLoader(train_set, shuffle=True, **loader_args)
     val_loader = DataLoader(val_set, shuffle=False, drop_last=True, **loader_args)
-    return train_loader, val_loader
+    return n_val, n_train, train_loader, val_loader
 
 
 class CustomImageDataset(Dataset):
@@ -69,12 +69,13 @@ class CustomImageDataset(Dataset):
         #assert image.size == mask.size, \
         #    'Image and mask {name} should be the same size, but are {img.size} and {mask.size}'
         
-        #return {
-        #    'image': image,
-        #    'mask': mask
-        #}
+        return {
+            'image': image,
+            'mask': mask
+        }
 
-        return image, mask
+        #return image, mask
+
 
     def __len__(self):
         return len(self.paths) 

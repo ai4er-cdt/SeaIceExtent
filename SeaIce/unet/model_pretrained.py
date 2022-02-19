@@ -8,13 +8,13 @@ from SeaIce.unet.dataset_preparation import *
 torch.manual_seed(2022)  # Setting random seed so that augmentations can be reproduced.
 
 val_percent = 0.1
-batch_size = 10
+batch_size = 1
 
-# 1. Create dataset
-img_list = create_npy_list(dir_img, r"modis")
+# Create dataset
+img_list = create_npy_list(dir_img, r"sar")
 dataset = CustomImageDataset(img_list, True)
 
-train_loader, val_loader = split_data(val_percent, batch_size, 4)
+_, _, train_loader, val_loader = split_data(dataset, val_percent, batch_size, 4)
 
 loss = smp.utils.losses.DiceLoss()
 metrics = [
@@ -56,6 +56,7 @@ if __name__ == '__main__':
     for i in range(0, n_epochs):
 
         print('\nEpoch: {}'.format(i))
+        
         train_logs = train_epoch.run(train_loader)
         valid_logs = valid_epoch.run(val_loader)
 
