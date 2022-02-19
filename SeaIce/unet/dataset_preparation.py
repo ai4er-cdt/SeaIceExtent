@@ -34,35 +34,48 @@ def create_npy_list(image_directory, img_string):
     return img_label_pairs
 
 
+def split_data(dataset, val_percent, batch_size, workers):
+    # Split into train / validation partitions
+    n_val = int(len(dataset) * val_percent)
+    n_train = len(dataset) - n_val
+    train_set, val_set = random_split(dataset, [n_train, n_val], generator=torch.Generator().manual_seed(0))
+    # Create data loaders
+    loader_args = dict(batch_size=batch_size, num_workers=workers, pin_memory=True)
+    train_loader = DataLoader(train_set, shuffle=True, **loader_args)
+    val_loader = DataLoader(val_set, shuffle=False, drop_last=True, **loader_args)
+    return n_val, n_train, train_loader, val_loader
+
+
 class CustomImageDataset(Dataset):
     """GTC Code for a dataset class. The class is instantiated with list of filenames within a directory (created using
     the list_npy_filenames function). The __getitem__ method pairs up corresponding image-label .npy file pairs. This
-    dataset can then be input to a dataloader."""
+    dataset can then be input to a dataloader. return_type = "values" or "dict"."""
     
-    def __init__(self, paths, isSingleBand = True):
+    def __init__(self, paths, is_single_band, return_type):
         self.paths = paths
-        self.isSingleBand = isSingleBand
+        self.is_single_band = is_single_band
+        self.return_type = return_type
     
     def __getitem__(self, index):
         image = torch.from_numpy(np.vstack(np.load(self.paths[index][0])).astype(float))
-        if self.isSingleBand:
+        if self.is_single_band:
             image = image[None,:]
         else:
-            image = torch.permute(image, (2,0,1))
+            #image = torch.permute(image, (3, 1, 2, 0))
+            image = torch.permute(image, (2, 0, 1))
         mask_raw = (np.load(self.paths[index][1]))
         maskremap100 = np.where(mask_raw == 100, 0, mask_raw)
         maskremap200 = np.where(maskremap100 == 200, 1, maskremap100)
         mask = torch.from_numpy(np.vstack(maskremap200).astype(float))
-        
+
         #assert image.size == mask.size, \
         #    'Image and mask {name} should be the same size, but are {img.size} and {mask.size}'
-        
-        #return {
-        #    'image': image,
-        #    'mask': mask
-        #}
+        if self.return_type == "dict":
+            return {'image': image, 'mask': mask}
+        elif self.return_type == "values":
+            mask = mask[None, :]
+            return image, mask
 
-        return image, mask
 
     def __len__(self):
         return len(self.paths) 
