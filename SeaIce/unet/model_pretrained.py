@@ -31,7 +31,7 @@ metrics = [
 ]
 # Can also specify number of UNet steps and channel numbers.
 model = smp.Unet(encoder_name='resnet34', encoder_weights='imagenet', decoder_use_batchnorm=True,
-                 decoder_attention_type=None, in_channels=n_channels, classes=1, encoder_depth=5)
+                 decoder_attention_type=None, in_channels=n_channels, classes=2, encoder_depth=5)
 model = model.double()
 
 optimizer = torch.optim.Adam([dict(params=model.parameters(), lr=0.0001),])
