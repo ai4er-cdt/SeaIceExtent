@@ -1,5 +1,3 @@
-
-import glob
 import segmentation_models_pytorch as smp
 from SeaIce.unet.shared import *
 from SeaIce.unet.dataset_preparation import *
@@ -26,12 +24,10 @@ dataset = CustomImageDataset(img_list, single_channel, "values")
 _, _, train_loader, val_loader = split_data(dataset, val_percent, batch_size, 2)
 
 loss = smp.utils.losses.DiceLoss()
-metrics = [
-    smp.utils.metrics.IoU(threshold=0.5),
-]
+metrics = [smp.utils.metrics.IoU(threshold=0.5),]
 # Can also specify number of UNet steps and channel numbers.
 model = smp.Unet(encoder_name='resnet34', encoder_weights='imagenet', decoder_use_batchnorm=True,
-                 decoder_attention_type=None, in_channels=n_channels, classes=2, encoder_depth=5)
+                 decoder_attention_type=None, in_channels=n_channels, classes=1, encoder_depth=5)
 model = model.double()
 
 optimizer = torch.optim.Adam([dict(params=model.parameters(), lr=0.0001),])
