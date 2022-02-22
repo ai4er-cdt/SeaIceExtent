@@ -29,3 +29,13 @@ $ ssh -A <user_id>@<login_server>
 
 e.g. ssh -A usr12@login1.jasmin.ac.uk
 
+
+Once logged in, JASMIN message will show usage of each VM over past hour. To log into specific VM use:
+
+$ ssh <user_id>@<VM name>
+  
+e.g. ssh mcl65@sci3.jasmin.ac.uk
+
+Once logged in to specific VM (may take a few ports), can link with Jupyter + porgrams with:
+  
+module load jaspy
