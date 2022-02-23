@@ -1,7 +1,6 @@
 """ CNN Dataset preparation functions """
 
 from SeaIce.unet.shared import *
-import random
 from torch.utils.data.dataset import Dataset  # For custom data-sets
 from torchvision import transforms
 import glob

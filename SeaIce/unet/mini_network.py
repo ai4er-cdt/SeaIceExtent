@@ -72,6 +72,8 @@ class OutConv(nn.Module):
 class MiniUNet(nn.Module):
     def __init__(self, n_channels, n_classes, bilinear=True):
         super(MiniUNet, self).__init__()
+        print("Warning: Mini-UNet is not the full UNet and should not be used for actual model training."
+              "\nThis is a skeletal version for code development.")
         self.n_channels = n_channels
         self.n_classes = n_classes
         self.bilinear = bilinear
