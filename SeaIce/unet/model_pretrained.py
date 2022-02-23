@@ -65,7 +65,7 @@ if __name__ == '__main__':
         # do something (save model, change lr, etc.)
         if max_score < valid_logs['iou_score']:
             max_score = valid_logs['iou_score']
-            torch.save(model, './best_model.pth')
+            torch.save(model, './best_{}_model.pth'.format(imagery)
             print('Model saved!')
 
         if i == n_epochs/2:
