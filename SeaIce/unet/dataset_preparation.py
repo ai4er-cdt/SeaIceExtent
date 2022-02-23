@@ -1,7 +1,7 @@
 """ CNN Dataset preparation functions """
 
 from SeaIce.unet.shared import *
-
+import random
 from torch.utils.data.dataset import Dataset  # For custom data-sets
 from torchvision import transforms
 import glob
@@ -30,8 +30,15 @@ def create_npy_list(image_directory, img_string):
             img_label_pairs.append((image, expected_label_name))
         else:
             raise Exception(f'{img_string} tile name {image} does not have a matching labeled tile.')
-            
+   
     return img_label_pairs
+
+
+def small_sample(dataset):
+    tenth = round(len(dataset)/10)
+    random.shuffle(dataset)
+    small_set = dataset[0:tenth]
+    return small_set
 
 
 def split_data(dataset, val_percent, batch_size, workers):

@@ -1,4 +1,3 @@
-import segmentation_models_pytorch as smp
 from SeaIce.unet.shared import *
 from SeaIce.unet.dataset_preparation import *
 

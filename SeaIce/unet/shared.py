@@ -7,6 +7,7 @@ import torch.nn.functional as F
 import torch.cuda
 from torch.utils.data import DataLoader, random_split
 from pathlib import Path
+import segmentation_models_pytorch as smp
 
 # Shared constants
 #processor = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
