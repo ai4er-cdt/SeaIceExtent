@@ -59,3 +59,17 @@ Transferring to your home directory:
 	e.g rsync jonnycode.py usr12@xfer1.jasmin.ac.uk:/home/users/usr12/
 
 
+Transferring from your home directory:
+	
+	[Need to be have ssh key for jasmin added, and be in local area on laptop]
+	
+	$ rsync <user_id>@<transfer_server>:/home/users/user_id/filename .
+	
+	
+	e.g. eval $(ssh-agent -s)
+	
+	ssh-add ~/.ssh/id_rsa_jasmin
+
+	rsync jdr53@xfer1.jasmin.ac.uk:/home/users/jdr53/transfer_test.txt <local_filepath>
+
+	
