@@ -18,10 +18,10 @@ def optimise():
     receptor_field = 0
     weight_decay = 0
     bias = 0
-    tile_sizes = [128, 256, 512, 1024]
+    tile_sizes = [tiled256, tiled512, tiled768, tiled1024]
     tile_index = random.randint(0, 3)
     tile_index_best = tile_index
-    tile_size = tile_sizes[tile_index]
+    tile_path = tile_sizes[tile_index]
  
 
     #### loop the NN ####
@@ -85,19 +85,30 @@ if __name__ == '__main__':
                  f'\t{"Bilinear" if net.bilinear else "Transposed conv"} upscaling')
 
     net.to(device=processor)
+    tile_sizes = [tiled256, tiled512, tiled768, tiled1024]
     best_loss, iterations = 100, 0
-    while best_loss > 0.5 and iterations < 10:
-        # Replace these parameters later with Jonnycode.
-        loss = train_net(net=net,
-                  device=processor,
-                  epochs=args.epochs, 
-                  image_type="modis",
-                  batch_size=args.batch_size,
-                  learning_rate=args.lr,
-                  img_scale=args.scale,
-                  save_checkpoint=args.save_checkpoint,
-                  val_percent=args.val / 100,
-                  amp=args.amp)
-        if loss < best_loss:
-            best_loss = loss
-        iterations += 1
+    losses = []
+    #while best_loss > 0.5 and iterations < 10:
+    for _ in range(3):
+        for tiles in tile_sizes: 
+            # Replace these parameters later with Jonnycode.
+            loss = train_net(net=net,
+                      device=processor,
+                      image_type="modis",
+                      dir_img=tiles,
+                      epochs=args.epochs, 
+                      batch_size=args.batch_size,
+                      learning_rate=args.lr,
+                      img_scale=args.scale,
+                      save_checkpoint=args.save_checkpoint,
+                      val_percent=args.val / 100,
+                      amp=args.amp)
+            loss = loss.item()
+            losses.append((tiles, loss))
+            if loss < best_loss:
+                best_loss = loss
+                best_tile_size = tiles
+            iterations += 1
+    print('best tile size:', best_tile_size, best_loss)
+    print(losses)
+    print("pause")

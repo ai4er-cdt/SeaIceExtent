@@ -14,7 +14,7 @@ from torch import optim
 dir_checkpoint = Path(r'G:/Shared drives/2021-gtc-sea-ice/model/checkpoints/unet-modis/')
 
 
-def train_net(net, device, image_type,
+def train_net(net, device, image_type, dir_img,
               epochs: int = 5,
               batch_size: int = 10,
               learning_rate: float = 0.001,
