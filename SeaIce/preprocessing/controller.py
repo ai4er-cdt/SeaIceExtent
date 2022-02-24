@@ -20,7 +20,7 @@ def preprocess(shape_file_path, folder_name, modis_paths = None, sar_path = None
        fiona.open(shape_file_path)
    except:
        raise Exception(help(preprocess), "Shapefile could not be opened. A .shp file must be provided.")
-   if modis_path == None and sar_path == None:
+   if modis_paths == None and sar_path == None:
        raise Exception(help(preprocess), "No optical or radar image provided. The file path to least one of these must be supplied.")
    if len(modis_paths) != 0:
         if len(modis_paths) > 1:

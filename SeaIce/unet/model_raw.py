@@ -3,11 +3,9 @@
 from SeaIce.unet.shared import *
 from SeaIce.unet.evaluation import evaluate, dice_loss
 from SeaIce.unet.dataset_preparation import *
-#from SeaIce.unet.network_structure import UNet
-from SeaIce.unet.mini_network import MiniUNet
+from SeaIce.unet.network_structure import UNet
 
 import argparse
-import logging
 import sys
 import wandb
 from torch import optim
@@ -16,7 +14,7 @@ from torch import optim
 dir_checkpoint = Path(r'G:/Shared drives/2021-gtc-sea-ice/model/checkpoints/unet-modis/')
 
 
-def train_net(net, device, image_type,
+def train_net(net, device, image_type, dir_img,
               epochs: int = 5,
               batch_size: int = 10,
               learning_rate: float = 0.001,
@@ -131,6 +129,8 @@ def train_net(net, device, image_type,
             torch.save(net.state_dict(), str(dir_checkpoint / 'checkpoint_epoch{}.pth'.format(epoch + 1)))
             logging.info(f'Checkpoint {epoch + 1} saved!')
 
+    return loss
+
 
 def get_args():
     parser = argparse.ArgumentParser(description='Train the UNet on images and target masks')
@@ -155,17 +155,17 @@ def get_mini_args():
     parser.add_argument('--learning-rate', '-l', metavar='LR', type=float, default=0.001,
                         help='Learning rate', dest='lr')
     parser.add_argument('--load', '-f', type=str, default=False, help='Load model from a .pth file')
-    parser.add_argument('--scale', '-s', type=float, default=0.5, help='Downscaling factor of the images')
     parser.add_argument('--validation', '-v', dest='val', type=float, default=1.0,
                         help='Percent of the data that is used as validation (0-100)')
+    parser.add_argument('--save-checkpoint', '-c', default = False, help='Save a checkpoint file after each validation round')
+    parser.add_argument('--scale', '-s', type=float, default=0.5, help='Downscaling factor of the images')
     parser.add_argument('--amp', action='store_true', default=False, help='Use mixed precision')
 
     return parser.parse_args()
 
 
 if __name__ == '__main__':
-    #args = get_args()
-    args = get_mini_args()
+    args = get_args()
 
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
     logging.info(f'Using device {processor}')
@@ -173,7 +173,7 @@ if __name__ == '__main__':
     # Change here to adapt to your data
     # n_channels=3 for RGB images
     # n_classes is the number of probabilities you want to get per pixel
-    net = MiniUNet(n_channels=3, n_classes=2, bilinear=True)
+    net = UNet(n_channels=3, n_classes=2, bilinear=True)
 
     logging.info(f'Network:\n'
                  f'\t{net.n_channels} input channels\n'
@@ -193,6 +193,7 @@ if __name__ == '__main__':
                   batch_size=args.batch_size,
                   learning_rate=args.lr,
                   img_scale=args.scale,
+                  save_checkpoint=args.save_checkpoint,
                   val_percent=args.val / 100,
                   amp=args.amp)
     except KeyboardInterrupt:

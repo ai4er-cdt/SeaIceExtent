@@ -6,12 +6,12 @@ from preprocessing.data_handling import get_contents
 
 test = r"C:\Users\sophi\test"
 data = r"G:\Shared drives\2021-gtc-sea-ice\data"
-tiled = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled"
+tiled = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled1024"
 
 all_folder_names, all_folder_paths = get_contents(data, None, None)
 
-# Put the for loop here, once all is done and tested.
-for index in range(len(all_folder_names)):
+#for index in range(len(all_folder_names)):
+for index in range(3):
 
      # Look in the first folder
     folder_name, folder_path = all_folder_names[index], all_folder_paths[index]
@@ -44,7 +44,7 @@ for index in range(len(all_folder_names)):
     # Old format: 0 = no data. 1 = ice free. 2 = sea ice. 9 = on land or ice shelf. 10 = unclassified.        
     # New format: 0 = ignore (for now). 1 = water. 2 = ice.
     # 1 is already water and 2 is already ice so there is no need to waste time checking or changing these.
-    controller.preprocess(shape_file_path, folder_name, modis_file_paths, sar_file_path, "buffer", 40, [10, 9], [0, 2], 100, 512, 384)
+    controller.preprocess(shape_file_path, folder_name, modis_file_paths, sar_file_path, tiled, 40, [10, 9], [0, 2], 100, 1024, 512)
 
 
 
