@@ -1,6 +1,7 @@
 from SeaIce.unet.shared import *
 from SeaIce.unet.model_raw import *
 from SeaIce.unet.mini_network import MiniUNet
+from SeaIce.unet.torch_receptive_field import receptive_field
  
 #epochs/early stopping criterion
 
@@ -84,7 +85,8 @@ if __name__ == '__main__':
                  f'\t{net.n_classes} output channels (classes)\n'
                  f'\t{"Bilinear" if net.bilinear else "Transposed conv"} upscaling')
 
-    net.to(device=processor)
+    model = net.to(device=processor)
+    #print(receptive_field(model, input_size=(3, 256, 256)))
     tile_sizes = [tiled256, tiled512, tiled768, tiled1024]
     best_loss, iterations = 100, 0
     losses = []
