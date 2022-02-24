@@ -6,18 +6,18 @@ from SeaIce.unet.dataset_preparation import *
 
 
 torch.manual_seed(2022)  # Setting random seed so that augmentations can be reproduced.
-
-imagery = "sar"
+img_type = "sar"
 val_percent = 0.1
 batch_size = 1
+path_checkpoint = Path('/mnt/g/Shared drives/2021-gtc-sea-ice/model/checkpoints/')
 
 # Create dataset
-img_list = create_npy_list(dir_img, imagery)
+img_list = create_npy_list(dir_img, img_type)
 
-if imagery == "sar":
+if img_type == "sar":
     single_channel = True
     n_channels = 1
-elif imagery == "modis":
+elif img_type == "modis":
     single_channel = False
     n_channels = 3
 
@@ -69,7 +69,8 @@ if __name__ == '__main__':
         # do something (save model, change lr, etc.)
         if max_score < valid_logs['iou_score']:
             max_score = valid_logs['iou_score']
-            torch.save(model, './best_model.pth')
+            dir_checkpoint = create_checkpoint_dir(path_checkpoint, img_type, model_type='pretrained')
+            torch.save(model, str(dir_checkpoint + 'best_model.pth'))
             print('Model saved!')
 
         if i == n_epochs/2:

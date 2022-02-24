@@ -10,27 +10,7 @@ import logging
 import sys
 import wandb
 from torch import optim
-import os
-from datetime import datetime
-
-
-def create_checkpoint_dir(path_checkpoint, img_type, model_type):
-    now = datetime.now()
-    dt_string = now.strftime("%d%m%Y_%H%M%S")
-    dir_list = os.listdir(path_checkpoint)
-    FOLDER_EXISTS = True
-    x = 1
-    
-    while FOLDER_EXISTS: 
-        dir_checkpoint_name = str('{}_{}_{}_{}/'.format(img_type, model_type, dt_string, str(x)))
-        path = os.path.join(path_checkpoint, Path(dir_checkpoint_name))
-        if dir_checkpoint_name in dir_list:
-           x += 1
-        else:
-          FOLDER_EXISTS = False
-          os.mkdir(path)
-          print("Checkpoint directory {} created.".format(str(path)))
-          return(path)
+from pathlib import Path
 
 
 def train_net(net, device, 
@@ -196,10 +176,6 @@ def run_training(net,
                  f'\t{net.n_channels} input channels\n'
                  f'\t{net.n_classes} output channels (classes)\n'
                  f'\t{"Bilinear" net.bilinear else "Transposed conv"} upscaling')
-
-#    if args.load:
-#        net.load_state_dict(torch.load(args.load, map_location=processor))
-#        logging.info(f'Model loaded from {args.load}')
 
     net.to(device=processor)
     try:
