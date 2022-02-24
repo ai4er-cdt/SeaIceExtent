@@ -1,7 +1,69 @@
 from SeaIce.unet.shared import *
- 
-#epochs/early stopping criterion
+import wandb
 
+# Model Name
+model_name = 'unet-original'
+
+# Configuring wandb settings
+sweep_config = {
+    'method': 'random' # Random search method -- less computationally expensive yet effective.
+    }
+
+# Tuned hyperparameters
+parameters_dict = {
+    'optimizer': {
+        'values': ['adam', 'sgd']
+        },
+    'learning_rate': {
+        # a flat distribution between 0 and 0.1
+        'distribution': 'uniform',
+        'min': 0,
+        'max': 0.1
+      },
+    'batch_size': {
+        # Uniformly-distributed between 5-15
+        'distribution': 'uniform',
+        'min': 5,
+        'max': 15,
+    },
+    'epochs': {
+        # a flat distribution between 0 and 0.1
+        'distribution': 'uniform',
+        'min': 1,
+        'max': 10
+    }
+}
+sweep_config['parameters'] = parameters_dict
+
+# Fixed hyperparamters
+parameters_dict.update({
+    'weight_decay': {
+        'value': 1e-8},
+    'momentum': {
+        'value': 0.9},
+    'validation_percent': {
+        'value': 0.1},
+    'img_scale': {
+        'value': 0.5}
+})
+
+sweep_id = wandb.sweep(sweep_config, project= model_name + "pytorch-sweeps-demo")
+
+def train(config=None):
+    # Initialize a new wandb run
+    with wandb.init(config=config):
+        # If called by wandb.agent, as below,
+        # this config will be set by Sweep Controller
+        config = wandb.config
+
+        # Loader
+        # Network
+        # Optimiser
+        # Calculate loss for each epoch
+        
+wandb.agent(sweep_id, train, count=5)
+
+"""
 def optimise():
     learning_rate = round(random.uniform(0.000001, 0.01), 6)
     learning_rate_best = learning_rate
@@ -73,3 +135,5 @@ def optimise():
 
 
 optimise()
+
+"""
