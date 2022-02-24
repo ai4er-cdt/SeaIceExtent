@@ -75,13 +75,8 @@ def optimise():
 
 if __name__ == '__main__':
     args = get_mini_args()
-
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
     logging.info(f'Using device {processor}')
-
-    # Change here to adapt to your data
-    # n_channels=3 for RGB images
-    # n_classes is the number of probabilities you want to get per pixel
     net = MiniUNet(n_channels=3, n_classes=2, bilinear=True)
 
     logging.info(f'Network:\n'
@@ -90,7 +85,10 @@ if __name__ == '__main__':
                  f'\t{"Bilinear" if net.bilinear else "Transposed conv"} upscaling')
 
     net.to(device=processor)
-    val_score = train_net(net=net,
+    best_loss, iterations = 100, 0
+    while best_loss > 0.5 and iterations < 10:
+        # Replace these parameters later with Jonnycode.
+        loss = train_net(net=net,
                   device=processor,
                   epochs=args.epochs, 
                   image_type="modis",
@@ -100,3 +98,6 @@ if __name__ == '__main__':
                   save_checkpoint=args.save_checkpoint,
                   val_percent=args.val / 100,
                   amp=args.amp)
+        if loss < best_loss:
+            best_loss = loss
+        iterations += 1

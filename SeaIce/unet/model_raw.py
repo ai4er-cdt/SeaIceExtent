@@ -129,7 +129,7 @@ def train_net(net, device, image_type,
             torch.save(net.state_dict(), str(dir_checkpoint / 'checkpoint_epoch{}.pth'.format(epoch + 1)))
             logging.info(f'Checkpoint {epoch + 1} saved!')
 
-    return val_score
+    return loss
 
 
 def get_args():
@@ -165,8 +165,7 @@ def get_mini_args():
 
 
 if __name__ == '__main__':
-    #args = get_args()
-    args = get_mini_args()
+    args = get_args()
 
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
     logging.info(f'Using device {processor}')
