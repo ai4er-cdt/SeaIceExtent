@@ -76,7 +76,7 @@ Transferring from your home directory:
 
 Creating virtual environment on JASMIN:
 
-# Navigate to area 
+Navigate to area 
 	
 	# Load jaspy to use venv command
 	$ module load jaspy
