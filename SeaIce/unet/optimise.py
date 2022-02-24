@@ -55,7 +55,7 @@ def optimise():
     tile_size = tile_sizes[tile_index]
 
     ### Get fitness function ###
-    
+
     # if improved:
     learning_rate_best = learning_rate
     batch_size_best = batch_size
@@ -63,7 +63,7 @@ def optimise():
     val_percent_best = val_percent
     img_scale_best = img_scale
     tile_index_best = tile_index
-   
+
     # if fitness score is worse than a certain threshold:
     learning_rate = learning_rate_best
     batch_size = batch_size_best
