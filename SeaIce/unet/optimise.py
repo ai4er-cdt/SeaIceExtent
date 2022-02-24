@@ -1,4 +1,4 @@
-from SeaIce.unet.shared import *
+from SeaIce.unet.dataset_preparation import *
 import wandb
 
 # Model Name
@@ -49,18 +49,32 @@ parameters_dict.update({
 
 sweep_id = wandb.sweep(sweep_config, project= model_name + "pytorch-sweeps-demo")
 
-def train(config=None):
+def train(config=None, image_type):
     # Initialize a new wandb run
     with wandb.init(config=config):
         # If called by wandb.agent, as below,
         # this config will be set by Sweep Controller
         config = wandb.config
 
+        if image_type == "sar":
+            is_single_band = True
+        elif image_type == "modis":
+            is_single_band = False
+
+        # Create dataset
+        img_list = create_npy_list(dir_img, image_type)
+        # Use this if you want a smaller dataset just to test things with
+        img_list = small_sample(img_list)
+
+        dataset = CustomImageDataset(img_list, False, "dict")
+
+        n_val, n_train, train_loader, val_loader = split_data(dataset, val_percent, batch_size, 2)
+
         # Loader
         # Network
         # Optimiser
         # Calculate loss for each epoch
-        
+
 wandb.agent(sweep_id, train, count=5)
 
 """
