@@ -20,38 +20,36 @@ def optimise():
     tile_index = random.randint(0, 3)
     tile_index_best = tile_index
     tile_size = tile_sizes[tile_index]
+ 
 
-    for _ in range(3):
+    #### loop the NN ####
 
-        #### loop the NN ####
-        learning_rate += random.uniform(-0.001, 0.001)
-        learning_rate = round(learning_rate, 6)
-        if learning_rate < 0.000001 or learning_rate > 0.01:
-            learning_rate = learning_rate_best
+    learning_rate += random.uniform(-0.001, 0.001)
+    learning_rate = round(learning_rate, 6)
+    if learning_rate < 0.000001 or learning_rate > 0.01:
+        learning_rate = learning_rate_best
 
-        batch_size += random.randint(-1, 1)
-        if batch_size < 1 or batch_size > 10:
-            batch_size = batch_size_best
+    batch_size += random.randint(-1, 1)
+    if batch_size < 1 or batch_size > 10:
+        batch_size = batch_size_best
 
-        epochs += random.randint(-1, 1)
-        if epochs < 1 or epochs > 5:
-            epochs = epochs_best
+    epochs += random.randint(-1, 1)
+    if epochs < 1 or epochs > 5:
+        epochs = epochs_best
 
-        val_percent += random.randint(-5, 5)
-        if val_percent < 1 or val_percent > 40:
-            val_percent = val_percent_best
+    val_percent += random.randint(-5, 5)
+    if val_percent < 1 or val_percent > 40:
+        val_percent = val_percent_best
 
-        img_scale += random.uniform(-0.1, 0.1)
-        img_scale = round(img_scale, 2)
-        if img_scale < 0.1 or img_scale > 1.0:
-            img_scale = img_scale_best
+    img_scale += random.uniform(-0.1, 0.1)
+    img_scale = round(img_scale, 2)
+    if img_scale < 0.1 or img_scale > 1.0:
+        img_scale = img_scale_best
 
-        tile_index += random.randint(-1, 1)
-        if tile_index < 0 or tile_index > 3:
-            tile_index = tile_index_best
-        tile_size = tile_sizes[tile_index]
-
-        print(learning_rate, batch_size, epochs, val_percent, img_scale, tile_size)
+    tile_index += random.randint(-1, 1)
+    if tile_index < 0 or tile_index > 3:
+        tile_index = tile_index_best
+    tile_size = tile_sizes[tile_index]
 
     ### Get fitness function ###
     
