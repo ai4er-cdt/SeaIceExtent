@@ -1,83 +1,8 @@
-from SeaIce.unet.dataset_preparation import *
-import wandb
+from SeaIce.unet.shared import *
 
-# Model Name
-model_name = 'unet-original'
 
-# Configuring wandb settings
-sweep_config = {
-    'method': 'random' # Random search method -- less computationally expensive yet effective.
-    }
+# epochs/early stopping criterion
 
-# Tuned hyperparameters
-parameters_dict = {
-    'optimizer': {
-        'values': ['adam', 'sgd']
-        },
-    'learning_rate': {
-        # a flat distribution between 0 and 0.1
-        'distribution': 'uniform',
-        'min': 0,
-        'max': 0.1
-      },
-    'batch_size': {
-        # Uniformly-distributed between 5-15
-        'distribution': 'uniform',
-        'min': 5,
-        'max': 15,
-    },
-    'epochs': {
-        # a flat distribution between 0 and 0.1
-        'distribution': 'uniform',
-        'min': 1,
-        'max': 10
-    }
-}
-sweep_config['parameters'] = parameters_dict
-
-# Fixed hyperparamters
-parameters_dict.update({
-    'weight_decay': {
-        'value': 1e-8},
-    'momentum': {
-        'value': 0.9},
-    'validation_percent': {
-        'value': 0.1},
-    'img_scale': {
-        'value': 0.5}
-})
-
-sweep_id = wandb.sweep(sweep_config, project= model_name + "pytorch-sweeps-demo")
-
-def train(config=None, image_type):
-    # Initialize a new wandb run
-    with wandb.init(config=config):
-        # If called by wandb.agent, as below,
-        # this config will be set by Sweep Controller
-        config = wandb.config
-
-        if image_type == "sar":
-            is_single_band = True
-        elif image_type == "modis":
-            is_single_band = False
-
-        # Create dataset
-        img_list = create_npy_list(dir_img, image_type)
-        # Use this if you want a smaller dataset just to test things with
-        img_list = small_sample(img_list)
-
-        dataset = CustomImageDataset(img_list, False, "dict")
-
-        n_val, n_train, train_loader, val_loader = split_data(dataset, val_percent, batch_size, 2)
-
-        # Loader
-        # Network
-        # Optimiser
-        # Calculate loss for each epoch
-
-wandb.agent(sweep_id, train, count=5)
-
-"""
 def optimise():
     learning_rate = round(random.uniform(0.000001, 0.01), 6)
     learning_rate_best = learning_rate
@@ -130,7 +55,7 @@ def optimise():
         print(learning_rate, batch_size, epochs, val_percent, img_scale, tile_size)
 
     ### Get fitness function ###
-    
+
     # if improved:
     learning_rate_best = learning_rate
     batch_size_best = batch_size
@@ -138,7 +63,7 @@ def optimise():
     val_percent_best = val_percent
     img_scale_best = img_scale
     tile_index_best = tile_index
-   
+
     # if fitness score is worse than a certain threshold:
     learning_rate = learning_rate_best
     batch_size = batch_size_best
@@ -149,5 +74,3 @@ def optimise():
 
 
 optimise()
-
-"""
