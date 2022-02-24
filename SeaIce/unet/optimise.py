@@ -1,4 +1,6 @@
 from SeaIce.unet.shared import *
+from SeaIce.unet.model_raw import *
+from SeaIce.unet.mini_network import MiniUNet
  
 #epochs/early stopping criterion
 
@@ -70,4 +72,31 @@ def optimise():
     tile_index = tile_index_best
 
 
-optimise()
+
+if __name__ == '__main__':
+    args = get_mini_args()
+
+    logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+    logging.info(f'Using device {processor}')
+
+    # Change here to adapt to your data
+    # n_channels=3 for RGB images
+    # n_classes is the number of probabilities you want to get per pixel
+    net = MiniUNet(n_channels=3, n_classes=2, bilinear=True)
+
+    logging.info(f'Network:\n'
+                 f'\t{net.n_channels} input channels\n'
+                 f'\t{net.n_classes} output channels (classes)\n'
+                 f'\t{"Bilinear" if net.bilinear else "Transposed conv"} upscaling')
+
+    net.to(device=processor)
+    val_score = train_net(net=net,
+                  device=processor,
+                  epochs=args.epochs, 
+                  image_type="modis",
+                  batch_size=args.batch_size,
+                  learning_rate=args.lr,
+                  img_scale=args.scale,
+                  save_checkpoint=args.save_checkpoint,
+                  val_percent=args.val / 100,
+                  amp=args.amp)
