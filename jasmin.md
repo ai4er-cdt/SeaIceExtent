@@ -72,4 +72,20 @@ Transferring from your home directory:
 
 	rsync jdr53@xfer1.jasmin.ac.uk:/home/users/jdr53/transfer_test.txt <local_filepath>
 
+<br/>	
+
+Creating virtual environment on JASMIN:
+
+# Navigate to area 
 	
+	# Load jaspy to use venv command
+	$ module load jaspy
+	
+	# Create a virtual environment, including all the jaspy libraries
+	$ python -m venv --system-site-packages ./<env_name>
+	
+	# Activate the env
+	$ source ./env_name/bin/activate
+
+	# Install packages as needed
+	$ pip install <package_name>
