@@ -10,12 +10,32 @@ import logging
 import sys
 import wandb
 from torch import optim
+import os
+from datetime import datetime
 
 
-dir_checkpoint = Path(r'G:/Shared drives/2021-gtc-sea-ice/model/checkpoints/unet-modis/')
+def create_checkpoint_dir(path_checkpoint, img_type, model_type):
+    now = datetime.now()
+    dt_string = now.strftime("%d%m%Y_%H%M%S")
+    dir_list = os.listdir(path_checkpoint)
+    FOLDER_EXISTS = True
+    x = 1
+    
+    while FOLDER_EXISTS: 
+        dir_checkpoint_name = str('{}_{}_{}_{}/'.format(img_type, model_type, dt_string, str(x)))
+        path = os.path.join(path_checkpoint, Path(dir_checkpoint_name))
+        if dir_checkpoint_name in dir_list:
+           x += 1
+        else:
+          FOLDER_EXISTS = False
+          os.mkdir(path)
+          print("Checkpoint directory {} created.".format(str(path)))
+          return(path)
 
 
-def train_net(net, device, image_type,
+def train_net(net, device, 
+              image_type,
+              path_checkpoint,
               epochs: int = 1,
               batch_size: int = 10,
               learning_rate: float = 0.001,
@@ -56,6 +76,7 @@ def train_net(net, device, image_type,
     global_step = 0
     
     # Begin training
+    dir_checkpoint = path_checkpoint
     for epoch in range(epochs):
         net.train()
         epoch_loss = 0
@@ -125,41 +146,56 @@ def train_net(net, device, image_type,
                         })
 
         if save_checkpoint:
-            Path(dir_checkpoint).mkdir(parents=True, exist_ok=True)
+            if epoch == 1:
+                dir_checkpoint = create_checkpoint_dir(path_checkpoint, img_type, model_type)
+            
             torch.save(net.state_dict(), str(dir_checkpoint / 'checkpoint_epoch{}.pth'.format(epoch + 1)))
             logging.info(f'Checkpoint {epoch + 1} saved!')
 
 
-def get_args():
-    parser = argparse.ArgumentParser(description='Train the UNet on images and target masks')
-    parser.add_argument('--epochs', '-e', metavar='E', type=int, default=5, help='Number of epochs')
-    parser.add_argument('--batch-size', '-b', dest='batch_size', metavar='B', type=int, default=1, help='Batch size')
-    parser.add_argument('--learning-rate', '-l', metavar='LR', type=float, default=0.00001,
-                        help='Learning rate', dest='lr')
-    parser.add_argument('--load', '-f', type=str, default=False, help='Load model from a .pth file')
-    parser.add_argument('--scale', '-s', type=float, default=0.5, help='Downscaling factor of the images')
-    parser.add_argument('--validation', '-v', dest='val', type=float, default=10.0,
-                        help='Percent of the data that is used as validation (0-100)')
-    parser.add_argument('--amp', action='store_true', default=False, help='Use mixed precision')
+#def get_args():
+#    parser = argparse.ArgumentParser(description='Train the UNet on images and target masks')
+#    parser.add_argument('--epochs', '-e', metavar='E', type=int, default=5, help='Number of epochs')
+#    parser.add_argument('--batch-size', '-b', dest='batch_size', metavar='B', type=int, default=1, help='Batch size')
+#    parser.add_argument('--learning-rate', '-l', metavar='LR', type=float, default=0.00001,
+#                        help='Learning rate', dest='lr')
+#    parser.add_argument('--load', '-f', type=str, default=False, help='Load model from a .pth file')
+#    parser.add_argument('--scale', '-s', type=float, default=0.5, help='Downscaling factor of the images')
+#    parser.add_argument('--validation', '-v', dest='val', type=float, default=10.0,
+#                        help='Percent of the data that is used as validation (0-100)')
+#    parser.add_argument('--amp', action='store_true', default=False, help='Use mixed precision')
+#
+#    return parser.parse_args()
 
-    return parser.parse_args()
 
-
-if __name__ == '__main__':
-    args = get_args()
+#if __name__ == '__main__':
+    #args = get_args()
+def run_training(net, 
+                 device, 
+                 image_type,
+                 path_checkpoint,
+                 epochs: int = 1,
+                 batch_size: int = 10,
+                 learning_rate: float = 0.001,
+                 val_percent: float = 0.1,
+                 save_checkpoint: bool = True,
+                 img_scale: float = 0.5,
+                 amp: bool = False
 
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
     logging.info(f'Using device {processor}')
 
     # Change here to adapt to your data
-    # n_channels=3 for RGB images
     # n_classes is the number of probabilities you want to get per pixel
-    net = UNet(n_channels=3, n_classes=2, bilinear=True)
+    if image_type == "sar":
+        net = UNet(n_channels=1, n_classes=2, bilinear=True)
+    elif image_type == "modis":
+        net = UNet(n_channels=3, n_classes=2, bilinear=True)
 
     logging.info(f'Network:\n'
                  f'\t{net.n_channels} input channels\n'
                  f'\t{net.n_classes} output channels (classes)\n'
-                 f'\t{"Bilinear" if net.bilinear else "Transposed conv"} upscaling')
+                 f'\t{"Bilinear" net.bilinear else "Transposed conv"} upscaling')
 
 #    if args.load:
 #        net.load_state_dict(torch.load(args.load, map_location=processor))

@@ -53,7 +53,7 @@ valid_epoch = smp.utils.train.ValidEpoch(
     device=processor
 )
 
-# train model for 40 epochs
+# train model for n epochs
 
 max_score = 0
 n_epochs = 1
