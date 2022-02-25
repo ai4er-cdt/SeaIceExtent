@@ -7,8 +7,9 @@ import numpy as np
 from osgeo import ogr, gdal
 
 program_path = os.getcwd()
-temp_folder = r"{}\SeaIce\temp\temporary_files".format(program_path)
-temp_buffer = r"{}\SeaIce\temp\temporary_buffer".format(program_path)
+temp_folder = r"{}\temp\temporary_files".format(program_path)
+temp_buffer = r"{}\temp\temporary_buffer".format(program_path)
+temp_prediction = r"{}\temp\current_prediction".format(program_path)
 
 
 def get_contents(in_directory, search_terms = None, string_position = None):
@@ -49,6 +50,8 @@ def name_file(out_name, file_type, out_path = "temp"):
         out_path = temp_folder
     elif out_path == "buffer":
         out_path = temp_buffer
+    elif out_path == "prediction":
+        out_path = temp_prediction
     file_name = "{}\{}{}".format(out_path, out_name, file_type)
     return file_name
 
@@ -56,7 +59,7 @@ def name_file(out_name, file_type, out_path = "temp"):
 def delete_temp_files():
     """Remove temporary files when no longer needed.
     """
-    for folder in [temp_folder, temp_buffer]:
+    for folder in [temp_folder, temp_buffer, temp_prediction]:
         os.chdir(folder)
         for temp_file in os.listdir():
             os.remove(temp_file)

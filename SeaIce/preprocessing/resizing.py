@@ -15,6 +15,15 @@ def resize_to_match(image_to_change, image_to_match, out_path):
     del template_image
 
 
+def halve_size(image_path, out_path):
+    large_image = gdal.Open(image_path) 
+    width, length = large_image.RasterXSize, large_image.RasterYSize 
+    gdal.Translate(out_path, image_path, width=round(width/2), height=round(length/2))
+    # Clean up.
+    large_image.FlushCache()
+    del large_image
+
+
 def change_resolution(in_path, out_path, new_resolution = 40):
 # Change the resolution.
     gdal.Warp(out_path, in_path, xRes=new_resolution, yRes=new_resolution)
