@@ -5,6 +5,9 @@ from torch.utils.data.dataset import Dataset  # For custom data-sets
 from torchvision import transforms
 import glob
 import numpy as np
+from pathlib import Path
+import os
+from datetime import datetime
 
 torch.manual_seed(2022) # Setting random seed so that augmentations can be reproduced.
 
@@ -156,3 +159,26 @@ class CustomImageAugmentDataset(Dataset):
         """
         return {'image': augmented_image, 'mask': augmented_mask}
 
+    
+def create_checkpoint_dir(path_checkpoint, img_type, model_type):
+    """ A function that checks for a custom directory based on a model type, image type and if
+    that directory does not exist, creates it and returns the value for use in checkpoint saving.
+    Input img_type can be sar or modis. Includes the datetime in the string name.""" 
+    
+    
+    now = datetime.now()
+    dt_string = now.strftime("%d%m%Y_%H%M%S")
+    dir_list = os.listdir(path_checkpoint)
+    FOLDER_EXISTS = True
+    x = 1
+    
+    while FOLDER_EXISTS: 
+        dir_checkpoint_name = str('{}_{}_{}_{}/'.format(img_type, model_type, dt_string, str(x)))
+        path = os.path.join(path_checkpoint, Path(dir_checkpoint_name))
+        if dir_checkpoint_name in dir_list:
+           x += 1
+        else:
+          FOLDER_EXISTS = False
+          os.mkdir(path)
+          print("Checkpoint directory {} created.".format(str(path)))
+          return(path)

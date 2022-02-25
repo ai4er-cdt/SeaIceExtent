@@ -9,9 +9,7 @@ import argparse
 import sys
 import wandb
 from torch import optim
-
-
-dir_checkpoint = Path(r'G:/Shared drives/2021-gtc-sea-ice/model/checkpoints/unet-modis/')
+from pathlib import Path
 
 
 def train_net(net, device, image_type, dir_img,
@@ -58,6 +56,7 @@ def train_net(net, device, image_type, dir_img,
     global_step = 0
     
     # Begin training
+    dir_checkpoint = path_checkpoint
     for epoch in range(epochs):
         net.train()
         epoch_loss = 0
@@ -125,13 +124,15 @@ def train_net(net, device, image_type, dir_img,
                         })
 
         if save_checkpoint:
-            Path(dir_checkpoint).mkdir(parents=True, exist_ok=True)
+            if epoch == 1:
+                dir_checkpoint = create_checkpoint_dir(path_checkpoint, img_type, model_type)
+            
             torch.save(net.state_dict(), str(dir_checkpoint / 'checkpoint_epoch{}.pth'.format(epoch + 1)))
             logging.info(f'Checkpoint {epoch + 1} saved!')
 
     return loss
 
-
+  
 def get_args():
     parser = argparse.ArgumentParser(description='Train the UNet on images and target masks')
     parser.add_argument('--epochs', '-e', metavar='E', type=int, default=5, help='Number of epochs')
@@ -167,7 +168,6 @@ def get_mini_args():
 
 def run_training(image_type):
     args = get_args()
-
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
     logging.info(f'Using device {processor}')
 

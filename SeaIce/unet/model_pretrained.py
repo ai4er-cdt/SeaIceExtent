@@ -3,18 +3,17 @@ from SeaIce.unet.dataset_preparation import *
 
 
 torch.manual_seed(2022)  # Setting random seed so that augmentations can be reproduced.
-
-imagery = "sar"
+img_type = "sar"
 val_percent = 0.1
 batch_size = 1
 
 # Create dataset
 img_list = create_npy_list(tiled512, imagery)
 
-if imagery == "sar":
+if img_type == "sar":
     single_channel = True
     n_channels = 1
-elif imagery == "modis":
+elif img_type == "modis":
     single_channel = False
     n_channels = 3
 
@@ -48,7 +47,7 @@ valid_epoch = smp.utils.train.ValidEpoch(
     device=processor
 )
 
-# train model for 40 epochs
+# train model for n epochs
 
 max_score = 0
 n_epochs = 1
