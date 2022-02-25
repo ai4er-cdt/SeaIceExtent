@@ -1,6 +1,3 @@
-
-import glob
-import segmentation_models_pytorch as smp
 from SeaIce.unet.shared import *
 from SeaIce.unet.dataset_preparation import *
 
@@ -9,10 +6,9 @@ torch.manual_seed(2022)  # Setting random seed so that augmentations can be repr
 img_type = "sar"
 val_percent = 0.1
 batch_size = 1
-path_checkpoint = Path('/mnt/g/Shared drives/2021-gtc-sea-ice/model/checkpoints/')
 
 # Create dataset
-img_list = create_npy_list(dir_img, img_type)
+img_list = create_npy_list(tiled512, imagery)
 
 if img_type == "sar":
     single_channel = True
@@ -26,9 +22,7 @@ dataset = CustomImageDataset(img_list, single_channel, "values")
 _, _, train_loader, val_loader = split_data(dataset, val_percent, batch_size, 2)
 
 loss = smp.utils.losses.DiceLoss()
-metrics = [
-    smp.utils.metrics.IoU(threshold=0.5),
-]
+metrics = [smp.utils.metrics.IoU(threshold=0.5),]
 # Can also specify number of UNet steps and channel numbers.
 model = smp.Unet(encoder_name='resnet34', encoder_weights='imagenet', decoder_use_batchnorm=True,
                  decoder_attention_type=None, in_channels=n_channels, classes=1, encoder_depth=5)
@@ -69,7 +63,7 @@ if __name__ == '__main__':
         # do something (save model, change lr, etc.)
         if max_score < valid_logs['iou_score']:
             max_score = valid_logs['iou_score']
-            dir_checkpoint = create_checkpoint_dir(path_checkpoint, img_type, model_type='pretrained')
+            dir_checkpoint = create_checkpoint_dir(path_checkpoint, imagery, model_type='pretrained')
             torch.save(model, str(dir_checkpoint + 'best_model.pth'))
             print('Model saved!')
 

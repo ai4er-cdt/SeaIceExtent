@@ -27,9 +27,7 @@ def evaluate(net, dataloader, device):
             else:
                 mask_pred = F.one_hot(mask_pred.argmax(dim=1), net.n_classes).permute(0, 3, 1, 2).float()
                 # compute the Dice score, ignoring background
-                dice_score += multiclass_dice_coeff(mask_pred[:, 1:, ...], mask_true[:, 1:, ...], reduce_batch_first=False)
-
-           
+                dice_score += multiclass_dice_coeff(mask_pred[:, 1:, ...], mask_true[:, 1:, ...], reduce_batch_first=False)  
 
     net.train()
 
@@ -75,3 +73,12 @@ def dice_loss(input: Tensor, target: Tensor, multiclass: bool = False):
     assert input.size() == target.size()
     fn = multiclass_dice_coeff if multiclass else dice_coeff
     return 1 - fn(input, target, reduce_batch_first=True)
+
+
+def view_model(model_path):
+    # Load and view a previously trained model from a .pth or .pt file.
+    model = torch.load(model_path)
+    model.eval()
+    print(model)
+    return model
+
