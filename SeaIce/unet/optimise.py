@@ -55,7 +55,7 @@ def optimise():
     tile_size = tile_sizes[tile_index]
 
     ### Get fitness function ###
-    
+
     # if improved:
     learning_rate_best = learning_rate
     batch_size_best = batch_size
@@ -63,7 +63,7 @@ def optimise():
     val_percent_best = val_percent
     img_scale_best = img_scale
     tile_index_best = tile_index
-   
+
     # if fitness score is worse than a certain threshold:
     learning_rate = learning_rate_best
     batch_size = batch_size_best
@@ -89,11 +89,10 @@ if __name__ == '__main__':
     #print(receptive_field(model, input_size=(3, 256, 256)))
     tile_sizes = [tiled256, tiled512, tiled768, tiled1024]
     best_loss, iterations = 100, 0
-    all_losses = []
+    losses = []
     #while best_loss > 0.5 and iterations < 10:
-    for tiles in tile_sizes:
-        tiles_losses = []
-        for _ in range(4):
+    for _ in range(3):
+        for tiles in tile_sizes: 
             # Replace these parameters later with Jonnycode.
             loss = train_net(net=net,
                       device=processor,
@@ -107,13 +106,11 @@ if __name__ == '__main__':
                       val_percent=args.val / 100,
                       amp=args.amp)
             loss = loss.item()
-            tiles_losses.append(loss)
+            losses.append((tiles, loss))
             if loss < best_loss:
                 best_loss = loss
                 best_tile_size = tiles
-            #iterations += 1
-        avg_loss = sum(tiles_losses)/4
-        all_losses.append((tiles, avg_loss))
+            iterations += 1
     print('best tile size:', best_tile_size, best_loss)
-    print(all_losses)
+    print(losses)
     print("pause")

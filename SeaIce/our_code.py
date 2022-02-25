@@ -11,7 +11,7 @@ tiled = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled1024"
 all_folder_names, all_folder_paths = get_contents(data, None, None)
 
 #for index in range(len(all_folder_names)):
-for index in range(5):
+for index in range(3):
 
      # Look in the first folder
     folder_name, folder_path = all_folder_names[index], all_folder_paths[index]

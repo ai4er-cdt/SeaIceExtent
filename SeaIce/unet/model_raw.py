@@ -140,7 +140,6 @@ def get_args():
                         help='Learning rate', dest='lr')
     parser.add_argument('--load', '-f', type=str, default=False, help='Load model from a .pth file')
     parser.add_argument('--scale', '-s', type=float, default=0.5, help='Downscaling factor of the images')
-    parser.add_argument('--save-checkpoint', '-c', default = True, help='Save a checkpoint file after each validation round')
     parser.add_argument('--validation', '-v', dest='val', type=float, default=10.0,
                         help='Percent of the data that is used as validation (0-100)')
     parser.add_argument('--amp', action='store_true', default=False, help='Use mixed precision')
@@ -165,21 +164,25 @@ def get_mini_args():
     return parser.parse_args()
 
 
-def run_training(image_type):
+if __name__ == '__main__':
     args = get_args()
 
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
     logging.info(f'Using device {processor}')
 
-    if image_type == "sar":
-        net = UNet(n_channels=1, n_classes=2, bilinear=True)
-    elif image_type == "modis":
-        net = UNet(n_channels=3, n_classes=2, bilinear=True)
+    # Change here to adapt to your data
+    # n_channels=3 for RGB images
+    # n_classes is the number of probabilities you want to get per pixel
+    net = UNet(n_channels=3, n_classes=2, bilinear=True)
 
     logging.info(f'Network:\n'
                  f'\t{net.n_channels} input channels\n'
                  f'\t{net.n_classes} output channels (classes)\n'
                  f'\t{"Bilinear" if net.bilinear else "Transposed conv"} upscaling')
+
+#    if args.load:
+#        net.load_state_dict(torch.load(args.load, map_location=processor))
+#        logging.info(f'Model loaded from {args.load}')
 
     net.to(device=processor)
     try:
@@ -187,7 +190,6 @@ def run_training(image_type):
                   device=processor,
                   epochs=args.epochs, 
                   image_type="modis",
-                  dir_img=tiled512,
                   batch_size=args.batch_size,
                   learning_rate=args.lr,
                   img_scale=args.scale,
@@ -198,8 +200,3 @@ def run_training(image_type):
         torch.save(net.state_dict(), 'INTERRUPTED.pth')
         logging.info('Saved interrupt')
         sys.exit(0)
-
-
-# How to run:
-#if __name__ == '__main__':
-#    run_training("modis")
