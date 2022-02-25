@@ -1,5 +1,5 @@
-from SeaIce.unet.shared import *
-from SeaIce.unet.dataset_preparation import *
+from unet.shared import *
+from unet.dataset_preparation import *
 
 
 torch.manual_seed(2022)  # Setting random seed so that augmentations can be reproduced.
@@ -8,7 +8,7 @@ val_percent = 0.1
 batch_size = 1
 
 # Create dataset
-img_list = create_npy_list(tiled512, imagery)
+img_list = create_npy_list(tiled512, img_type)
 
 if img_type == "sar":
     single_channel = True
@@ -63,7 +63,7 @@ if __name__ == '__main__':
         # do something (save model, change lr, etc.)
         if max_score < valid_logs['iou_score']:
             max_score = valid_logs['iou_score']
-            dir_checkpoint = create_checkpoint_dir(path_checkpoint, imagery, model_type='pretrained')
+            dir_checkpoint = create_checkpoint_dir(path_checkpoint, img_type, model_type='pretrained')
             torch.save(model, str(dir_checkpoint + 'best_model.pth'))
             print('Model saved!')
 

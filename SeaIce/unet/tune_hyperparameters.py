@@ -1,5 +1,5 @@
-from SeaIce.unet.dataset_preparation import *
-from SeaIce.unet.evaluation import *
+from unet.dataset_preparation import *
+from unet.evaluation import *
 import wandb
 
 # Model Name
