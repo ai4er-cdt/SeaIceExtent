@@ -101,7 +101,7 @@ def tile_prediction_image(image_path, image_type, out_path, tile_size):
         for tile_count, (tile_image) in enumerate(row_image):
             tile_num = num_shape * row_count + tile_count
             # Save the tiles.            
-            image_name = name_file("prediction_tile{}_{}".format(tile_num, image_type), ".npy", out_path)
+            image_name = name_file("{}_tile{}_row{}_col{}".format(image_type, tile_num, row_count, tile_count), ".npy", out_path)
             np.save(image_name, tile_image)
             # Update metadata. 
             generate_metadata(tile_num, image_type, 1, 1, top_left, row_count, tile_count, step_size, tile_size, out_path)
@@ -116,3 +116,34 @@ def tif_to_window(tif_path, window_shape, step_size):
     return image_window
 
 
+def reconstruct_from_tiles(tiles_path):
+    os.chdir(tiles_path)
+    file_names = os.listdir()
+    num_rows, num_cols = 0, 0
+    for file_name in file_names:
+        if "row0" in file_name:
+            num_cols += 1
+        if "col0" in file_name:
+            num_rows += 1
+    row, next_row = 0, 1
+    full_array = []
+    for row in range(num_rows-1):
+        row_array = []
+        for col in range(num_cols):
+            file_num = (row * (num_cols + 1)) + col + 1
+            tile_file = file_names[file_num]
+            tile_array = np.load(tile_file)
+            tile_array = tile_array[0]
+            if len(row_array) == 0:
+                row_array = tile_array
+            else:
+                row_array = np.concatenate((row_array, tile_array), axis=1)
+        if len(full_array) == 0:
+            full_array = row_array
+        else:
+            full_array = np.concatenate((full_array, row_array), axis=0)
+    mosaic_name = name_file("reconstructed", ".npy", tiles_path)
+    np.save(mosaic_name, full_array)
+
+   
+        
