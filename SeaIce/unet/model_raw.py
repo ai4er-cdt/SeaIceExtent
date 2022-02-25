@@ -1,9 +1,9 @@
 """ Implementation of model """
 
-from SeaIce.unet.shared import *
-from SeaIce.unet.evaluation import evaluate, dice_loss
-from SeaIce.unet.dataset_preparation import *
-from SeaIce.unet.network_structure import UNet
+from unet.shared import *
+from unet.evaluation import evaluate, dice_loss
+from unet.dataset_preparation import *
+from unet.network_structure import UNet
 
 import argparse
 import sys
