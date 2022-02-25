@@ -58,4 +58,6 @@ def make_prediction_data():
 
 
 #make_training_data()
-make_prediction_data()
+#make_prediction_data()
+from preprocessing.tiling import reconstruct_from_tiles
+reconstruct_from_tiles(r"C:\Users\sophi\source\repos\SeaIce\SeaIce\temp\current_prediction")

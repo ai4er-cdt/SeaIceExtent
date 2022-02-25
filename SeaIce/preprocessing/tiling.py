@@ -126,14 +126,22 @@ def reconstruct_from_tiles(tiles_path):
         if "col0" in file_name:
             num_rows += 1
     row, next_row = 0, 1
-    full_array, row_array = [], []
-    for row in num_rows:
-        for col in num_cols:
-            file_num = row * (num_cols + 1) + col + 1
+    full_array = []
+    for row in range(num_rows-1):
+        row_array = []
+        for col in range(num_cols):
+            file_num = (row * (num_cols + 1)) + col + 1
             tile_file = file_names[file_num]
             tile_array = np.load(tile_file)
-            row_array = np.concatenate((row_array, tile_array), axis=1)
-        full_array = np.concatenate((full_array, row_array), axis=0)
+            tile_array = tile_array[0]
+            if len(row_array) == 0:
+                row_array = tile_array
+            else:
+                row_array = np.concatenate((row_array, tile_array), axis=1)
+        if len(full_array) == 0:
+            full_array = row_array
+        else:
+            full_array = np.concatenate((full_array, row_array), axis=0)
     mosaic_name = name_file("reconstructed", ".npy", tiles_path)
     np.save(mosaic_name, full_array)
 
