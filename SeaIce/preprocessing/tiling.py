@@ -3,7 +3,7 @@ from PIL import Image
 from preprocessing.data_handling import *
 
 
-def tile_images(labels_path, out_path, tile_size, step_size, date_name, modis_path = None, sar_path = None): 
+def tile_training_images(labels_path, out_path, tile_size, step_size, date_name, modis_path = None, sar_path = None): 
     """Divide associated images into tiles and save the tiles and their metadata.
        Parameters: labels_path: (string) file path of labelled raster.
                    out_path: (string) path to directory to write output.
@@ -14,7 +14,7 @@ def tile_images(labels_path, out_path, tile_size, step_size, date_name, modis_pa
                    sar_path: (string) file path of radar image, or None.
     """
     if modis_path == None and sar_path == None:
-        raise Exception(help(tile_images), "No optical or radar image provided. The file path to least one of these must be supplied.")
+        raise Exception(help(tile_training_images), "No optical or radar image provided. The file path to least one of these must be supplied.")
 
     has_modis, has_sar = False, False
 
@@ -76,6 +76,35 @@ def tile_images(labels_path, out_path, tile_size, step_size, date_name, modis_pa
                 np.save(image_name, tile_labels)
                 # Update metadata.
                 generate_metadata(tile_num, date_name, n_water, n_ice, top_left, row_count, tile_count, step_size, tile_size, out_path)
+
+
+def tile_prediction_image(image_path, image_type, out_path, tile_size): 
+    """Divide image into tiles and save the tiles and their metadata.
+       Parameters: image_path: (string) file path of image.
+                   image_type: (string) modis or sar.
+                   out_path: (string) path to directory to write output.
+                   tile_size: (int) number of pixels in length or width of square tile.
+    """
+    step_size = tile_size
+    if image_type == "modis":
+        window_shape = (tile_size, tile_size, 3)
+    elif image_type == "sar":
+        window_shape = (tile_size, tile_size)
+    image_window = tif_to_window(image_path, window_shape, step_size)
+    image_data = gdal.Open(image_path)
+    geography = image_data.GetGeoTransform()
+    top_left = geography[0], geography[3]
+    image_data.FlushCache()
+    del image_data
+    num_shape = image_window.shape[1]
+    for row_count, (row_image) in enumerate(image_window):
+        for tile_count, (tile_image) in enumerate(row_image):
+            tile_num = num_shape * row_count + tile_count
+            # Save the tiles.            
+            image_name = name_file("prediction_tile{}_{}".format(tile_num, image_type), ".npy", out_path)
+            np.save(image_name, tile_image)
+            # Update metadata. 
+            generate_metadata(tile_num, image_type, 1, 1, top_left, row_count, tile_count, step_size, tile_size, out_path)
 
 
 def tif_to_window(tif_path, window_shape, step_size):

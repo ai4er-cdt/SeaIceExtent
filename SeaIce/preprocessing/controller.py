@@ -1,7 +1,7 @@
 from preprocessing.data_handling import *
 from preprocessing import stitching, resizing, clipping, relabelling, tiling
 
-def preprocess(shape_file_path, folder_name, modis_paths = None, sar_path = None, out_path = "temp", resolution = 40, 
+def preprocess_training(shape_file_path, folder_name, modis_paths = None, sar_path = None, out_path = "temp", resolution = 40, 
                relabel_from = [0], relabel_to = [0], relabel_scale = 1, tile_size = 512, step_size = 384):
    """
    Handles the sequence of performing all the preprocessing functions.
@@ -19,9 +19,9 @@ def preprocess(shape_file_path, folder_name, modis_paths = None, sar_path = None
    try:
        fiona.open(shape_file_path)
    except:
-       raise Exception(help(preprocess), "Shapefile could not be opened. A .shp file must be provided.")
+       raise Exception(help(preprocess_training), "Shapefile could not be opened. A .shp file must be provided.")
    if modis_paths == None and sar_path == None:
-       raise Exception(help(preprocess), "No optical or radar image provided. The file path to least one of these must be supplied.")
+       raise Exception(help(preprocess_training), "No optical or radar image provided. The file path to least one of these must be supplied.")
    if len(modis_paths) != 0:
         if len(modis_paths) > 1:
             # Stitch the modis images together
@@ -55,7 +55,20 @@ def preprocess(shape_file_path, folder_name, modis_paths = None, sar_path = None
    relabelling.relabel(labels_path, relabel_from, relabel_to, relabel_scale)
 
     # Tile    
-   tiling.tile_images(labels_path, out_path, tile_size, step_size, folder_name, modis_file_path, sar_path)
+   tiling.tile_training_images(labels_path, out_path, tile_size, step_size, folder_name, modis_file_path, sar_path)
 
    delete_temp_files()
+
+
+def preprocess_prediction(image_path, image_type, out_path, resolution, tile_size):
+   if image_type == "modis" and resolution != None:
+           # Alter resolution of modis image
+           new_resolution_path = name_file("new_resolution", ".tif", "temp")
+           resizing.change_resolution(image_path, new_resolution_path, resolution)
+           # The image will be too large
+           new_size_path = name_file("resized", ".tif", "temp")
+           resizing.halve_size(new_resolution_path, new_size_path)
+   # Tile
+   tiling.tile_prediction_image(new_size_path, image_type, out_path, tile_size)
+   #delete_temp_files()
 
