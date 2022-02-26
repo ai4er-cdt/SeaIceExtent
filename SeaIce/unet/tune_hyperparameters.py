@@ -1,56 +1,8 @@
 from unet.dataset_preparation import *
 from unet.evaluation import *
+from unet.mini_network import *
 import wandb
-
-# Model Name
-model_name = 'unet-original'
-
-# Configuring wandb settings
-sweep_config = {
-    'method': 'random',  # Random search method -- less computationally expensive yet effective.
-}
-
-# Tuned hyperparameters
-parameters_dict = {
-    'optimiser': {
-        'values': ['adam', 'sgd']
-    },
-    'learning_rate': {
-        # a flat distribution between 0 and 0.1
-        'distribution': 'uniform',
-        'min': 0,
-        'max': 0.1
-    },
-    'batch_size': {
-        # Uniformly-distributed between 5-15
-        'distribution': 'uniform',
-        'min': 5,
-        'max': 15,
-    },
-    'epochs': {
-        # a flat distribution between 0 and 0.1
-        'distribution': 'uniform',
-        'min': 1,
-        'max': 10
-    }
-}
-sweep_config['parameters'] = parameters_dict
-
-# Fixed hyperparamters
-parameters_dict.update({
-    'weight_decay': {
-        'value': 1e-8},
-    'momentum': {
-        'value': 0.9},
-    'validation_percent': {
-        'value': 0.1},
-    'img_scale': {
-        'value': 0.5}
-})
-
-sweep_id = wandb.sweep(sweep_config, project=model_name + "hyp-sweep")
-
-
+import os
 import torch.optim as optim
 
 
@@ -64,7 +16,12 @@ def build_optimiser(network, config):
     return optimiser
 
 
-def train_and_validate(img_dir, image_type, return_type, config=None, amp=False, device='cpu'):
+def train_and_validate(config=None, amp=False, device='cpu'):
+
+    img_dir = '../tiled/'
+    image_type = 'sar'
+    net = MiniUNet(1, 2, True)
+    return_type = 'dict'
 
     # Initialize a new wandb run
     with wandb.init(config=config):
@@ -83,9 +40,6 @@ def train_and_validate(img_dir, image_type, return_type, config=None, amp=False,
         img_list = small_sample(img_list)
         dataset = CustomImageDataset(img_list, is_single_band, return_type)
         n_val, n_train, train_loader, val_loader = split_data(dataset, config.validation_percent, config.batch_size, 2)
-
-        # Network
-        net = 10000
 
         # Optimiser
         optimiser = build_optimiser(net, config)
@@ -137,10 +91,71 @@ def train_and_validate(img_dir, image_type, return_type, config=None, amp=False,
                     val_score = evaluate(net, val_loader, device)
                     scheduler.step(val_score)
 
-            wandb.log({"epoch loss": epoch_loss, "epoch": epoch})
+
+            wandb.log({"loss": epoch_loss, "epoch": epoch})
 
 
 
+if __name__ == '__main__':
 
-n_tuning = 5
-wandb.agent(sweep_id, function=train_and_validate, count=n_tuning)
+    os.environ["WANDB_API_KEY"] = 'ENTER API KEY'
+
+    wandb.init(project="test-hyptuning")
+
+    # Model Name
+    model_name = 'mini-unet'
+
+    # Configuring wandb settings
+    sweep_config = {
+        'method': 'random',  # Random search method -- less computationally expensive yet effective.
+    }
+
+    metric = {
+        'name': 'loss',
+        'goal': 'minimize'
+    }
+
+    sweep_config['metric'] = metric
+
+    # Tuned hyperparameters
+    parameters_dict = {
+        'optimiser': {
+            'values': ['adam', 'sgd']
+        },
+        'learning_rate': {
+            # a flat distribution between 0 and 0.1
+            'distribution': 'uniform',
+            'min': 0,
+            'max': 0.1
+        },
+        'batch_size': {
+            # Uniformly-distributed between 5-15
+            'distribution': 'int_uniform',
+            'min': 5,
+            'max': 15,
+        },
+        'epochs': {
+            # a flat distribution between 0 and 0.1
+            'distribution': 'int_uniform',
+            'min': 1,
+            'max': 10
+        }
+    }
+    sweep_config['parameters'] = parameters_dict
+
+    # Fixed hyperparamters
+    parameters_dict.update({
+        'weight_decay': {
+            'value': 1e-8},
+        'momentum': {
+            'value': 0.9},
+        'validation_percent': {
+            'value': 0.1},
+        'img_scale': {
+            'value': 0.5}
+    })
+
+    sweep_id = wandb.sweep(sweep_config, project=model_name + "hyp-sweep")
+
+    n_tuning = 5
+    wandb.agent(sweep_id, function=train_and_validate, count=n_tuning)
