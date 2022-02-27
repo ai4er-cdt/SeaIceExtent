@@ -68,7 +68,8 @@ def preprocess_prediction(image_path, image_type, out_path, resolution, tile_siz
            # The image will be too large
            new_size_path = name_file("resized", ".tif", "temp")
            resizing.halve_size(new_resolution_path, new_size_path)
+           image_path = new_size_path
    # Tile
-   tiling.tile_prediction_image(new_size_path, image_type, out_path, tile_size)
+   tiling.tile_prediction_image(image_path, image_type, out_path, tile_size)
    #delete_temp_files()
 

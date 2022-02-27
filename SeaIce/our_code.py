@@ -4,12 +4,14 @@ from preprocessing import controller
 import fiona
 from preprocessing.data_handling import get_contents
 
-test = r"C:\Users\sophi\test"
+#test = r"C:\Users\sophi\test"
 data = r"G:\Shared drives\2021-gtc-sea-ice\data"
 tiled256 = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled256"
 tiled512 = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled512"
 tiled768 = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled768"
 tiled1024 = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled1024"
+prediction_raw = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\test_raw\sar"
+prediction_tiles = r"G:\Shared drives\2021-gtc-sea-ice\prediction"
 
 
 def make_training_data():
@@ -53,11 +55,13 @@ def make_training_data():
 
 
 def make_prediction_data():
-    controller.preprocess_prediction(r'G:\Shared drives\2021-gtc-sea-ice\data\2011-02-14_024135\MODIS\Antarctica_r05c02.2011045.terra.367.250m.tif',
-                                     "modis", "prediction", 40, 512)
+    _, image_paths = get_contents(prediction_raw, None, None)
+    _, tile_folders = get_contents(prediction_tiles, None, None)
+    for i in range(5):
+        image_path = r'{}'.format(image_paths[i])
+        tile_folder = r'{}'.format(tile_folders[i])
+        controller.preprocess_prediction(image_path, "sar", tile_folder, None, 512)
 
 
 #make_training_data()
-#make_prediction_data()
-from preprocessing.tiling import reconstruct_from_tiles
-reconstruct_from_tiles(r"C:\Users\sophi\source\repos\SeaIce\SeaIce\temp\current_prediction")
+make_prediction_data()
