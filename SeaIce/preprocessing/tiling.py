@@ -108,12 +108,14 @@ def tile_prediction_image(image_path, image_type, out_path, tile_size):
 
 
 def tif_to_window(tif_path, window_shape, step_size):
-    Image.MAX_IMAGE_PIXELS = 660000000
+    Image.MAX_IMAGE_PIXELS = 900000000
     try:
         image_tif = Image.open(tif_path)
+        image_array = np.asarray(image_tif)
     except:
         image_tif = gdal.Open(tif_path)
-    image_array = np.asarray(image_tif)
+        image_array = np.array(image_tif.GetRasterBand(1).ReadAsArray())
+    
     del image_tif
     image_window = np.lib.stride_tricks.sliding_window_view(x=image_array, window_shape=(window_shape))[::step_size, ::step_size]
     return image_window
