@@ -44,17 +44,22 @@ def train_and_validate(config=None, amp=False, device='cpu'):
         # Optimiser
         optimiser = build_optimiser(net, config)
 
-        scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimiser, 'max', patience=2)  # CHECK goal: maximize Dice score
+        scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimiser, 'max',
+                                                         patience=2)  # CHECK goal: maximize Dice score
         grad_scaler = torch.cuda.amp.GradScaler(enabled=False)
         criterion = nn.CrossEntropyLoss()
         global_step = 0
+        # epoch_step
 
         # Begin training
-
+        run_loss_train = 0
+        run_loss_val = 0
         for epoch in range(config.epochs):
             net.train()
             epoch_loss = 0
+            n_batches = 0
             with tqdm(total=n_train, desc=f'Epoch {epoch + 1}/{config.epochs}', unit='img') as pbar:
+
                 for batch in train_loader:
                     images = batch['image']
                     true_masks = batch['mask']
@@ -67,14 +72,18 @@ def train_and_validate(config=None, amp=False, device='cpu'):
                     images = images.to(device=device, dtype=torch.float32)
                     true_masks = true_masks.to(device=device, dtype=torch.long)
 
+                    # Adding based on pytorch documentation
+                    # optimiser.zero_grad()
+
+                    # Making prediction and calculating loss
                     with torch.cuda.amp.autocast(enabled=amp):
                         masks_pred = net(images)
                         loss = criterion(masks_pred, true_masks) \
                                + dice_loss(F.softmax(masks_pred, dim=1).float(),
                                            F.one_hot(true_masks, net.n_classes).permute(0, 3, 1, 2).float(),
                                            multiclass=True)
-                    # change number for permute?
 
+                    # Optimisation
                     optimiser.zero_grad(set_to_none=True)
                     grad_scaler.scale(loss).backward()
                     grad_scaler.step(optimiser)
@@ -82,17 +91,29 @@ def train_and_validate(config=None, amp=False, device='cpu'):
 
                     pbar.update(images.shape[0])
                     global_step += 1
-                    epoch_loss += loss.item()
-
-                    wandb.log({"batch loss": loss.item()})
-
+                    batch_loss = loss.item()
+                    epoch_loss += batch_loss
+                    wandb.log({"Batch Loss, Training": batch_loss}, step=global_step)
                     pbar.set_postfix(**{'loss (batch)': loss.item()})
+                    n_batches += 1
 
-                    val_score = evaluate(net, val_loader, device)
-                    scheduler.step(val_score)
+                val_score = evaluate(net, val_loader, device)
+                print(f'\nVal Score: {val_score}, Epoch: {epoch}')
 
+                # wandb.log({"Batch Loss, Validation": val_score_list[index]}, step=global_step-(len(val_score_list)+index))
+                # wandb.log({"Epoch Validation Loss": val_score}) , step=global_step-(len(val_score_list)+index)
+                scheduler.step(val_score)
 
-            wandb.log({"loss": epoch_loss, "epoch": epoch})
+            avg_epoch_training_loss = epoch_loss / n_batches
+            # wandb.log({"Epoch Training Loss": avg_epoch_training_loss})
+            run_loss_train += avg_epoch_training_loss
+            # run_loss_val += val_score
+            print('Logging Epoch Scores')
+            wandb.log({"Epoch Loss, Training": avg_epoch_training_loss, "Epoch Loss, Validation": val_score,
+                       "Epoch": epoch + 1}, step=global_step)
+
+        wandb.log({"Run Loss, Training": run_loss_train / config.epochs, "Run Loss, Validation": val_score},
+                  step=global_step)
 
 
 
@@ -111,7 +132,7 @@ if __name__ == '__main__':
     }
 
     metric = {
-        'name': 'loss',
+        'name': 'Run Loss, Validation',
         'goal': 'minimize'
     }
 
@@ -132,13 +153,13 @@ if __name__ == '__main__':
             # Uniformly-distributed between 5-15
             'distribution': 'int_uniform',
             'min': 5,
-            'max': 15,
+            'max': 10,
         },
         'epochs': {
             # a flat distribution between 0 and 0.1
             'distribution': 'int_uniform',
-            'min': 1,
-            'max': 10
+            'min': 4,
+            'max': 5
         }
     }
     sweep_config['parameters'] = parameters_dict
@@ -150,12 +171,14 @@ if __name__ == '__main__':
         'momentum': {
             'value': 0.9},
         'validation_percent': {
-            'value': 0.1},
+            'value': 0.5},
         'img_scale': {
-            'value': 0.5}
+            'value': 0.5},
+        'epochs': {
+            'value': 3}
     })
 
     sweep_id = wandb.sweep(sweep_config, project=model_name + "hyp-sweep")
 
-    n_tuning = 5
+    n_tuning = 10
     wandb.agent(sweep_id, function=train_and_validate, count=n_tuning)
