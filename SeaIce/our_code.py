@@ -5,14 +5,23 @@ import fiona
 from preprocessing.data_handling import get_contents
 
 #test = r"C:\Users\sophi\test"
-data = r"G:\Shared drives\2021-gtc-sea-ice\data"
-tiled256 = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled256"
-tiled512 = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled512"
-tiled768 = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled768"
-tiled1024 = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled1024"
+#data = r"G:\Shared drives\2021-gtc-sea-ice\data"
+#tiled256 = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled256"
+#tiled512 = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled512"
+#tiled768 = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled768"
+#tiled1024 = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled1024"
+#prediction_raw = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\test_raw\sar"
+#prediction_tiles = r"G:\Shared drives\2021-gtc-sea-ice\prediction"
+
+
+# For Maddy: /mnt/g/Shared drives/
+data = r"mnt\g\Shared drives\2021-gtc-sea-ice\data"
+tiled256 = r"mnt\g\Shared drives\2021-gtc-sea-ice\trainingdata\tiled256"
+tiled512 = r"mnt\g\Shared drives\2021-gtc-sea-ice\trainingdata\tiled512"
+tiled768 = r"mnt\g\Shared drives\2021-gtc-sea-ice\trainingdata\tiled768"
+tiled1024 = r"mnt\g\Shared drives\2021-gtc-sea-ice\trainingdata\tiled1024"
 prediction_raw = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\test_raw\sar"
 prediction_tiles = r"G:\Shared drives\2021-gtc-sea-ice\prediction"
-
 
 def make_training_data():
 
