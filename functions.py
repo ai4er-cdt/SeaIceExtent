@@ -576,8 +576,8 @@ def augment_dataset(original_dataset, flip_hor, flip_ver, rotate_90, rotate_180,
 #clipped = r"\gws\nopw\j04\bas_climate\projects\SeaIceExtent\trainingdata\clipped"
 #tiled = r"\gws\nopw\j04\bas_climate\projects\SeaIceExtent\trainingdata\tiled"
 
-raw = r"~\data"
-clipped = r"\gws\nopw\j04\bas_climate\projects\SeaIceExtent\trainingdata\clipped"
-tiled = r"\gws\nopw\j04\bas_climate\projects\SeaIceExtent\trainingdata\tiled"
+raw = r"data"
+clipped = r"trainingdata\clipped"
+tiled = r"trainingdata\tiled"
 
 tile_all(raw, clipped, tiled, 512, 384)
