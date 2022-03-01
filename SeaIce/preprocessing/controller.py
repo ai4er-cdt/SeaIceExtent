@@ -83,8 +83,12 @@ def make_prediction_data(image_path):
     if image_path.endswith(".tif"):
         # Individual image.
         image_paths = [image_path]
+        image_path = image_path[::-1]
+        folder = image_path.split("\\", 1)
+        folder = folder[::-1]
     else:
         # Folder containing images.
+        folder = image_path
         image_names, image_paths = get_contents(image_path, ".tif", "suffix")
     for image in image_paths:
         image_path = r'{}'.format(image)
@@ -93,8 +97,8 @@ def make_prediction_data(image_path):
         if open_image.RasterCount == 1:
             image_type = "sar"
         elif open_image.RasterCount > 3:
-            rebanding.select_bands(open_image)
-        print(open_image.RasterCount)
-
+            # name rebanded image path.
+            image_path = name_file("rebanded", ".tif", folder)
+            rebanding.select_bands(open_image, image_path)
         preprocess_prediction(image_path, "sar", tile_folder, None, 512)
 
