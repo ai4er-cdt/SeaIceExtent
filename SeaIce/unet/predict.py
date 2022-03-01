@@ -4,7 +4,6 @@ from torchvision import transforms
 import segmentation_models_pytorch as smp
 from network_structure import UNet
 from dataset_preparation import create_npy_list
-#from sklearn.metrics import precision_score, accuracy_score
 
 
 def load_model(model_path, unet_type, image_type):
@@ -87,6 +86,8 @@ def mask_to_image(mask: np.ndarray):
 def make_predictions(model_path, unet_type, image_type, dir_test, dir_out, log = False, metrics = False, viz = False, save = False):
     if viz:
         import matplotlib.pyplot as plt
+    if metrics:
+        from sklearn.metrics import precision_score, accuracy_score
 
     img_list = create_npy_list(dir_test, image_type)
     
