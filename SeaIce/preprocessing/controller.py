@@ -100,5 +100,5 @@ def make_prediction_data(image_path):
             # name rebanded image path.
             image_path = name_file("rebanded", ".tif", folder)
             rebanding.select_bands(open_image, image_path)
-        preprocess_prediction(image_path, "sar", tile_folder, None, 512)
+        preprocess_prediction(image_path, image_type, folder, None, 512)
 
