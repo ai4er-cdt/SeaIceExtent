@@ -1,9 +1,8 @@
 {
   "ExpandedNodes": [
     "",
-    "\\preprocessing",
     "\\unet"
   ],
-  "SelectedNode": "\\preprocessing\\tiling.py",
+  "SelectedNode": "\\our_code.py",
   "PreviewInSolutionExplorer": false
 }

@@ -1,9 +1,9 @@
 try:
     from data_handling import *
-    import stitching, resizing, clipping, relabelling, tiling
+    import stitching, resizing, clipping, relabelling, tiling, rebanding
 except:
     from preprocessing.data_handling import *
-    from preprocessing import stitching, resizing, clipping, relabelling, tiling
+    from preprocessing import stitching, resizing, clipping, relabelling, tiling, rebanding
 
 
 def preprocess_training(shape_file_path, folder_name, modis_paths = None, sar_path = None, out_path = "temp", resolution = 40, 
@@ -76,5 +76,25 @@ def preprocess_prediction(image_path, image_type, out_path, resolution, tile_siz
            image_path = new_size_path
    # Tile
    tiling.tile_prediction_image(image_path, image_type, out_path, tile_size)
-   #delete_temp_files()
+
+
+def make_prediction_data(image_path):
+    # Check if the provided path is to a folder or an individual image.
+    if image_path.endswith(".tif"):
+        # Individual image.
+        image_paths = [image_path]
+    else:
+        # Folder containing images.
+        image_names, image_paths = get_contents(image_path, ".tif", "suffix")
+    for image in image_paths:
+        image_path = r'{}'.format(image)
+        # Find out if the image is modis or sar.
+        open_image = gdal.Open(image_path)
+        if open_image.RasterCount == 1:
+            image_type = "sar"
+        elif open_image.RasterCount > 3:
+            rebanding.select_bands(open_image)
+        print(open_image.RasterCount)
+
+        preprocess_prediction(image_path, "sar", tile_folder, None, 512)
 
