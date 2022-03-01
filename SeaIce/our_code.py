@@ -2,26 +2,22 @@
 # This code is not really reuseable unless given as an example.
 from preprocessing import controller
 import fiona
+from pathlib import Path
 from preprocessing.data_handling import get_contents
 
+
+prefix = "G:"
+prefix = "/mnt/g"
+
 #test = r"C:\Users\sophi\test"
-#data = r"G:\Shared drives\2021-gtc-sea-ice\data"
-#tiled256 = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled256"
-#tiled512 = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled512"
-#tiled768 = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled768"
-#tiled1024 = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled1024"
-#prediction_raw = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\test_raw\sar"
-#prediction_tiles = r"G:\Shared drives\2021-gtc-sea-ice\prediction"
+data = Path(r"{}/Shared drives/2021-gtc-sea-ice/data".format(prefix))
+tiled256 = Path(r"{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled256".format(prefix))
+tiled512 = Path(r"{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled512".format(prefix))
+tiled768 = Path(r"{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled768".format(prefix))
+tiled1024 = Path(r"{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled1024".format(prefix))
+prediction_raw = Path(r"{}/Shared drives/2021-gtc-sea-ice/trainingdata/test_raw/sar".format(prefix))
+prediction_tiles = Path(r"{}/Shared drives/2021-gtc-sea-ice/prediction".format(prefix))
 
-
-# For Maddy: /mnt/g/Shared drives/
-data = r"mnt\g\Shared drives\2021-gtc-sea-ice\data"
-tiled256 = r"mnt\g\Shared drives\2021-gtc-sea-ice\trainingdata\tiled256"
-tiled512 = r"mnt\g\Shared drives\2021-gtc-sea-ice\trainingdata\tiled512"
-tiled768 = r"mnt\g\Shared drives\2021-gtc-sea-ice\trainingdata\tiled768"
-tiled1024 = r"mnt\g\Shared drives\2021-gtc-sea-ice\trainingdata\tiled1024"
-prediction_raw = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\test_raw\sar"
-prediction_tiles = r"G:\Shared drives\2021-gtc-sea-ice\prediction"
 
 def make_training_data():
 

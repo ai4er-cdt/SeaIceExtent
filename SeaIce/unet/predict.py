@@ -1,7 +1,6 @@
 from shared import *
 from PIL import Image
 from torchvision import transforms
-import matplotlib.pyplot as plt
 import segmentation_models_pytorch as smp
 from network_structure import UNet
 from dataset_preparation import create_npy_list
@@ -86,6 +85,9 @@ def mask_to_image(mask: np.ndarray):
     
 
 def make_predictions(model_path, unet_type, image_type, dir_test, dir_out, log = False, metrics = False, viz = False, save = False):
+    if viz:
+        import matplotlib.pyplot as plt
+
     img_list = create_npy_list(dir_test, image_type)
     
     net = load_model(model_path, unet_type, image_type)
@@ -139,9 +141,6 @@ def make_predictions(model_path, unet_type, image_type, dir_test, dir_out, log =
              result.save(out_filename)
              logging.info(f'Mask saved to {out_filename}')
 
-                
-#prefix = "/mnt/g"
-prefix = "G:"
 
 model_path = Path(r'{}/Shared drives/2021-gtc-sea-ice/model/checkpoints/unet_orig/checkpoint_epoch1.pth'.format(prefix))
 unet_type = 'raw'
@@ -149,4 +148,4 @@ image_type = 'sar'
 dir_test = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata/test_tiles/'.format(prefix))
 dir_out = Path(r'{}/Shared drives/2021-gtc-sea-ice/model/outtiles/'.format(prefix))
 
-make_predictions(model_path, unet_type, image_type, dir_test, dir_out, viz = True, save = True)
+make_predictions(model_path, unet_type, image_type, dir_test, dir_out, viz = False, save = True)

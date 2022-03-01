@@ -14,13 +14,15 @@ import os
 import segmentation_models_pytorch as smp
 
 # Shared constants
+#prefix = "/mnt/g" # Maddy
+prefix = "G:" # Sophie
 #processor = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 processor = torch.device('cpu')
-tiled256 = Path(r'G:/Shared drives/2021-gtc-sea-ice/trainingdata/tiled256/')
-tiled512 = Path(r'G:/Shared drives/2021-gtc-sea-ice/trainingdata/tiled512/')
-tiled768 = Path(r'G:/Shared drives/2021-gtc-sea-ice/trainingdata/tiled768/')
-tiled1024 = Path(r'G:/Shared drives/2021-gtc-sea-ice/trainingdata/tiled1024/')
-path_checkpoint = Path(r'G:/Shared drives/2021-gtc-sea-ice/model/checkpoints/')
+tiled256 = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled256/'.format(prefix))
+tiled512 = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled512/'.format(prefix))
+tiled768 = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled768/'.format(prefix))
+tiled1024 = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled1024/'.format(prefix))
+path_checkpoint = Path(r'{}/Shared drives/2021-gtc-sea-ice/model/checkpoints/'.format(prefix))
 
 # Allow imports to function the same in different environments
 program_path = os.getcwd()
