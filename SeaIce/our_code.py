@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 prefix = "G:"
-prefix = "/mnt/g"
+#prefix = "/mnt/g"
 
 #test = r"C:\Users\sophi\test"
 data = Path(r"{}/Shared drives/2021-gtc-sea-ice/data".format(prefix))
@@ -17,6 +17,9 @@ tiled768 = Path(r"{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled768".forma
 tiled1024 = Path(r"{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled1024".format(prefix))
 prediction_raw = Path(r"{}/Shared drives/2021-gtc-sea-ice/trainingdata/test_raw/sar".format(prefix))
 prediction_tiles = Path(r"{}/Shared drives/2021-gtc-sea-ice/prediction".format(prefix))
+model_path = Path(r"{}/Shared drives/2021-gtc-sea-ice/model/checkpoints/unet_orig/checkpoint_epoch1.pth".format(prefix))
+dir_test = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata/test_tiles/'.format(prefix))
+dir_out = Path(r'{}/Shared drives/2021-gtc-sea-ice/model/outtiles/'.format(prefix))
 
 
 def make_training_data():
@@ -70,3 +73,5 @@ def make_prediction_data():
 
 #make_training_data()
 #make_prediction_data()
+make_predictions(model_path, "raw", "sar", dir_test, dir_out, viz = False, save = True)
+

@@ -148,10 +148,3 @@ def make_predictions(model_path, unet_type, image_type, dir_test, dir_out, log =
              logging.info(f'Mask saved to {out_filename}')
 
 
-model_path = Path(r'{}/Shared drives/2021-gtc-sea-ice/model/checkpoints/unet_orig/checkpoint_epoch1.pth'.format(prefix))
-unet_type = 'raw'
-image_type = 'sar'
-dir_test = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata/test_tiles/'.format(prefix))
-dir_out = Path(r'{}/Shared drives/2021-gtc-sea-ice/model/outtiles/'.format(prefix))
-
-make_predictions(model_path, unet_type, image_type, dir_test, dir_out, viz = False, save = True)
