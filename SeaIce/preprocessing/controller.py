@@ -1,5 +1,10 @@
-from preprocessing.data_handling import *
-from preprocessing import stitching, resizing, clipping, relabelling, tiling
+try:
+    from data_handling import *
+    import stitching, resizing, clipping, relabelling, tiling
+except:
+    from preprocessing.data_handling import *
+    from preprocessing import stitching, resizing, clipping, relabelling, tiling
+
 
 def preprocess_training(shape_file_path, folder_name, modis_paths = None, sar_path = None, out_path = "temp", resolution = 40, 
                relabel_from = [0], relabel_to = [0], relabel_scale = 1, tile_size = 512, step_size = 384):

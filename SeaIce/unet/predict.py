@@ -1,9 +1,14 @@
-from shared import *
+try:
+    from shared import *
+    from network_structure import UNet
+    from dataset_preparation import create_npy_list
+except:
+    from unet.shared import *
+    from unet.network_structure import UNet
+    from unet.dataset_preparation import create_npy_list
 from PIL import Image
 from torchvision import transforms
 import segmentation_models_pytorch as smp
-from network_structure import UNet
-from dataset_preparation import create_npy_list
 
 
 def load_model(model_path, unet_type, image_type):

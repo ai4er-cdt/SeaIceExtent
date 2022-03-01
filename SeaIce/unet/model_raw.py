@@ -1,9 +1,14 @@
 """ Implementation of model """
-
-from unet.shared import *
-from unet.evaluation import evaluate, dice_loss
-from unet.dataset_preparation import *
-from unet.network_structure import UNet
+try:
+    from shared import *
+    from evaluation import evaluate, dice_loss
+    from dataset_preparation import *
+    from network_structure import UNet
+except:
+    from unet.shared import *
+    from unet.evaluation import evaluate, dice_loss
+    from unet.dataset_preparation import *
+    from unet.network_structure import UNet
 
 import argparse
 import sys
