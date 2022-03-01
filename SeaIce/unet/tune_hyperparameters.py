@@ -1,6 +1,11 @@
-from SeaIce.unet.dataset_preparation import *
-from SeaIce.unet.evaluation import *
-from SeaIce.unet.mini_network import *
+try:
+    from dataset_preparation import *
+    from evaluation import *
+    from mini_network import *
+except:
+    from unet.dataset_preparation import *
+    from unet.evaluation import *
+    from unet.mini_network import *
 import wandb
 import os
 import torch.optim as optim

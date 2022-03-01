@@ -1,27 +1,26 @@
 # Code which we run specifically on our dataset, which would not be applicable to others.
 # This code is not really reuseable unless given as an example.
 from preprocessing import controller
-import fiona
 from preprocessing.data_handling import get_contents
+import fiona
+from pathlib import Path
+
+
+prefix = "G:"
+#prefix = "/mnt/g"
 
 #test = r"C:\Users\sophi\test"
-#data = r"G:\Shared drives\2021-gtc-sea-ice\data"
-#tiled256 = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled256"
-#tiled512 = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled512"
-#tiled768 = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled768"
-#tiled1024 = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled1024"
-#prediction_raw = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\test_raw\sar"
-#prediction_tiles = r"G:\Shared drives\2021-gtc-sea-ice\prediction"
+data = Path(r"{}/Shared drives/2021-gtc-sea-ice/data".format(prefix))
+tiled256 = Path(r"{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled256".format(prefix))
+tiled512 = Path(r"{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled512".format(prefix))
+tiled768 = Path(r"{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled768".format(prefix))
+tiled1024 = Path(r"{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled1024".format(prefix))
+prediction_raw = Path(r"{}/Shared drives/2021-gtc-sea-ice/trainingdata/test_raw/sar".format(prefix))
+prediction_tiles = Path(r"{}/Shared drives/2021-gtc-sea-ice/prediction".format(prefix))
+model_path = Path(r"{}/Shared drives/2021-gtc-sea-ice/model/checkpoints/unet_orig/checkpoint_epoch1.pth".format(prefix))
+dir_test = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata/test_tiles/'.format(prefix))
+dir_out = Path(r'{}/Shared drives/2021-gtc-sea-ice/model/outtiles/'.format(prefix))
 
-
-# For Maddy: /mnt/g/Shared drives/
-data = r"mnt\g\Shared drives\2021-gtc-sea-ice\data"
-tiled256 = r"mnt\g\Shared drives\2021-gtc-sea-ice\trainingdata\tiled256"
-tiled512 = r"mnt\g\Shared drives\2021-gtc-sea-ice\trainingdata\tiled512"
-tiled768 = r"mnt\g\Shared drives\2021-gtc-sea-ice\trainingdata\tiled768"
-tiled1024 = r"mnt\g\Shared drives\2021-gtc-sea-ice\trainingdata\tiled1024"
-prediction_raw = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\test_raw\sar"
-prediction_tiles = r"G:\Shared drives\2021-gtc-sea-ice\prediction"
 
 def make_training_data():
 
@@ -63,14 +62,9 @@ def make_training_data():
         controller.preprocess_training(shape_file_path, folder_name, modis_file_paths, sar_file_path, tiled512, 40, [10, 9], [0, 2], 100, 1024, 512)
 
 
-def make_prediction_data():
-    _, image_paths = get_contents(prediction_raw, None, None)
-    _, tile_folders = get_contents(prediction_tiles, None, None)
-    for i in range(5):
-        image_path = r'{}'.format(image_paths[i])
-        tile_folder = r'{}'.format(tile_folders[i])
-        controller.preprocess_prediction(image_path, "sar", tile_folder, None, 512)
-
-
 #make_training_data()
-make_prediction_data()
+#controller.make_prediction_data(r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\raw\2011-01-13_021245_modis.tif")
+controller.make_prediction_data(r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\raw\2011-01-13_021245_sar.tif")
+#make_predictions(model_path, "raw", "sar", dir_test, dir_out, viz = False, save = True)
+
+

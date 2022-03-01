@@ -1,6 +1,8 @@
-from logging import raiseExceptions
+try:
+    from data_handling import *
+except:
+    from preprocessing.data_handling import *
 from PIL import Image
-from preprocessing.data_handling import *
 
 
 def tile_training_images(labels_path, out_path, tile_size, step_size, date_name, modis_path = None, sar_path = None): 

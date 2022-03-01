@@ -1,7 +1,11 @@
-from unet.shared import *
-from unet.model_raw import *
-from unet.mini_network import MiniUNet
-from unet.torch_receptive_field import receptive_field
+try:
+    from shared import *
+    from model_raw import *
+    from mini_network import MiniUNet
+except:
+    from unet.shared import *
+    from unet.model_raw import *
+    from unet.mini_network import MiniUNet
  
 
 if __name__ == '__main__':

@@ -1,12 +1,11 @@
 """ CNN Dataset preparation functions """
-
-from unet.shared import *
+try:
+    from shared import *
+except:
+    from unet.shared import *
 from torch.utils.data.dataset import Dataset  # For custom data-sets
 from torchvision import transforms
 import glob
-import numpy as np
-from pathlib import Path
-import os
 from datetime import datetime
 
 torch.manual_seed(2022) # Setting random seed so that augmentations can be reproduced.

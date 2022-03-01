@@ -1,4 +1,7 @@
-from preprocessing.data_handling import *
+try:
+    from data_handling import *
+except:
+    from preprocessing.data_handling import *
 
 
 def resize_to_match(image_to_change, image_to_match, out_path):
