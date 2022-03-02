@@ -16,16 +16,19 @@ The 2021-2022 Sea Ice Extent Guided Team Challenge (Group 2) aims to build a pip
 NOTE TO MADDY: put an image of the S ocean here. 
 
 ## GitHub Organization
+```
 ├── LICENSE
 ├── README.md          <- The top-level README for developers using this project.
 |
-├── SeaIce             <- Python modules for training our model and implementing prediction           |   |                     functionality.
+├── SeaIce             <- Python modules for training our model and implementing prediction           
+|   |                     functionality.
 │   ├── preprocessing  <- Notebooks for initial exploration.
 │   └── unet           <- Polished notebooks for presentations or intermediate results.
 │
 ├── Exploratory        <- Scripts and modules used for exploring our data and testing models.
 │
 └──  Notes              <- For markdown files associated with our project.
+```
 
 ## Usage
 **Note : Use Python 3.6 or newer**
