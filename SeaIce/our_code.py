@@ -1,11 +1,11 @@
 # Code which we run specifically on our dataset, which would not be applicable to others.
 # This code is not really reuseable unless given as an example.
 try:
-    from preprocessing import controller
+    import controller
     from unet import predict
     from preprocessing.data_handling import get_contents
 except:
-    from SeaIce.preprocessing import controller
+    from SeaIce import controller
     from SeaIce.unet import predict
     from SeaIce.preprocessing.data_handling import get_contents
 import fiona
@@ -68,6 +68,6 @@ def make_training_data():
 
 
 #make_training_data()
-controller.make_prediction_data(r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\test_raw\sar")
+controller.start_prediction(r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\test_raw\sar\s1_20220111T080455.tif")
 
 

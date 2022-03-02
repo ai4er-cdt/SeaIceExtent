@@ -8,6 +8,7 @@ except:
     from unet.dataset_preparation import create_npy_list
 from PIL import Image
 from torchvision import transforms
+import glob
 import segmentation_models_pytorch as smp
 
 
@@ -88,15 +89,18 @@ def mask_to_image(mask: np.ndarray):
         return Image.fromarray((np.argmax(mask, axis=0) * 255 / mask.shape[0]).astype(np.uint8))
     
 
-def make_predictions(model_path, unet_type, image_type, dir_test, dir_out, log = False, metrics = False, viz = False, save = False):
+def make_predictions(model_path, unet_type, image_type, dir_in, dir_out, log = False, metrics = False, viz = False, save = False):
     if viz:
         import matplotlib.pyplot as plt
     if metrics:
         from sklearn.metrics import precision_score, accuracy_score
 
-    img_list = create_npy_list(dir_test, image_type)
+    img_list = create_npy_list(dir_in, image_type)
+    img_list = sorted(glob.glob(str(dir_in) + '/*' + '.npy'))
+    print(img_list)
     
     net = load_model(model_path, unet_type, image_type)
+    print(net)
 
     for i in enumerate(img_list):
         filename = i[1][0]
