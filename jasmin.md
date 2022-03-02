@@ -111,3 +111,9 @@ Navigating to personal space on JASMIN:
 	# Navigate to personal directory
 	$ cd /
 	$ home/users/<username>
+
+<br/>
+
+Other useful commands:
+	# Shut down/logout
+	$ exit
