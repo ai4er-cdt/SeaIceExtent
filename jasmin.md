@@ -89,3 +89,11 @@ Navigate to area
 
 	# Install packages as needed
 	$ pip install <package_name>
+
+<br/>
+
+Navigating to personal space on JASMIN:
+
+	# Navigate to personal directory
+	$ cd /
+	$ home/users/<username>
