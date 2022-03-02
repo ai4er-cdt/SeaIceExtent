@@ -115,5 +115,7 @@ Navigating to personal space on JASMIN:
 <br/>
 
 Other useful commands:
+
 	# Shut down/logout
+	
 	$ exit
