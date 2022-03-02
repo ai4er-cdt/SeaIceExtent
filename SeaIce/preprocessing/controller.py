@@ -85,11 +85,12 @@ def make_prediction_data(image_path):
         image_paths = [image_path]
         image_path = image_path[::-1]
         folder = image_path.split("\\", 1)
+        folder = folder[1]
         folder = folder[::-1]
     else:
         # Folder containing images.
         folder = image_path
-        image_names, image_paths = get_contents(image_path, ".tif", "suffix")
+        _, image_paths = get_contents(image_path, ".tif", "suffix")
     for image in image_paths:
         image_path = r'{}'.format(image)
         # Find out if the image is modis or sar.
@@ -100,5 +101,6 @@ def make_prediction_data(image_path):
             # name rebanded image path.
             image_path = name_file("rebanded", ".tif", folder)
             rebanding.select_bands(open_image, image_path)
+        print(folder)
         preprocess_prediction(image_path, image_type, folder, None, 512)
 
