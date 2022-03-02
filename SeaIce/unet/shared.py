@@ -26,6 +26,10 @@ path_checkpoint = Path(r'{}/Shared drives/2021-gtc-sea-ice/model/checkpoints/'.f
 
 # Allow imports to function the same in different environments
 program_path = os.getcwd()
-if not program_path.endswith("SeaIce"):
+if program_path.endswith("SeaIce"):
+    os.chdir(os.path.dirname(program_path))
+    import shared
+    os.chdir(program_path)
+else:
+    import shared
     os.chdir(r"{}/SeaIce".format(program_path))
-

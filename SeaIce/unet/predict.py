@@ -94,17 +94,16 @@ def make_predictions(model_path, unet_type, image_type, dir_in, dir_out, log = F
         import matplotlib.pyplot as plt
     if metrics:
         from sklearn.metrics import precision_score, accuracy_score
-
-    img_list = create_npy_list(dir_in, image_type)
-    img_list = sorted(glob.glob(str(dir_in) + '/*' + '.npy'))
-    print(img_list)
+        img_list = create_npy_list(dir_in, image_type)
+    else:
+        img_list = sorted(glob.glob(str(dir_in) + '/*' + '.npy'))
     
     net = load_model(model_path, unet_type, image_type)
     print(net)
 
-    for i in enumerate(img_list):
-        filename = i[1][0]
-        if metrics == True:
+    for filename in img_list:
+        if metrics:
+            filename = filename[1][0]
             groundtruth_filename = filename.replace(image_type,'labels')
             gt_npy = np.vstack(np.load(groundtruth_filename))
             gt100 = np.where(gt_npy == 100, 0, gt_npy)
@@ -145,10 +144,8 @@ def make_predictions(model_path, unet_type, image_type, dir_in, dir_out, log = F
              plot_img_and_mask(img.squeeze(), mask, image_type)
 
         if save:
-             out_filename = str(dir_out) + "/" + str(filename[-33:-4]) + "_prediction.png"
-             print(out_filename)
+             out_filename = name_file(str(filename[-23:-4]), ".png", dir_out)
              result = mask_to_image(mask)
              result.save(out_filename)
              logging.info(f'Mask saved to {out_filename}')
-
 
