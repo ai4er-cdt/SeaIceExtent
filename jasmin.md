@@ -41,7 +41,13 @@ Once logged in, JASMIN message will show usage of each VM over past hour. To log
 
 	$ ssh <user_id>@<VM name>
   
-	e.g. ssh mcl65@sci3.jasmin.ac.uk
+	e.g. ssh user12@sci3.jasmin.ac.uk
+
+To prevent timeout of the SSH connection, set the ServerAliveInterval to send alive signals every 30 seconds:
+
+	$ ssh -o ServerAliveInterval=30 <username>@<VM name>
+	
+	e.g. ssh -o ServerAliveInterval=30 user12@sci3.jasmin.ac.uk
 
 
 Once logged in to specific VM (may take a few ports), can link with Jupyter + porgrams with:
@@ -117,5 +123,4 @@ Navigating to personal space on JASMIN:
 Other useful commands:
 
 	# Shut down/logout
-	
 	$ exit
