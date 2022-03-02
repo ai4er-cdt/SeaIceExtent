@@ -124,3 +124,9 @@ Other useful commands:
 
 	# Shut down/logout
 	$ exit
+
+
+<br/>
+
+Group Workspace Location
+	/gws/nopw/j04/bas_climate/projects/SeaIceExtent
