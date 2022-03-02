@@ -50,6 +50,14 @@ Once logged in to specific VM (may take a few ports), can link with Jupyter + po
 
 <br/>
 
+Navigating to Shared Workspace:
+	
+	$ cd /
+	
+	$ cd gws/nopw/j04/bas_climate/projects/SeaIceExtent
+
+<br/>
+
 Data Transfer:
 
 Transferring to your home directory:
@@ -76,7 +84,7 @@ Transferring from your home directory:
 
 Creating virtual environment on JASMIN:
 
-Navigate to area 
+Navigate to venv area
 	
 	# Load jaspy to use venv command
 	$ module load jaspy
