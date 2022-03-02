@@ -10,6 +10,8 @@ program_path = os.getcwd()
 temp_folder = r"{}\temp\temporary_files".format(program_path)
 temp_buffer = r"{}\temp\temporary_buffer".format(program_path)
 temp_prediction = r"{}\temp\current_prediction".format(program_path)
+model_sar = r"{}\models\sar_model_example.pth".format(program_path)
+model_modis = r"{}\models\modis_model_example.pth".format(program_path)
 
 
 def get_contents(in_directory, search_terms = None, string_position = None):

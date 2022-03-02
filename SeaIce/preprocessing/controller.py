@@ -65,7 +65,7 @@ def preprocess_training(shape_file_path, folder_name, modis_paths = None, sar_pa
    delete_temp_files()
 
 
-def preprocess_prediction(image_path, image_type, out_path, resolution, tile_size):
+def preprocess_prediction(image_path, image_type, resolution, tile_size, out_path="prediction"):
    if image_type == "modis" and resolution != None:
            # Alter resolution of modis image
            new_resolution_path = name_file("new_resolution", ".tif", "temp")
@@ -95,12 +95,19 @@ def make_prediction_data(image_path):
         image_path = r'{}'.format(image)
         # Find out if the image is modis or sar.
         open_image = gdal.Open(image_path)
+        image_type = "modis"
+        model = model_modis
         if open_image.RasterCount == 1:
             image_type = "sar"
+            model = model_sar
         elif open_image.RasterCount > 3:
             # name rebanded image path.
             image_path = name_file("rebanded", ".tif", folder)
             rebanding.select_bands(open_image, image_path)
-        print(folder)
-        preprocess_prediction(image_path, image_type, folder, None, 512)
+        print(image_type)
+        # Tile and do any necessary resizing.
+        preprocess_prediction(image_path, image_type, 40, 512, "prediction")
+        # Pass the tiles into the model.
+        predict.make_predictions(model, "raw", image_type, "prediction", "temp", viz = False, save = True)
+        # Construct a mosaic of tiles to match the original image.
 
