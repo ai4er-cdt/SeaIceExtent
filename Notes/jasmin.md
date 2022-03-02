@@ -128,5 +128,6 @@ Other useful commands:
 
 <br/>
 
-Group Workspace Location
-	/gws/nopw/j04/bas_climate/projects/SeaIceExtent
+Group Workspace Location:
+	
+	# /gws/nopw/j04/bas_climate/projects/SeaIceExtent
