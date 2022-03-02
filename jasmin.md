@@ -64,7 +64,7 @@ Transferring to your home directory:
 
 	$ rsync filename_for_transfer <user_id>@<transfer_server>:/home/users/user_id/
 	
-	e.g rsync jonnycode.py usr12@xfer1.jasmin.ac.uk:/home/users/usr12/
+	e.g. rsync jonnycode.py usr12@xfer1.jasmin.ac.uk:/home/users/usr12/
 
 
 Transferring from your home directory:
@@ -79,6 +79,12 @@ Transferring from your home directory:
 	ssh-add ~/.ssh/id_rsa_jasmin
 
 	rsync jdr53@xfer1.jasmin.ac.uk:/home/users/jdr53/transfer_test.txt <local_filepath>
+
+Transfering within JASMIN
+	
+	$ cp file.file destination
+	
+	e.g. cp functions.py /home/users/user12
 
 <br/>	
 
