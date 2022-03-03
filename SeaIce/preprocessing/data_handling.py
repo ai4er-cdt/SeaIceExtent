@@ -5,11 +5,20 @@ import os
 import fiona
 import numpy as np
 from osgeo import ogr, gdal
+from PIL import Image
 
+
+# Allow imports to function the same in different environments
 program_path = os.getcwd()
+if not program_path.endswith("SeaIce"):
+    os.chdir(r"{}/SeaIce".format(program_path))
+    program_path = os.getcwd()
+
 temp_folder = r"{}\temp\temporary_files".format(program_path)
 temp_buffer = r"{}\temp\temporary_buffer".format(program_path)
 temp_prediction = r"{}\temp\current_prediction".format(program_path)
+model_sar = r"{}\models\sar_model_example.pth".format(program_path)
+model_modis = r"{}\models\modis_model_example.pth".format(program_path)
 
 
 def get_contents(in_directory, search_terms = None, string_position = None):
@@ -77,6 +86,14 @@ def save_tiff(image_array, image_metadata, out_name, out_path = "temp"):
     with rasterio.open(file_name, "w", **image_metadata) as destination:
         destination.write(image_array) 
     return file_name
+
+
+def mask_to_image(mask: np.ndarray):
+    # Convert numpy array to .png file.
+    if mask.ndim == 2:
+        return Image.fromarray((mask * 255).astype(np.uint8))
+    elif mask.ndim == 3:
+        return Image.fromarray((np.argmax(mask, axis=0) * 255 / mask.shape[0]).astype(np.uint8))
 
 
 def generate_metadata(tile, image, n_water, n_ice, coordinates, row, col, step_size, tile_size, json_directory = "temp"):

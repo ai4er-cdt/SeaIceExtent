@@ -1,7 +1,4 @@
-try:
-    from data_handling import *
-except:
-    from preprocessing.data_handling import *
+from preprocessing.data_handling import *
 
 
 def shp_to_tif(shape_file_path, image_file_path, out_path):

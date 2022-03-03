@@ -1,11 +1,6 @@
-try:
-    from shared import *
-    from model_raw import *
-    from mini_network import MiniUNet
-except:
-    from unet.shared import *
-    from unet.model_raw import *
-    from unet.mini_network import MiniUNet
+from unet.shared import *
+from unet.model_raw import *
+from unet.mini_network import MiniUNet
  
 
 if __name__ == '__main__':

@@ -1,12 +1,6 @@
-try:
-    from shared import *
-    from network_structure import UNet
-    from dataset_preparation import create_npy_list
-except:
-    from unet.shared import *
-    from unet.network_structure import UNet
-    from unet.dataset_preparation import create_npy_list
-from PIL import Image
+from unet.shared import *
+from unet.network_structure import UNet
+from unet.dataset_preparation import create_npy_list
 from torchvision import transforms
 import segmentation_models_pytorch as smp
 
@@ -79,28 +73,22 @@ def predict_img(net,
         return (full_mask > out_threshold).numpy()
     else:
         return F.one_hot(full_mask.argmax(dim=0), net.n_classes).permute(2, 0, 1).numpy()
-
-
-def mask_to_image(mask: np.ndarray):
-    if mask.ndim == 2:
-        return Image.fromarray((mask * 255).astype(np.uint8))
-    elif mask.ndim == 3:
-        return Image.fromarray((np.argmax(mask, axis=0) * 255 / mask.shape[0]).astype(np.uint8))
     
 
-def make_predictions(model_path, unet_type, image_type, dir_test, dir_out, log = False, metrics = False, viz = False, save = False):
+def make_predictions(model_path, unet_type, image_type, dir_in, dir_out, log = False, metrics = False, viz = False, save = False):
     if viz:
         import matplotlib.pyplot as plt
     if metrics:
         from sklearn.metrics import precision_score, accuracy_score
-
-    img_list = create_npy_list(dir_test, image_type)
+        img_list = create_npy_list(dir_in, image_type)
+    else:
+        _, img_list = get_contents(dir_in, ".npy", "suffix")
     
     net = load_model(model_path, unet_type, image_type)
 
-    for i in enumerate(img_list):
-        filename = i[1][0]
-        if metrics == True:
+    for filename in img_list:
+        if metrics: 
+            filename = filename[1][0]
             groundtruth_filename = filename.replace(image_type,'labels')
             gt_npy = np.vstack(np.load(groundtruth_filename))
             gt100 = np.where(gt_npy == 100, 0, gt_npy)
@@ -141,10 +129,11 @@ def make_predictions(model_path, unet_type, image_type, dir_test, dir_out, log =
              plot_img_and_mask(img.squeeze(), mask, image_type)
 
         if save:
-             out_filename = str(dir_out) + "/" + str(filename[-33:-4]) + "_prediction.png"
-             print(out_filename)
-             result = mask_to_image(mask)
-             result.save(out_filename)
+             filename = filename[::-1]
+             filename = filename.split("\\", 1)[0]
+             filename = filename[::-1]
+             filename = filename.split(".")[0]
+             out_filename = name_file(filename, ".npy", dir_out)
+             np.save(out_filename, mask)
              logging.info(f'Mask saved to {out_filename}')
-
 

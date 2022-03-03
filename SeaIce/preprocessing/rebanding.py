@@ -1,11 +1,9 @@
 # Some of this code has been copied from here:
 # https://gis.stackexchange.com/questions/190724/remove-subset-raster-bands-in-python-gdal
 
-try:
-    from data_handling import *
-except:
-    from preprocessing.data_handling import *
+from preprocessing.data_handling import *
 import struct
+from osgeo import osr
 
 
 def select_bands(open_image, out_path):
@@ -19,7 +17,7 @@ def select_bands(open_image, out_path):
     band6 = open_image.GetRasterBand(6)
     band7 = open_image.GetRasterBand(7)
 
-    geotransform = dataset.GetGeoTransform()
+    geotransform = open_image.GetGeoTransform()
 
     # Create gtif file with rows and columns from parent raster 
     driver = gdal.GetDriverByName("GTiff")
@@ -66,4 +64,4 @@ def select_bands(open_image, out_path):
     dst_ds = None
 
     #Close main raster dataset
-    dataset = None
+    open_image = None
