@@ -140,3 +140,53 @@ Other useful commands:
 Group Workspace Location:
 	
 	# /gws/nopw/j04/bas_climate/projects/SeaIceExtent
+
+<br/>
+
+Slurm:
+
+<br/>
+
+Slurm is a job scheduling manager. On JASMIN it seems like the easiest way to submit a job is via a batch script.
+
+
+The batch script should follow the same template, although additional flags/options can be added. The template is as follows:
+
+<br/>
+
+#!/bin/bash
+#SBATCH --partition=short-serial
+#SBATCH -o %j.out
+#SBATCH -e %j.err
+#SBATCH --time=01:00:00
+#SBATCH --ntasks=50
+
+# executable
+python3 tune_hyperparameters_jasmin.py
+
+<br/>
+
+The .out and .err files record the output from python (e.g. prints) and the output from the console, respectively.
+
+--time refers to the number of hours allocated for the job; the format is: hh:mm:ss.
+
+--ntasks refers to the number of cores required for the job. I think this is a balance between using too much of the compute power and using too few and having a slower runtime.
+
+
+The batch script should have the extension .sh, e.g. test_job.sh, and can be submitted as:
+
+	$ sbatch test_job.sh
+
+
+You can view your submitted jobs using the following:
+
+	$ squeue -u <username> ; e.g. squeue -u jdr53
+
+
+This will display a list of the jobs you have submitted that are currently active, along with a jobID for each.
+
+
+The following command can be used to see more details for a particular job:
+
+
+	$ scontrol show job <jobID>.
