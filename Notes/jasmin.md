@@ -188,4 +188,4 @@ This will display a list of the jobs you have submitted that are currently activ
 The following command can be used to see more details for a particular job:
 
 
-	$ scontrol show job <jobID>.
+	$ scontrol show job <jobID>
