@@ -1,6 +1,6 @@
 # Useful links and commands for accessing JASMIN
 
-Links: <br/>
+## Links: <br/>
 
 JASMIN Login:
 https://accounts.jasmin.ac.uk
@@ -16,7 +16,7 @@ https://help.jasmin.ac.uk/article/187-login
 
 <br/>
 
-Adding SSH Key:
+## Adding SSH Key:
 
 	$ eval $(ssh-agent -s)
 
@@ -26,7 +26,7 @@ Adding SSH Key:
 
 <br/>
 
-Logging into the JASMIN Servers:
+## Logging into the JASMIN Servers:
 
 	$ ssh -A <user_id>@<login_server>
 
@@ -62,7 +62,7 @@ Once logged in to specific VM (may take a few ports), can link with Jupyter + po
 
 <br/>
 
-Navigating to Shared Workspace:
+## Navigating to Shared Workspace:
 	
 	$ cd /
 	
@@ -70,7 +70,7 @@ Navigating to Shared Workspace:
 
 <br/>
 
-Data Transfer:
+## Data Transfer:
 
 Transferring to your home directory:
 
@@ -100,7 +100,7 @@ Transfering within JASMIN
 
 <br/>	
 
-Creating virtual environment on JASMIN:
+## Creating virtual environment on JASMIN:
 
 Navigate to venv area
 	
@@ -137,32 +137,31 @@ Other useful commands:
 
 <br/>
 
-Group Workspace Location:
+## Group Workspace Location:
 	
 	# /gws/nopw/j04/bas_climate/projects/SeaIceExtent
 
 <br/>
 
-Slurm:
+## Slurm:
 
 <br/>
 
 Slurm is a job scheduling manager. On JASMIN it seems like the easiest way to submit a job is via a batch script.
 
-
 The batch script should follow the same template, although additional flags/options can be added. The template is as follows:
 
 <br/>
 
-#!/bin/bash
-#SBATCH --partition=short-serial
-#SBATCH -o %j.out
-#SBATCH -e %j.err
-#SBATCH --time=01:00:00
-#SBATCH --ntasks=50
+	#!/bin/bash
+	#SBATCH --partition=short-serial
+	#SBATCH -o %j.out
+	#SBATCH -e %j.err
+	#SBATCH --time=01:00:00
+	#SBATCH --ntasks=50
 
-# executable
-python3 tune_hyperparameters_jasmin.py
+	# executable
+	python3 tune_hyperparameters_jasmin.py
 
 <br/>
 
