@@ -130,7 +130,10 @@ Other useful commands:
 
 	# Shut down/logout
 	$ exit
-
+	
+	# To change read/write:
+	$ chmod g+w <filepath>
+	e.g. chmod g+w /gws/nopw/j04/bas_climate/projects/SeaIceExtent
 
 <br/>
 
