@@ -136,6 +136,9 @@ Other useful commands:
 	# To change read/write:
 	$ chmod g+w <filepath>
 	e.g. chmod g+w /gws/nopw/j04/bas_climate/projects/SeaIceExtent
+	
+	# To create a TMP file locally in JASMIN (in response to wandb ERROR 13)
+	$ export TMPDIR="$(mktemp -d -t ci-XXXXXXX --tmpdir=/home/users/<user>/tempfiles)"
 
 <br/>
 
