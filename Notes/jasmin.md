@@ -49,6 +49,12 @@ To prevent timeout of the SSH connection, set the ServerAliveInterval to send al
 	
 	e.g. ssh -o ServerAliveInterval=30 user12@sci3.jasmin.ac.uk
 
+This can also be done in the initial log in as:
+
+	$ ssh -o ServerAliveInterval=30 -A <user_id>@<login_server>
+
+	e.g. ssh -o ServerAliveInterval=30 -A usr12@login1.jasmin.ac.uk
+
 
 Once logged in to specific VM (may take a few ports), can link with Jupyter + porgrams with:
   
