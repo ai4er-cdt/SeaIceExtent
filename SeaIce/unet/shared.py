@@ -31,11 +31,14 @@ tiled512 = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled512/'.form
 tiled768 = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled768/'.format(prefix))
 tiled1024 = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled1024/'.format(prefix))
 path_checkpoint = Path(r'{}/Shared drives/2021-gtc-sea-ice/model/checkpoints/'.format(prefix))
-temp_folder = r"{}\temp\temporary_files".format(program_path)
-temp_buffer = r"{}\temp\temporary_buffer".format(program_path)
-temp_prediction = r"{}\temp\current_prediction".format(program_path)
-model_sar = r"{}\models\sar_model_example.pth".format(program_path)
-model_modis = r"{}\models\modis_model_example.pth".format(program_path)
+temp_files = Path(r"{}/temp/temporary_files".format(program_path))
+temp_buffer = Path(r"{}/temp/temporary_buffer".format(program_path))
+temp_binary = Path(r"{}/temp/binary".format(program_path))
+temp_preprocessed = Path(r"{}/temp/preprocessed".format(program_path))
+temp_probabilities = Path(r"{}/temp/probabilities".format(program_path))
+temp_tiled = Path(r"{}/temp/tiled".format(program_path))
+model_sar = Path(r"{}/models/sar_model_example.pth".format(program_path))
+model_modis = Path(r"{}/models/modis_model_example.pth".format(program_path))
 
 
 def get_contents(in_directory, search_terms = None, string_position = None):
@@ -64,20 +67,14 @@ def get_contents(in_directory, search_terms = None, string_position = None):
     return items, full_paths
 
 
-def name_file(out_name, file_type, out_path = "temp"):
+def name_file(out_name, file_type, out_path = temp_files):
     """Construct the full path for a new file.
-       Parameters: out_path: (string) the path to the folder in which to place the new item, or "temp" or "buffer"
+       Parameters: out_path: (string) the path to the folder in which to place the new item.
                    to store it temporarily with the program files for the duration of the run-time.
                    out_name: (string) the name of the new file. 
                    file_type: (string) the file extention on the new file.
        Returns: file_name: (string) the full path of the new file.
     """
-    if out_path == "temp":
-        out_path = temp_folder
-    elif out_path == "buffer":
-        out_path = temp_buffer
-    elif out_path == "prediction":
-        out_path = temp_prediction
     file_name = "{}\{}{}".format(out_path, out_name, file_type)
     return file_name
 
@@ -85,7 +82,7 @@ def name_file(out_name, file_type, out_path = "temp"):
 def delete_temp_files():
     """Remove temporary files when no longer needed.
     """
-    for folder in [temp_folder, temp_buffer, temp_prediction]:
+    for folder in [temp_files, temp_buffer, temp_binary, temp_preprocessed, temp_probabilities, temp_tiled]:
         os.chdir(folder)
         for temp_file in os.listdir():
             os.remove(temp_file)

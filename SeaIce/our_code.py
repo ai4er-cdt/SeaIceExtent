@@ -62,7 +62,6 @@ def make_training_data():
 
 
 #make_training_data()
-delete_temp_files()
-controller.start_prediction(r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\raw\2011-01-18_122137_sar.tif")
+controller.start_prediction(r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\raw\2011-01-29_072859_sar.tif")
 
 

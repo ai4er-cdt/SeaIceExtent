@@ -70,12 +70,12 @@ def predict_img(net,
         full_mask = tf(probs.cpu()).squeeze()
 
     if net.n_classes == 1:
-        return (full_mask > out_threshold).numpy()
+        return (full_mask > out_threshold).numpy(), full_mask
     else:
-        return F.one_hot(full_mask.argmax(dim=0), net.n_classes).permute(2, 0, 1).numpy()
+        return F.one_hot(full_mask.argmax(dim=0), net.n_classes).permute(2, 0, 1).numpy(), full_mask
     
 
-def make_predictions(model_path, unet_type, image_type, dir_in, dir_out, log = False, metrics = False, viz = False, save = False):
+def make_predictions(model_path, unet_type, image_type, dir_in, dir_out_bin, dir_out_prob, log = False, metrics = False, viz = False, save = False):
     if viz:
         import matplotlib.pyplot as plt
     if metrics:
@@ -104,21 +104,18 @@ def make_predictions(model_path, unet_type, image_type, dir_in, dir_out, log = F
         elif image_type == "modis":
             img = torch.permute(img, (2, 0, 1))
         
-        mask = predict_img(net=net,
-                            full_img=img,
-                            out_threshold=0.5,
-                            device=processor)
-        
+        mask_bin, mask_prob = predict_img(net=net, full_img=img, out_threshold=0.5, device=processor)
+
         if metrics:
             #print(gt_remap.shape, mask[0].shape)
             #print(np.unique(gt_remap), np.unique(mask[0]))
             #print(accuracy_score(gt_remap, mask[0], average = 'micro'), precision_score(gt_remap, mask[0]))
             N = gt_remap.shape[0] * gt_remap.shape[1]
             #accuracy = (gt_remap == mask).sum() / N
-            TP = ((mask[0] == 1) & (gt_remap == 1)).sum()
-            TN = ((mask[0] == 0) & (gt_remap == 0)).sum()
-            FP = ((mask[0] == 1) & (gt_remap == 0)).sum()
-            FN = ((mask[0] == 0) & (gt_remap == 1)).sum()
+            TP = ((mask_bin[0] == 1) & (gt_remap == 1)).sum()
+            TN = ((mask_bin[0] == 0) & (gt_remap == 0)).sum()
+            FP = ((mask_bin[0] == 1) & (gt_remap == 0)).sum()
+            FN = ((mask_bin[0] == 0) & (gt_remap == 1)).sum()
             precision = TP / (TP+FP)
             recall = TP / (TP+FN)
             accuracy = (TP+TN) / N
@@ -126,14 +123,16 @@ def make_predictions(model_path, unet_type, image_type, dir_in, dir_out, log = F
         
         if viz:
              logging.info(f'Visualizing results for image {filename}, close to continue...')
-             plot_img_and_mask(img.squeeze(), mask, image_type)
+             plot_img_and_mask(img.squeeze(), mask_bin, image_type)
 
         if save:
              filename = filename[::-1]
              filename = filename.split("\\", 1)[0]
              filename = filename[::-1]
              filename = filename.split(".")[0]
-             out_filename = name_file(filename, ".npy", dir_out)
-             np.save(out_filename, mask)
+             out_filename = name_file(filename, ".npy", dir_out_bin)
+             np.save(out_filename, mask_bin)
+             out_filename = name_file(filename, ".npy", dir_out_prob)
+             np.save(out_filename, mask_prob)
              logging.info(f'Mask saved to {out_filename}')
 

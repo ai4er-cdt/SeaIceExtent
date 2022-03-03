@@ -42,4 +42,3 @@ if __name__ == '__main__':
             iterations += 1
     print('best tile size:', best_tile_size, best_loss)
     print(losses)
-    print("pause")
