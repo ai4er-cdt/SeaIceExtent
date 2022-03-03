@@ -116,7 +116,7 @@ Navigate to venv area
 	# Install packages as needed
 	$ pip install <package_name>
 	
-For our project we have installed: rasterio, wandb, torch, torchIO
+For our project we have installed: rasterio, wandb, torch, torchIO, segmentation_models_pytorch
 
 <br/>
 
