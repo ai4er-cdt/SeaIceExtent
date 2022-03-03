@@ -1,8 +1,5 @@
 """ Model evaluation functions and Dice Loss scoring functions """
-try:
-    from shared import *
-except:
-    from unet.shared import *
+from unet.shared import *
 
 
 def evaluate(net, dataloader, device):

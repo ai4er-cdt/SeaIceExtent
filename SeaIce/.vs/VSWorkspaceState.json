@@ -1,7 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\preprocessing",
+    "\\unet"
   ],
-  "SelectedNode": "\\preprocessing",
+  "SelectedNode": "\\preprocessing\\clipping.py",
   "PreviewInSolutionExplorer": false
 }

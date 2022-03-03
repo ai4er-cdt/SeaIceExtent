@@ -1,11 +1,6 @@
-try:
-    from preprocessing.data_handling import *
-    from preprocessing import stitching, resizing, clipping, relabelling, tiling, rebanding
-    from unet.predict import make_predictions
-except:
-    from SeaIce.preprocessing.data_handling import *
-    from SeaIce.preprocessing import stitching, resizing, clipping, relabelling, tiling, rebanding
-    from SeaIce.unet.predict import make_predictions
+from preprocessing.data_handling import *
+from preprocessing import stitching, resizing, clipping, relabelling, tiling, rebanding
+from unet.predict import make_predictions
 
 
 def preprocess_training(shape_file_path, folder_name, modis_paths = None, sar_path = None, out_path = "temp", resolution = 40, 
@@ -87,13 +82,17 @@ def start_prediction(image_path):
         image_paths = [image_path]
         image_path = image_path[::-1]
         folder = image_path.split("\\", 1)
-        folder = folder[1]
-        folder = folder[::-1]
+        filename, folder = folder[0], folder[1]
+        filename, folder = filename[::-1], folder[::-1]
+        image_names = [filename]
     else:
         # Folder containing images.
         folder = image_path
-        _, image_paths = get_contents(image_path, ".tif", "suffix")
-    for image in image_paths:
+        image_names, image_paths = get_contents(image_path, ".tif", "suffix")
+    for i in range(len(image_paths)):
+        image = image_paths[i]
+        filename = image_names[i]
+        filename = filename.split(".")[0]
         image_path = r'{}'.format(image)
         # Find out if the image is modis or sar.
         open_image = gdal.Open(image_path)
@@ -111,5 +110,9 @@ def start_prediction(image_path):
         # Pass the tiles into the model.
         make_predictions(model, "raw", image_type, temp_prediction, temp_folder, viz = False, save = True)
         # Construct a mosaic of tiles to match the original image.
-        #delete_temp_files()
+        out_path = name_file("{}_predicted".format(filename), ".png", folder)
+        tiling.reconstruct_from_tiles(temp_folder, out_path)
+        # Clean up.
+        delete_temp_files()
+        del open_image
 

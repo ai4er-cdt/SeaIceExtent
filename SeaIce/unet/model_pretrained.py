@@ -1,9 +1,5 @@
-try:
-    from shared import *
-    from dataset_preparation import *
-except:
-    from unet.shared import *
-    from unet.dataset_preparation import *
+from unet.shared import *
+from unet.dataset_preparation import *
 
 
 torch.manual_seed(2022)  # Setting random seed so that augmentations can be reproduced.

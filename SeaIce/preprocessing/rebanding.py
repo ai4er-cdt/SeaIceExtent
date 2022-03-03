@@ -1,10 +1,7 @@
 # Some of this code has been copied from here:
 # https://gis.stackexchange.com/questions/190724/remove-subset-raster-bands-in-python-gdal
 
-try:
-    from data_handling import *
-except:
-    from preprocessing.data_handling import *
+from preprocessing.data_handling import *
 import struct
 from osgeo import osr
 

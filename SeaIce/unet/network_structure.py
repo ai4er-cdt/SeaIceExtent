@@ -1,8 +1,5 @@
 """ Parts of the U-Net model """
-try:
-    from shared import *
-except:
-    from unet.shared import *
+from unet.shared import *
 
 
 class DoubleConv(nn.Module):

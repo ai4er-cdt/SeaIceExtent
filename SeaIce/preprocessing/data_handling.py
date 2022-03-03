@@ -1,18 +1,24 @@
 # Moves data around and writes output.
 import json
 import rasterio
+import os
 import fiona
+import numpy as np
 from osgeo import ogr, gdal
+from PIL import Image
+
 
 # Allow imports to function the same in different environments
 program_path = os.getcwd()
-if program_path.endswith("SeaIce"):
-    os.chdir(os.path.dirname(program_path))
-    import shared
-    os.chdir(program_path)
-else:
-    import shared
+if not program_path.endswith("SeaIce"):
     os.chdir(r"{}/SeaIce".format(program_path))
+    program_path = os.getcwd()
+
+temp_folder = r"{}\temp\temporary_files".format(program_path)
+temp_buffer = r"{}\temp\temporary_buffer".format(program_path)
+temp_prediction = r"{}\temp\current_prediction".format(program_path)
+model_sar = r"{}\models\sar_model_example.pth".format(program_path)
+model_modis = r"{}\models\modis_model_example.pth".format(program_path)
 
 
 def get_contents(in_directory, search_terms = None, string_position = None):
@@ -41,6 +47,33 @@ def get_contents(in_directory, search_terms = None, string_position = None):
     return items, full_paths
 
 
+def name_file(out_name, file_type, out_path = "temp"):
+    """Construct the full path for a new file.
+       Parameters: out_path: (string) the path to the folder in which to place the new item, or "temp" or "buffer"
+                   to store it temporarily with the program files for the duration of the run-time.
+                   out_name: (string) the name of the new file. 
+                   file_type: (string) the file extention on the new file.
+       Returns: file_name: (string) the full path of the new file.
+    """
+    if out_path == "temp":
+        out_path = temp_folder
+    elif out_path == "buffer":
+        out_path = temp_buffer
+    elif out_path == "prediction":
+        out_path = temp_prediction
+    file_name = "{}\{}{}".format(out_path, out_name, file_type)
+    return file_name
+
+
+def delete_temp_files():
+    """Remove temporary files when no longer needed.
+    """
+    for folder in [temp_folder, temp_buffer, temp_prediction]:
+        os.chdir(folder)
+        for temp_file in os.listdir():
+            os.remove(temp_file)
+
+
 def save_tiff(image_array, image_metadata, out_name, out_path = "temp"):
     """Write a tiff image to a directory. 
        Parameters: image_array: (array) the pixel values of the image. 
@@ -53,6 +86,14 @@ def save_tiff(image_array, image_metadata, out_name, out_path = "temp"):
     with rasterio.open(file_name, "w", **image_metadata) as destination:
         destination.write(image_array) 
     return file_name
+
+
+def mask_to_image(mask: np.ndarray):
+    # Convert numpy array to .png file.
+    if mask.ndim == 2:
+        return Image.fromarray((mask * 255).astype(np.uint8))
+    elif mask.ndim == 3:
+        return Image.fromarray((np.argmax(mask, axis=0) * 255 / mask.shape[0]).astype(np.uint8))
 
 
 def generate_metadata(tile, image, n_water, n_ice, coordinates, row, col, step_size, tile_size, json_directory = "temp"):

@@ -1,8 +1,4 @@
-try:
-    from data_handling import *
-except:
-    from preprocessing.data_handling import *
-from PIL import Image
+from preprocessing.data_handling import *
 
 
 def tile_training_images(labels_path, out_path, tile_size, step_size, date_name, modis_path = None, sar_path = None): 
@@ -98,15 +94,21 @@ def tile_prediction_image(image_path, image_type, out_path, tile_size):
     top_left = geography[0], geography[3]
     image_data.FlushCache()
     del image_data
-    num_shape = image_window.shape[1]
     for row_count, (row_image) in enumerate(image_window):
+        row_name = str(row_count)
+        if row_count < 100:
+            row_name = "0{}".format(row_name)
+            if row_count < 10:
+                row_name = "0{}".format(row_name)
         for tile_count, (tile_image) in enumerate(row_image):
-            tile_num = num_shape * row_count + tile_count
+            tile_name = str(tile_count)
+            if tile_count < 100:
+                tile_name = "0{}".format(tile_name)
+                if tile_count < 10:
+                    tile_name = "0{}".format(tile_name)
             # Save the tiles.            
-            image_name = name_file("{}_tile{}_row{}_col{}".format(image_type, tile_num, row_count, tile_count), ".npy", out_path)
+            image_name = name_file("row{}_col{}".format(row_name, tile_name), ".npy", out_path)
             np.save(image_name, tile_image)
-            # Update metadata. 
-            generate_metadata(tile_num, image_type, 1, 1, top_left, row_count, tile_count, step_size, tile_size, out_path)
 
 
 def tif_to_window(tif_path, window_shape, step_size):
@@ -123,21 +125,20 @@ def tif_to_window(tif_path, window_shape, step_size):
     return image_window
 
 
-def reconstruct_from_tiles(tiles_path):
+def reconstruct_from_tiles(tiles_path, out_path):
     os.chdir(tiles_path)
     file_names = os.listdir()
     num_rows, num_cols = 0, 0
     for file_name in file_names:
-        if "row0" in file_name:
+        if "row000" in file_name:
             num_cols += 1
-        if "col0" in file_name:
+        if "col000" in file_name:
             num_rows += 1
-    row, next_row = 0, 1
     full_array = []
-    for row in range(num_rows-1):
+    for row in range(num_rows):
         row_array = []
         for col in range(num_cols):
-            file_num = (row * (num_cols + 1)) + col + 1
+            file_num = (row * num_cols) + col
             tile_file = file_names[file_num]
             tile_array = np.load(tile_file)
             tile_array = tile_array[0]
@@ -149,8 +150,8 @@ def reconstruct_from_tiles(tiles_path):
             full_array = row_array
         else:
             full_array = np.concatenate((full_array, row_array), axis=0)
-    mosaic_name = name_file("reconstructed", ".npy", tiles_path)
-    np.save(mosaic_name, full_array)
+    full_image = mask_to_image(full_array)
+    full_image.save(out_path)
 
    
         

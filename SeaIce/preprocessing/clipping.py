@@ -1,7 +1,4 @@
-try:
-    from data_handling import *
-except:    
-    from preprocessing.data_handling import *
+from preprocessing.data_handling import *
 import rasterio.mask
 
 
