@@ -3,7 +3,7 @@ from preprocessing import stitching, resizing, clipping, relabelling, tiling, re
 from unet.predict import make_predictions
 
 
-def preprocess_training(shape_file_path, folder_name, modis_paths = None, sar_path = None, out_path = "temp", resolution = 40, 
+def preprocess_training(shape_file_path, folder_name, modis_paths = None, sar_path = None, out_path = temp_files, resolution = 40, 
                relabel_from = [0], relabel_to = [0], relabel_scale = 1, tile_size = 512, step_size = 384):
    """
    Handles the sequence of performing all the preprocessing functions.
@@ -29,18 +29,18 @@ def preprocess_training(shape_file_path, folder_name, modis_paths = None, sar_pa
             # Stitch the modis images together
             modis_array, modis_metadata = stitching.stitch(modis_paths)
             # Save the full image in temporary folder
-            modis_file_path = save_tiff(modis_array, modis_metadata, "stitched", "temp")
+            modis_file_path = save_tiff(modis_array, modis_metadata, "stitched", temp_files)
         else:
             modis_file_path = modis_paths[0]
         # Upsample modis image
-        upsampled_modis_path = name_file("upsampled", ".tif", "temp")
+        upsampled_modis_path = name_file("upsampled", ".tif", temp_files)
         resizing.change_resolution(modis_file_path, upsampled_modis_path, resolution)
         # Clip modis image
         modis_clipped, modis_metadata = clipping.clip(shape_file_path, upsampled_modis_path)
-        modis_clipped_path = save_tiff(modis_clipped, modis_metadata, "clipped", "temp")
+        modis_clipped_path = save_tiff(modis_clipped, modis_metadata, "clipped", temp_files)
         # Resize the modis image to match the sar image
         if sar_path != None:
-            resized_modis_path = name_file("resized", ".tif", "temp")
+            resized_modis_path = name_file("resized", ".tif", temp_files)
             resizing.resize_to_match(modis_clipped_path, sar_path, resized_modis_path)
             modis_file_path = resized_modis_path
    else:
@@ -48,7 +48,7 @@ def preprocess_training(shape_file_path, folder_name, modis_paths = None, sar_pa
 
     # These will be applied to either modis or sar, depending on which we have.
     # Relabel. Sar images are faster to work with. 
-   labels_path = name_file("labels", ".tif", "temp") 
+   labels_path = name_file("labels", ".tif", temp_files) 
    if sar_path != None:
         relabelling.shp_to_tif(shape_file_path, sar_path, labels_path)
    else:
@@ -62,17 +62,17 @@ def preprocess_training(shape_file_path, folder_name, modis_paths = None, sar_pa
    delete_temp_files()
 
 
-def preprocess_prediction(image_path, image_type, resolution, tile_size, out_path="prediction"):
+def preprocess_prediction(image_path, image_type, resolution, tile_size):
    if image_type == "modis" and resolution != None:
            # Alter resolution of modis image
-           new_resolution_path = name_file("new_resolution", ".tif", "temp")
+           new_resolution_path = name_file("new_resolution", ".tif", temp_preprocessed)
            resizing.change_resolution(image_path, new_resolution_path, resolution)
            # The image will be too large
-           new_size_path = name_file("resized", ".tif", "temp")
+           new_size_path = name_file("resized", ".tif", temp_preprocessed)
            resizing.halve_size(new_resolution_path, new_size_path)
            image_path = new_size_path
    # Tile
-   tiling.tile_prediction_image(image_path, image_type, out_path, tile_size)
+   tiling.tile_prediction_image(image_path, image_type, temp_tiled, tile_size)
 
 
 def start_prediction(image_path):
@@ -106,12 +106,14 @@ def start_prediction(image_path):
             image_path = name_file("rebanded", ".tif", folder)
             rebanding.select_bands(open_image, image_path)
         # Tile and do any necessary resizing.
-        preprocess_prediction(image_path, image_type, 40, 512, "prediction")
+        preprocess_prediction(image_path, image_type, 40, 512)
         # Pass the tiles into the model.
-        make_predictions(model, "raw", image_type, temp_prediction, temp_folder, viz = False, save = True)
+        make_predictions(model, "raw", image_type, temp_tiled, temp_binary, temp_probabilities, save = True)
         # Construct a mosaic of tiles to match the original image.
-        out_path = name_file("{}_predicted".format(filename), ".png", folder)
-        tiling.reconstruct_from_tiles(temp_folder, out_path)
+        out_path = name_file("{}_predicted_classes".format(filename), ".png", folder)
+        tiling.reconstruct_from_tiles(temp_binary, out_path)
+        out_path = name_file("{}_predicted_probabilities".format(filename), ".png", folder)
+        tiling.reconstruct_from_tiles(temp_probabilities, out_path)
         # Clean up.
         delete_temp_files()
         del open_image
