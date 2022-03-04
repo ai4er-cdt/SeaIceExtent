@@ -37,6 +37,9 @@ def shp_to_tif(shape_file_path, image_file_path, out_path):
 
 
 def unique(list1):
+    """Prints each unique value in a list once.
+       Parameter: list1 (list) a list of values.
+    """
     uniques = []
     for row in list1:
         for element in row:

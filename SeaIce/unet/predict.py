@@ -6,6 +6,13 @@ import segmentation_models_pytorch as smp
 
 
 def load_model(model_path, unet_type, image_type):
+    """Load a previously trained model from .pth file.
+       Parameters: 
+            model_path: (string) file path of .pth model.
+            unet_type: (string) "raw" or "pretrained".
+            image_type: (string) "sar" or "modis".
+       Returns: the model instance loaded into PyTorch, ready for eval().
+    """
     if image_type == "modis":
         channels = 3
     elif image_type == "sar":
@@ -22,6 +29,13 @@ def load_model(model_path, unet_type, image_type):
 
 
 def plot_img_and_mask(img, mask, image_type):
+    """Show visualisation of prediction.
+       Parameters: 
+            img: the image passed into the network.
+            mask: (numpy array) the predicted classes.
+            image_type: (string) "sar" or "modis".
+       Output: pyplot plot of predicted classifications.
+    """
     classes = mask.shape[0] if len(mask.shape) > 2 else 1
     _, ax = plt.subplots(1, classes + 1)
     ax[0].set_title('Input image')
@@ -49,6 +63,16 @@ def predict_img(net,
                 full_img,
                 device,
                 out_threshold=0.5):
+    """Predicts classes from an image.
+       Parameters:
+            net: the model instance.
+            full_img: the image to predict.
+            device: CPU or CUDA.
+            out_threshold: (float) the predicted probability of a pixel's class required to assert and display that class.
+       Outputs:
+            (numpy array) a binary classification of ice or water per pixel.
+            full_mask (numpy array) the predicted probabilities for classifications.
+    """
     net.eval()
     img = full_img 
     img = img.unsqueeze(0)

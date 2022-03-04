@@ -18,7 +18,7 @@ class SingleConv(nn.Module):
 
 
 class Down(nn.Module):
-    """Downscaling with maxpool then double conv"""
+    """Downscaling with maxpool then single conv"""
 
     def __init__(self, in_channels, out_channels):
         super().__init__()
@@ -32,7 +32,7 @@ class Down(nn.Module):
 
 
 class Up(nn.Module):
-    """Upscaling then double conv"""
+    """Upscaling then single conv"""
 
     def __init__(self, in_channels, out_channels, bilinear=True):
         super().__init__()
@@ -70,6 +70,7 @@ class OutConv(nn.Module):
 
 
 class MiniUNet(nn.Module):
+    """A smaller, skeletal version of UNET for code development."""
     def __init__(self, n_channels, n_classes, bilinear=True):
         super(MiniUNet, self).__init__()
         print("Warning: Mini-UNet is not the full UNet and should not be used for actual model training."

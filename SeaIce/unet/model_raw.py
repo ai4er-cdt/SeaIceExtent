@@ -18,6 +18,21 @@ def train_net(net, device, image_type, dir_img,
               save_checkpoint: bool = True,
               img_scale: float = 0.5,
               amp: bool = False):
+    """Train UNET.
+       Parameters:
+            net: the model instance.
+            device: CPU or CUDA.
+            image_type: (string) "sar" or "modis".
+            dir_img: (string) path to folder containing tiles.
+            epochs: (int) number of epochs to run.
+            batch_size: (int) number of tiles to train on at once.
+            learning_rate: (float) intitial value before optimisation. 
+            val_percent: (float) % of dataset to use for validation.
+            save_checkpoint: (boolean) whether to save model versions as the training runs.
+            img_scale: (float)
+            amp: (boolean) 
+        Returns: loss (float) the dice loss of the training run.
+    """
     
     # Create dataset
     img_list = create_npy_list(dir_img, image_type)
@@ -132,6 +147,7 @@ def train_net(net, device, image_type, dir_img,
 
   
 def get_args():
+    """Default parameters for a typical training run."""
     parser = argparse.ArgumentParser(description='Train the UNet on images and target masks')
     parser.add_argument('--epochs', '-e', metavar='E', type=int, default=5, help='Number of epochs')
     parser.add_argument('--batch-size', '-b', dest='batch_size', metavar='B', type=int, default=10, help='Batch size')
@@ -148,7 +164,7 @@ def get_args():
 
 
 def get_mini_args():
-    # small, basic implementation for quicker code tests, not for actual model training
+    """small, basic implementation of get_args for quicker code tests, not for actual model training."""
     parser = argparse.ArgumentParser(description='small, basic implementation for quicker code tests, not for actual model training')
     parser.add_argument('--epochs', '-e', metavar='E', type=int, default=1, help='Number of epochs')
     parser.add_argument('--batch-size', '-b', dest='batch_size', metavar='B', type=int, default=1, help='Batch size')
@@ -165,6 +181,9 @@ def get_mini_args():
 
 
 def run_training(image_type):
+    """Sets up the model and starts the training process.
+       Parameter: image_type: (string) "sar" or "modis".
+    """
     args = get_args()
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
     logging.info(f'Using device {processor}')

@@ -63,6 +63,14 @@ def preprocess_training(shape_file_path, folder_name, modis_paths = None, sar_pa
 
 
 def preprocess_prediction(image_path, image_type, resolution, tile_size):
+   """Perform preprocessing on new images to be consistent with training.
+      Parameters: 
+            image_path: (string) file path to image.
+            image_type: (string) "sar" or "modis".
+            resolution: (int) required resolutin in metres.
+            tile_size: (int) height and width of image tiles.
+      Output: preprocessed images in temporary folders, and tiles of image. 
+   """
    if image_type == "modis" and resolution != None:
            # Alter resolution of modis image
            new_resolution_path = name_file("new_resolution", ".tif", temp_preprocessed)
@@ -76,6 +84,10 @@ def preprocess_prediction(image_path, image_type, resolution, tile_size):
 
 
 def start_prediction(image_path):
+    """Controls pipeline of taking in a new image and passing it through prediction procedure.
+       Parameter: image_path: (string) file path to tiff image to be predicted, or path of folder containing tiff images to be predicted.
+       Output: two png images next to the original image's location(s); one for classes and one for probabilities. 
+    """
     # Check if the provided path is to a folder or an individual image.
     if image_path.endswith(".tif"):
         # Individual image.

@@ -112,6 +112,14 @@ def tile_prediction_image(image_path, image_type, out_path, tile_size):
 
 
 def tif_to_window(tif_path, window_shape, step_size):
+    """Create a sliding window over a tiff image.
+       Parameters: 
+            tif_path: (string) file path to tiff image.
+            window_shape: (list of ints) desired shape and tile size of window over image.
+            step_size: (int) number of pixels to move along.
+       Returns: image_window: (sliding window) for tiling.
+
+    """
     Image.MAX_IMAGE_PIXELS = 900000000
     try:
         image_tif = Image.open(tif_path)
@@ -126,6 +134,12 @@ def tif_to_window(tif_path, window_shape, step_size):
 
 
 def reconstruct_from_tiles(tiles_path, out_path):
+    """Piece together a mosaic image from tiles ordered by row and col.
+       Parameters: 
+            tiles_path: (string) directory containing numpy tiles.
+            out_path: (string) file path of final png image to write.
+       Outputs: a png image of the mosiac.        
+    """
     os.chdir(tiles_path)
     file_names = os.listdir()
     num_rows, num_cols = 0, 0
