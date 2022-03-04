@@ -81,6 +81,14 @@ def split_img_list(img_list, val_percent):
     return train_img_list, val_img_list, n_train, n_val
 
 
+def create_dataloaders(train_dataset, val_dataset, batch_size, workers):
+    loader_args = dict(batch_size=batch_size, num_workers=workers, pin_memory=True)
+    train_loader = DataLoader(train_dataset, shuffle=True, **loader_args)
+    val_loader = DataLoader(val_dataset, shuffle=False, drop_last=True, **loader_args)
+
+    return train_loader, val_loader
+
+
 class CustomImageDataset(Dataset):
     """GTC Code for a dataset class. The class is instantiated with list of filenames within a directory (created using
     the list_npy_filenames function). The __getitem__ method pairs up corresponding image-label .npy file pairs. This
