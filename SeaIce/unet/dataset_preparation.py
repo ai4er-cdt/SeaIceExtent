@@ -192,7 +192,7 @@ class CustomImageAugmentDataset(Dataset):
             augmented_image = torch.rot90(augmented_image, k=-1, dims=[1, 2])
             augmented_mask = torch.rot90(augmented_mask, k=-1, dims=[0, 1])
 
-        if aug_probabilities[5]: # Random crop (and resize)
+        if False:#aug_probabilities[5]: # Random crop (and resize)
             augment_function = transforms.Compose([transforms.RandomCrop(size=256),
                                                    transforms.Resize(512)])
             augmented_image, augmented_mask = augment_function(augmented_image), augment_function(augmented_mask)
