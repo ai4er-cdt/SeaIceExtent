@@ -33,6 +33,10 @@ def create_npy_list(image_directory, img_string):
 
 
 def small_sample(dataset):
+    """A sample 1/10 the size of the dataset for faster code development.
+       Parameter: dataset: (list) file paths of all data in the set.
+       Returns: small_set: (list) 10 % of those files, randomly selected.
+    """
     tenth = round(len(dataset)/10)
     random.shuffle(dataset)
     small_set = dataset[0:tenth]
@@ -40,6 +44,18 @@ def small_sample(dataset):
 
 
 def split_data(dataset, val_percent, batch_size, workers):
+    """Split dataset into training and validation sets.
+       Parameters: 
+            dataset: (list) paths of all numpy tile files in set.
+            val_percent: (numerical type) % of data to use for validation.
+            batch_size: (int) number of tiles per batch.
+            workers: (int) parallelism factor (CPU or GPU).
+       Returns:
+            n_val: (int) number of tiles in validation set.
+            n_train: (int) number of tiles in training set.
+            train_loader: (dataloader object) to train with.
+            val_loader: (dataloader object) to validate with.
+    """
     # Split into train / validation partitions
     n_val = int(len(dataset) * val_percent)
     n_train = len(dataset) - n_val

@@ -86,7 +86,10 @@ def save_tiff(image_array, image_metadata, out_name, out_path = temp_files):
 
 
 def mask_to_image(mask: np.ndarray):
-    # Convert numpy array to .png file.
+    """ Convert numpy array to .png file.
+        Parameters: mask: (numpy array) pixel values of an image.
+        Returns: .png format image.
+    """
     if mask.ndim == 2:
         return Image.fromarray((mask * 255).astype(np.uint8))
     elif mask.ndim == 3:

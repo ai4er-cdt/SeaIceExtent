@@ -1,7 +1,7 @@
 # Code which we run specifically on our dataset, which would not be applicable to others.
 # This code is not really reuseable unless given as an example.
 import controller
-from preprocessing.data_handling import get_contents, delete_temp_files
+from preprocessing.data_handling import get_contents
 import fiona
 from pathlib import Path
 
@@ -62,6 +62,6 @@ def make_training_data():
 
 
 #make_training_data()
-controller.start_prediction(r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\raw\2011-01-29_072859_sar.tif")
+controller.start_prediction(r"G:\Shared drives\2021-gtc-sea-ice\data\2011-01-13_021245\MODIS\Antarctica_r05c03.2011013.terra.367.250m.3031.tif")
 
 

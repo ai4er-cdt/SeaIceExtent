@@ -7,6 +7,12 @@ from osgeo import osr
 
 
 def select_bands(open_image, out_path):
+    """Copies light bands 3, 6 and 7 to a new image so that extra bands are not included.
+       Parameters: 
+            open_image: (gdal opened image) the image which contains extra bands.
+            out_path: (string) the file path of the new image to write.
+       Output: A new image.
+    """
     numerical_sizes = {'Byte':'B', 'UInt16':'H', 'Int16':'h', 'UInt32':'I', 'Int32':'i', 'Float32':'f', 'Float64':'d'}
 
     #Get projection

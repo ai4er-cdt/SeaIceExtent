@@ -3,6 +3,13 @@ from unet.shared import *
 
 
 def evaluate(net, dataloader, device):
+    """Evaluate the model during training.
+       Parameters:
+            net: the unet model instance.
+            dataloader: the validation set dataloader object.
+            device: CPU or CUDA.
+       Returns: dice score over the validation set.
+    """
     net.eval()
     num_val_batches = len(dataloader)
     dice_score = 0
@@ -38,7 +45,7 @@ def evaluate(net, dataloader, device):
 
 
 def dice_coeff(input: Tensor, target: Tensor, reduce_batch_first: bool = False, epsilon=1e-6):
-    # Average of Dice coefficient for all batches, or for a single mask
+    """Average of Dice coefficient for all batches, or for a single mask."""
     assert input.size() == target.size()
     if input.dim() == 2 and reduce_batch_first:
         raise ValueError(f'Dice: asked to reduce batch but got tensor without batch dimension (shape {input.shape})')
@@ -59,7 +66,7 @@ def dice_coeff(input: Tensor, target: Tensor, reduce_batch_first: bool = False, 
 
 
 def multiclass_dice_coeff(input: Tensor, target: Tensor, reduce_batch_first: bool = False, epsilon=1e-6):
-    # Average of Dice coefficient for all classes
+    """Average of Dice coefficient for all classes"""
     assert input.size() == target.size()
     dice = 0
     for channel in range(input.shape[1]):
@@ -69,7 +76,7 @@ def multiclass_dice_coeff(input: Tensor, target: Tensor, reduce_batch_first: boo
 
 
 def dice_loss(input: Tensor, target: Tensor, multiclass: bool = False):
-    # Dice loss (objective to minimize) between 0 and 1
+    """Dice loss (objective to minimize) between 0 and 1"""
     assert input.size() == target.size()
     fn = multiclass_dice_coeff if multiclass else dice_coeff
     return 1 - fn(input, target, reduce_batch_first=True)
