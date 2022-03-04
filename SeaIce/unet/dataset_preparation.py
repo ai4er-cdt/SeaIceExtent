@@ -4,6 +4,7 @@ from torch.utils.data.dataset import Dataset  # For custom data-sets
 from torchvision import transforms
 import glob
 from datetime import datetime
+import random
 
 torch.manual_seed(2022) # Setting random seed so that augmentations can be reproduced.
 
@@ -67,6 +68,27 @@ def split_data(dataset, val_percent, batch_size, workers):
     return n_val, n_train, train_loader, val_loader
 
 
+def split_img_list(img_list, val_percent):
+    random.seed(2022)
+
+    n_val = int(len(img_list) * val_percent)
+    n_train = len(img_list) - n_val
+    random.shuffle(img_list)
+
+    train_img_list = img_list[n_val:]
+    val_img_list = img_list[:n_val]
+
+    return train_img_list, val_img_list, n_train, n_val
+
+
+def create_dataloaders(train_dataset, val_dataset, batch_size, workers):
+    loader_args = dict(batch_size=batch_size, num_workers=workers, pin_memory=True)
+    train_loader = DataLoader(train_dataset, shuffle=True, **loader_args)
+    val_loader = DataLoader(val_dataset, shuffle=False, drop_last=True, **loader_args)
+
+    return train_loader, val_loader
+
+
 class CustomImageDataset(Dataset):
     """GTC Code for a dataset class. The class is instantiated with list of filenames within a directory (created using
     the list_npy_filenames function). The __getitem__ method pairs up corresponding image-label .npy file pairs. This
@@ -103,33 +125,44 @@ class CustomImageDataset(Dataset):
 
 
 class CustomImageAugmentDataset(Dataset):
-    """GTC Code for an augmented dataset class. The class is instantiated with a list of filenames within a directory 
+    """GTC Code for an augmented dataset class. The class is instantiated with a list of filenames within a directory
     (created using the list_npy_filenames function). The __getitem__ method pairs up corresponding image-label .npy file
-    pairs. If specified, augmentations are also applied to the images with a probability. There is a ~25% chance that 
-    no augmentations are applied and a 20% chance of each of the following augmentations: horizontal flip, vertical 
+    pairs. If specified, augmentations are also applied to the images with a probability. There is a ~25% chance that
+    no augmentations are applied and a 20% chance of each of the following augmentations: horizontal flip, vertical
     flip, 90 degree rotation (anti-clockwise & clockwise), 180 degree rotation, random crop. Multiple augmentations are
     applied in sequence. This dataset can then be input to a dataloader."""
 
-    def __init__(self, paths, augmentation):
+    def __init__(self, paths, is_single_band, return_type, augmentation):
         self.paths = paths
+        self.is_single_band = is_single_band
+        self.return_type = return_type
         self.augmentation = augmentation
 
     def __len__(self):
         return len(self.paths)
 
     def __getitem__(self, index):
-        image = torch.from_numpy(np.vstack(np.load(self.paths[index][0])).astype(float))[None, :]
+        image = torch.from_numpy(np.vstack(np.load(self.paths[index][0])).astype(float))
+        if self.is_single_band:
+            image = image[None,:]
+        else:
+            #image = torch.permute(image, (3, 1, 2, 0))
+            image = torch.permute(image, (2, 0, 1))
         mask_raw = (np.load(self.paths[index][1]))
-        maskremap100 = np.where(mask_raw == 100, 100, mask_raw) # 0
-        maskremap200 = np.where(maskremap100 == 200, 200, maskremap100) # 1
+        maskremap100 = np.where(mask_raw == 100, 0, mask_raw)
+        maskremap200 = np.where(maskremap100 == 200, 1, maskremap100)
         mask = torch.from_numpy(np.vstack(maskremap200).astype(float))
 
         if self.augmentation:
-            image_pair = self.augment_image(image, mask)
-        else:
-            image_pair = {'image': image, 'mask': mask}
+            image, mask = self.augment_image(image, mask)
 
-        return image_pair
+        #assert image.size == mask.size, \
+        #    'Image and mask {name} should be the same size, but are {img.size} and {mask.size}'
+        if self.return_type == "dict":
+            return {'image': image, 'mask': mask}
+        elif self.return_type == "values":
+            mask = mask[None, :]
+            return image, mask
 
     @staticmethod
     def augment_image(original_image, original_mask):
@@ -159,7 +192,7 @@ class CustomImageAugmentDataset(Dataset):
             augmented_image = torch.rot90(augmented_image, k=-1, dims=[1, 2])
             augmented_mask = torch.rot90(augmented_mask, k=-1, dims=[0, 1])
 
-        if aug_probabilities[5]: # Random crop (and resize)
+        if False:#aug_probabilities[5]: # Random crop (and resize)
             augment_function = transforms.Compose([transforms.RandomCrop(size=256),
                                                    transforms.Resize(512)])
             augmented_image, augmented_mask = augment_function(augmented_image), augment_function(augmented_mask)
@@ -169,7 +202,7 @@ class CustomImageAugmentDataset(Dataset):
             augment_function = transforms.GaussianBlur(kernel_size=(7,13), sigma=(0.1, 0.2))
             augmented_image, augmented_mask = augment_function(augmented_image), augment_function(augmented_mask)
         """
-        return {'image': augmented_image, 'mask': augmented_mask}
+        return augmented_image, augmented_mask
 
     
 def create_checkpoint_dir(path_checkpoint, img_type, model_type):
