@@ -21,7 +21,10 @@ AI4EO GTC 2021/2. Repository for group 2: detecting sea ice extent in visible/ S
 ## Description
 The 2021-2022 Sea Ice Extent Guided Team Challenge (Group 2) aims to build a pipeline that segments satellite imagery taken from the Bellinhausen Sea of the Southern Ocean to identify areas with ice and with open water to aid in the navigation of the research vessel the Sir David Attenborough. This project uses Sentinel-1 SAR imagery in the hh band at a 40m spatial resolution and MODIS optical imagery in bands 3 (459-479 nm), 6 (1628-1652 nm), and 7 (2105-2155 nm) at a 250m spatial resolution. The modeling is based on [U-Net](https://github.com/milesial/Pytorch-UNet) and segments SAR or Modis imagery based on seperately trained models. New imagery is read into the pipeline, is tiled and segmented, and then can be visualized either in tiles or as a fully reconstructed image. 
 
-![bellingshausen sea](images/bellingshausenSea.JPG?raw=true "Bellingshausen Sea")
+![bellingshausen sea](images/bellingshausenSea.JPG?raw=true "Bellingshausen Sea; Google Maps 2022")
+
+Imagery from Google Maps, 2022
+
 
 
 ## GitHub Organization
