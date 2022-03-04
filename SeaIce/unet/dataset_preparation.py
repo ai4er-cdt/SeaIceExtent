@@ -4,6 +4,7 @@ from torch.utils.data.dataset import Dataset  # For custom data-sets
 from torchvision import transforms
 import glob
 from datetime import datetime
+import random
 
 torch.manual_seed(2022) # Setting random seed so that augmentations can be reproduced.
 
@@ -65,6 +66,19 @@ def split_data(dataset, val_percent, batch_size, workers):
     train_loader = DataLoader(train_set, shuffle=True, **loader_args)
     val_loader = DataLoader(val_set, shuffle=False, drop_last=True, **loader_args)
     return n_val, n_train, train_loader, val_loader
+
+
+def split_img_list(img_list, val_percent):
+    random.seed(2022)
+
+    n_val = int(len(img_list) * val_percent)
+    n_train = len(img_list) - n_val
+    random.shuffle(img_list)
+
+    train_img_list = img_list[n_val:]
+    val_img_list = img_list[:n_val]
+
+    return train_img_list, val_img_list, n_train, n_val
 
 
 class CustomImageDataset(Dataset):
