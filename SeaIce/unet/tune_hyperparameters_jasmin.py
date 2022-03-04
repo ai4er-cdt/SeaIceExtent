@@ -4,10 +4,13 @@ try:
     from dataset_preparation import *
     from evaluation import *
     from network_structure import *
+    from mini_network import *
 except:
     from unet.dataset_preparation import *
     from unet.evaluation import *
+    from unet.network_structure import *
     from unet.mini_network import *
+
 import wandb
 import torch.optim as optim
 
@@ -30,6 +33,7 @@ def train_and_validate(config=None, amp=False, device='cpu'):
     image_type = 'sar'
     net = UNet(1, 2, True)
     return_type = 'dict'
+    workers = 2
 
     # Initialize a new wandb run
     with wandb.init(config=config):
@@ -44,11 +48,13 @@ def train_and_validate(config=None, amp=False, device='cpu'):
 
         # Loader
         img_list = create_npy_list(img_dir, image_type)
-        # Use this if you want a smaller dataset just to test things with
-        img_list = small_sample(img_list)
-        dataset = CustomImageDataset(img_list, is_single_band, return_type)
-        print(config)
-        n_val, n_train, train_loader, val_loader = split_data(dataset, config.validation_percent, config.batch_size, 2)
+
+        train_img_list, val_img_list, n_train, n_val = split_img_list(img_list, config.validation_percent)
+
+        train_dataset = CustomImageAugmentDataset(train_img_list, is_single_band, return_type, True)
+        validation_dataset = CustomImageAugmentDataset(val_img_list, is_single_band, return_type, False)
+
+        train_loader, val_loader = create_dataloaders(train_dataset, validation_dataset, config.batch_size, workers)
 
         # Optimiser
         optimiser = build_optimiser(net, config)
