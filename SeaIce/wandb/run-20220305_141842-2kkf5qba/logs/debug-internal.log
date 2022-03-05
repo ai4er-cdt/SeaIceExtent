@@ -1,0 +1,31 @@
+2022-03-05 14:18:43,479 INFO    MainThread:13484 [internal.py:wandb_internal():89] W&B internal server running at pid: 13484, started at: 2022-03-05 14:18:43.478246
+2022-03-05 14:18:43,481 DEBUG   HandlerThread:13484 [handler.py:handle_request():131] handle_request: check_version
+2022-03-05 14:18:43,481 INFO    WriterThread:13484 [datastore.py:open_for_write():77] open: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220305_141842-2kkf5qba\run-2kkf5qba.wandb
+2022-03-05 14:18:43,485 DEBUG   SenderThread:13484 [sender.py:send():235] send: header
+2022-03-05 14:18:43,485 DEBUG   SenderThread:13484 [sender.py:send_request():249] send_request: check_version
+2022-03-05 14:18:43,635 DEBUG   SenderThread:13484 [sender.py:send():235] send: run
+2022-03-05 14:18:43,637 INFO    SenderThread:13484 [sender.py:_maybe_setup_resume():489] checking resume status for None/U-Net/2kkf5qba
+2022-03-05 14:18:44,108 INFO    SenderThread:13484 [dir_watcher.py:__init__():169] watching files in: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220305_141842-2kkf5qba\files
+2022-03-05 14:18:44,108 INFO    SenderThread:13484 [sender.py:_start_run_threads():809] run started: 2kkf5qba with start time 1646489922
+2022-03-05 14:18:44,108 DEBUG   SenderThread:13484 [sender.py:send():235] send: summary
+2022-03-05 14:18:44,111 INFO    SenderThread:13484 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2022-03-05 14:18:44,111 DEBUG   HandlerThread:13484 [handler.py:handle_request():131] handle_request: run_start
+2022-03-05 14:18:44,126 DEBUG   HandlerThread:13484 [meta.py:__init__():36] meta init
+2022-03-05 14:18:44,126 DEBUG   HandlerThread:13484 [meta.py:__init__():50] meta init done
+2022-03-05 14:18:44,126 DEBUG   HandlerThread:13484 [meta.py:probe():210] probe
+2022-03-05 14:18:44,140 DEBUG   HandlerThread:13484 [meta.py:_setup_git():200] setup git
+2022-03-05 14:18:44,198 DEBUG   HandlerThread:13484 [meta.py:_setup_git():207] setup git done
+2022-03-05 14:18:44,198 DEBUG   HandlerThread:13484 [meta.py:_save_pip():54] save pip
+2022-03-05 14:18:44,199 DEBUG   HandlerThread:13484 [meta.py:_save_pip():68] save pip done
+2022-03-05 14:18:44,199 DEBUG   HandlerThread:13484 [meta.py:probe():248] probe done
+2022-03-05 14:18:44,204 DEBUG   SenderThread:13484 [sender.py:send():235] send: files
+2022-03-05 14:18:44,204 INFO    SenderThread:13484 [sender.py:_save_file():944] saving file wandb-metadata.json with policy now
+2022-03-05 14:18:44,219 DEBUG   HandlerThread:13484 [handler.py:handle_request():131] handle_request: stop_status
+2022-03-05 14:18:44,219 DEBUG   SenderThread:13484 [sender.py:send_request():249] send_request: stop_status
+2022-03-05 14:18:44,406 DEBUG   SenderThread:13484 [sender.py:send():235] send: config
+2022-03-05 14:18:45,119 INFO    Thread-12 :13484 [dir_watcher.py:_on_file_created():217] file/dir created: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220305_141842-2kkf5qba\files\wandb-summary.json
+2022-03-05 14:18:45,120 INFO    Thread-12 :13484 [dir_watcher.py:_on_file_created():217] file/dir created: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220305_141842-2kkf5qba\files\requirements.txt
+2022-03-05 14:18:45,120 INFO    Thread-12 :13484 [dir_watcher.py:_on_file_created():217] file/dir created: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220305_141842-2kkf5qba\files\output.log
+2022-03-05 14:18:45,121 INFO    Thread-12 :13484 [dir_watcher.py:_on_file_created():217] file/dir created: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220305_141842-2kkf5qba\files\wandb-metadata.json
+2022-03-05 14:18:45,500 INFO    Thread-17 :13484 [upload_job.py:push():137] Uploaded file C:\Users\sophi\AppData\Local\Temp\tmpni3k6lauwandb\1cqyw19w-wandb-metadata.json
+2022-03-05 14:18:47,126 INFO    Thread-12 :13484 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220305_141842-2kkf5qba\files\output.log

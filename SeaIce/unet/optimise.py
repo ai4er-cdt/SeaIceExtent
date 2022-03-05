@@ -1,6 +1,6 @@
-from unet.shared import *
-from unet.model_raw import *
-from unet.mini_network import MiniUNet
+from shared import *
+from model_raw import *
+from mini_network import MiniUNet
  
 
 if __name__ == '__main__':
@@ -16,7 +16,7 @@ if __name__ == '__main__':
 
     model = net.to(device=processor)
     #print(receptive_field(model, input_size=(3, 256, 256)))
-    tile_sizes = [tiled256, tiled512, tiled768, tiled1024]
+    tile_sizes = [tiled512, tiled768, tiled1024]
     best_loss, iterations = 100, 0
     losses = []
     #while best_loss > 0.5 and iterations < 10:
@@ -29,10 +29,10 @@ if __name__ == '__main__':
                       dir_img=tiles,
                       epochs=args.epochs, 
                       batch_size=args.batch_size,
-                      learning_rate=args.lr,
+                      learning_rate=0.001,
                       img_scale=args.scale,
                       save_checkpoint=args.save_checkpoint,
-                      val_percent=args.val / 100,
+                      val_percent=0.02,
                       amp=args.amp)
             loss = loss.item()
             losses.append((tiles, loss))

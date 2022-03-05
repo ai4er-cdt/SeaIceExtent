@@ -1,5 +1,5 @@
 """ CNN Dataset preparation functions """
-from unet.shared import *
+from shared import *
 from torch.utils.data.dataset import Dataset  # For custom data-sets
 from torchvision import transforms
 import glob

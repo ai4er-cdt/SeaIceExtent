@@ -1,0 +1,9 @@
+INFO: Starting training:
+        Epochs:          1
+        Batch size:      1
+        Learning rate:   0.0001
+        Training size:   215
+        Validation size: 4
+        Checkpoints:     False
+        Device:          cpu
+        Images scaling:  0.5

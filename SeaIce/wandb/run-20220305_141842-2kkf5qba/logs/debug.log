@@ -1,0 +1,27 @@
+2022-03-05 14:18:42,466 INFO    MainThread:11512 [wandb_setup.py:_flush():75] Loading settings from C:\Users\sophi\.config\wandb\settings
+2022-03-05 14:18:42,466 INFO    MainThread:11512 [wandb_setup.py:_flush():75] Loading settings from C:\Users\sophi\SeaIceExtent\SeaIce\wandb\settings
+2022-03-05 14:18:42,466 INFO    MainThread:11512 [wandb_setup.py:_flush():75] Loading settings from environment variables: {}
+2022-03-05 14:18:42,466 INFO    MainThread:11512 [wandb_setup.py:_flush():75] Inferring run settings from compute environment: {'program_relpath': 'SeaIce\\unet\\optimise.py', 'program': 'C:\\Users\\sophi\\SeaIceExtent\\SeaIce\\unet\\optimise.py'}
+2022-03-05 14:18:42,466 INFO    MainThread:11512 [wandb_setup.py:_flush():75] Applying login settings: {'anonymous': 'must'}
+2022-03-05 14:18:42,466 INFO    MainThread:11512 [wandb_init.py:_log_setup():386] Logging user logs to C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220305_141842-2kkf5qba\logs\debug.log
+2022-03-05 14:18:42,467 INFO    MainThread:11512 [wandb_init.py:_log_setup():387] Logging internal logs to C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220305_141842-2kkf5qba\logs\debug-internal.log
+2022-03-05 14:18:42,467 INFO    MainThread:11512 [wandb_init.py:init():420] calling init triggers
+2022-03-05 14:18:42,467 INFO    MainThread:11512 [wandb_init.py:init():425] wandb.init called with sweep_config: {}
+config: {}
+2022-03-05 14:18:42,467 INFO    MainThread:11512 [wandb_init.py:init():471] starting backend
+2022-03-05 14:18:42,467 INFO    MainThread:11512 [backend.py:_multiprocessing_setup():99] multiprocessing start_methods=spawn, using: spawn
+2022-03-05 14:18:42,473 INFO    MainThread:11512 [backend.py:ensure_launched():219] starting backend process...
+2022-03-05 14:18:42,529 INFO    MainThread:11512 [backend.py:ensure_launched():224] started backend process with pid: 13484
+2022-03-05 14:18:42,532 INFO    MainThread:11512 [wandb_init.py:init():480] backend started and connected
+2022-03-05 14:18:42,535 INFO    MainThread:11512 [wandb_init.py:init():550] updated telemetry
+2022-03-05 14:18:42,568 INFO    MainThread:11512 [wandb_init.py:init():581] communicating current version
+2022-03-05 14:18:43,633 INFO    MainThread:11512 [wandb_init.py:init():586] got version response upgrade_message: "wandb version 0.12.11 is available!  To upgrade, please run:\n $ pip install wandb --upgrade"
+
+2022-03-05 14:18:43,634 INFO    MainThread:11512 [wandb_init.py:init():596] communicating run to backend with 30 second timeout
+2022-03-05 14:18:44,110 INFO    MainThread:11512 [wandb_init.py:init():624] starting run threads in backend
+2022-03-05 14:18:44,218 INFO    MainThread:11512 [wandb_run.py:_console_start():1827] atexit reg
+2022-03-05 14:18:44,219 INFO    MainThread:11512 [wandb_run.py:_redirect():1701] redirect: SettingsConsole.WRAP
+2022-03-05 14:18:44,220 INFO    MainThread:11512 [wandb_run.py:_redirect():1738] Wrapping output streams.
+2022-03-05 14:18:44,225 INFO    MainThread:11512 [wandb_run.py:_redirect():1762] Redirects installed.
+2022-03-05 14:18:44,225 INFO    MainThread:11512 [wandb_init.py:init():651] run started, returning control to user process
+2022-03-05 14:18:44,225 INFO    MainThread:11512 [wandb_run.py:_config_callback():966] config_cb None None {'epochs': 1, 'batch_size': 1, 'learning_rate': 0.0001, 'val_percent': 0.02, 'save_checkpoint': False, 'img_scale': 0.5, 'amp': False}

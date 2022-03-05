@@ -1,8 +1,8 @@
 """ Implementation of model """
-from unet.shared import *
-from unet.evaluation import evaluate, dice_loss
-from unet.dataset_preparation import *
-from unet.network_structure import UNet
+from shared import *
+from evaluation import evaluate, dice_loss
+from dataset_preparation import *
+from network_structure import UNet
 import argparse
 import sys
 import wandb
@@ -62,7 +62,8 @@ def train_net(net, device, image_type, dir_img,
     ''')
 
     # Set up the optimizer, the loss, the learning rate scheduler and the loss scaling for AMP
-    optimizer = optim.RMSprop(net.parameters(), lr=learning_rate, weight_decay=1e-8, momentum=0.9)
+    optimizer = optim.Adam(net.parameters(), lr=learning_rate, weight_decay=1e-8)
+    #optimizer = optim.RMSprop(net.parameters(), lr=learning_rate, weight_decay=1e-8, momentum=0.9)
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'max', patience=2)  # goal: maximize Dice score
     grad_scaler = torch.cuda.amp.GradScaler(enabled=amp)
     criterion = nn.CrossEntropyLoss()

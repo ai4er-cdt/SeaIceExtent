@@ -64,4 +64,3 @@ def make_training_data():
 #make_training_data()
 controller.start_prediction(r"G:\Shared drives\2021-gtc-sea-ice\data\2011-01-13_021245\MODIS\Antarctica_r05c03.2011013.terra.367.250m.3031.tif")
 
-
