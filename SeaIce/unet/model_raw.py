@@ -16,7 +16,6 @@ def train_net(net, device, image_type, dir_img,
               learning_rate: float = 0.001,
               val_percent: float = 0.1,
               save_checkpoint: bool = True,
-              img_scale: float = 0.5,
               amp: bool = False):
     """Train UNET.
        Parameters:
@@ -29,8 +28,7 @@ def train_net(net, device, image_type, dir_img,
             learning_rate: (float) intitial value before optimisation. 
             val_percent: (float) % of dataset to use for validation.
             save_checkpoint: (boolean) whether to save model versions as the training runs.
-            img_scale: (float)
-            amp: (boolean) 
+            amp: (boolean) enable or disable mixed precision.
         Returns: loss (float) the dice loss of the training run.
     """
     
@@ -46,7 +44,7 @@ def train_net(net, device, image_type, dir_img,
     # Initialize logging
     experiment = wandb.init(project='U-Net', resume='allow', anonymous='must')
     experiment.config.update(dict(epochs=epochs, batch_size=batch_size, learning_rate=learning_rate,
-                                  val_percent=val_percent, save_checkpoint=save_checkpoint, img_scale=img_scale,
+                                  val_percent=val_percent, save_checkpoint=save_checkpoint,
                                   amp=amp))
 
     logging.info(f'''Starting training:
@@ -57,7 +55,6 @@ def train_net(net, device, image_type, dir_img,
         Validation size: {n_val}
         Checkpoints:     {save_checkpoint}
         Device:          {device.type}
-        Images scaling:  {img_scale}
         Mixed Precision: {amp}
     ''')
 
@@ -139,7 +136,7 @@ def train_net(net, device, image_type, dir_img,
 
         if save_checkpoint:
             if epoch == 1:
-                dir_checkpoint = create_checkpoint_dir(path_checkpoint, img_type, model_type)
+                dir_checkpoint = create_checkpoint_dir(path_checkpoint, image_type, "raw")
             
             torch.save(net.state_dict(), str(dir_checkpoint / 'checkpoint_epoch{}.pth'.format(epoch + 1)))
             logging.info(f'Checkpoint {epoch + 1} saved!')
@@ -155,7 +152,6 @@ def get_args():
     parser.add_argument('--learning-rate', '-l', metavar='LR', type=float, default=0.00001,
                         help='Learning rate', dest='lr')
     parser.add_argument('--load', '-f', type=str, default=False, help='Load model from a .pth file')
-    parser.add_argument('--scale', '-s', type=float, default=0.5, help='Downscaling factor of the images')
     parser.add_argument('--save-checkpoint', '-c', default = True, help='Save a checkpoint file after each validation round')
     parser.add_argument('--validation', '-v', dest='val', type=float, default=10.0,
                         help='Percent of the data that is used as validation (0-100)')
@@ -175,7 +171,6 @@ def get_mini_args():
     parser.add_argument('--validation', '-v', dest='val', type=float, default=1.0,
                         help='Percent of the data that is used as validation (0-100)')
     parser.add_argument('--save-checkpoint', '-c', default = False, help='Save a checkpoint file after each validation round')
-    parser.add_argument('--scale', '-s', type=float, default=0.5, help='Downscaling factor of the images')
     parser.add_argument('--amp', action='store_true', default=False, help='Use mixed precision')
 
     return parser.parse_args()
@@ -208,7 +203,6 @@ def run_training(image_type):
                   dir_img=tiled512,
                   batch_size=args.batch_size,
                   learning_rate=args.lr,
-                  img_scale=args.scale,
                   save_checkpoint=args.save_checkpoint,
                   val_percent=args.val / 100,
                   amp=args.amp)

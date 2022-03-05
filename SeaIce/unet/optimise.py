@@ -30,7 +30,6 @@ if __name__ == '__main__':
                       epochs=args.epochs, 
                       batch_size=args.batch_size,
                       learning_rate=0.001,
-                      img_scale=args.scale,
                       save_checkpoint=args.save_checkpoint,
                       val_percent=0.02,
                       amp=args.amp)
