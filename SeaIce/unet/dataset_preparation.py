@@ -69,6 +69,7 @@ def split_data(dataset, val_percent, batch_size, workers):
 
 
 def split_img_list(img_list, val_percent):
+    """Splits the img list pairs (created in create_npy_list) into separate sets for training and validation."""
     random.seed(2022)
 
     n_val = int(len(img_list) * val_percent)
@@ -82,6 +83,7 @@ def split_img_list(img_list, val_percent):
 
 
 def create_dataloaders(train_dataset, val_dataset, batch_size, workers):
+    """Creates dataloaders for the separate train and validation datasets."""
     loader_args = dict(batch_size=batch_size, num_workers=workers, pin_memory=True)
     train_loader = DataLoader(train_dataset, shuffle=True, **loader_args)
     val_loader = DataLoader(val_dataset, shuffle=False, drop_last=True, **loader_args)
