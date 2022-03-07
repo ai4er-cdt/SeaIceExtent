@@ -19,7 +19,7 @@ elif img_type == "modis":
 
 dataset = CustomImageDataset(img_list, single_channel, "values")
 
-_, _, train_loader, val_loader = split_data(dataset, val_percent, batch_size, 2)
+_, _, train_loader, val_loader = split_data(dataset, val_percent, batch_size, 1)
 
 loss = smp.utils.losses.DiceLoss()
 metrics = [smp.utils.metrics.IoU(threshold=0.5),]

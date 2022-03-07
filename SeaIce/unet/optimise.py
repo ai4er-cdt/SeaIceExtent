@@ -16,8 +16,8 @@ if __name__ == '__main__':
 
     model = net.to(device=processor)
     #print(receptive_field(model, input_size=(3, 256, 256)))
-    tile_sizes = [tiled512, tiled768, tiled1024]
-    best_loss, iterations = 100, 0
+    tile_sizes = [tiled256, tiled512, tiled768, tiled1024]
+    best_loss, worst_loss, iterations = 100, 0, 0
     losses = []
     #while best_loss > 0.5 and iterations < 10:
     for _ in range(3):
@@ -29,15 +29,21 @@ if __name__ == '__main__':
                       dir_img=tiles,
                       epochs=args.epochs, 
                       batch_size=args.batch_size,
-                      learning_rate=0.001,
+                      learning_rate=0.0001,
                       save_checkpoint=args.save_checkpoint,
-                      val_percent=0.02,
+                      val_percent=0.1,
                       amp=args.amp)
             loss = loss.item()
             losses.append((tiles, loss))
             if loss < best_loss:
                 best_loss = loss
                 best_tile_size = tiles
+            if loss > worst_loss:
+                worst_loss = loss
+                worst_tile_size = tiles
             iterations += 1
-    print('best tile size:', best_tile_size, best_loss)
+        print("best tile size", best_tile_size, "loss", best_loss)
+        print("worst tile size", worst_tile_size, "loss", worst_loss)
+        print("\n")
+    print('best tile size:', best_tile_size, "loss", best_loss)
     print(losses)

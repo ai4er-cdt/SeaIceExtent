@@ -5,6 +5,7 @@ from torchvision import transforms
 import glob
 from datetime import datetime
 import random
+import sys
 
 torch.manual_seed(2022) # Setting random seed so that augmentations can be reproduced.
 
@@ -34,13 +35,22 @@ def create_npy_list(image_directory, img_string):
 
 
 def small_sample(dataset):
-    """A sample 1/10 the size of the dataset for faster code development.
+    """A 100 MB sample of the dataset for faster code development.
        Parameter: dataset: (list) file paths of all data in the set.
-       Returns: small_set: (list) 10 % of those files, randomly selected.
+       Returns: small_set: (list) 100 MB of those files, randomly selected.
     """
-    tenth = round(len(dataset)/10)
     random.shuffle(dataset)
-    small_set = dataset[0:tenth]
+    small_set, i, num_bytes = [], 0, 0
+    while num_bytes < 100000000 and len(small_set) < len(dataset):
+        this_pair = dataset[i]
+        small_set.append(this_pair)
+        this_array = np.load(this_pair[0])
+        num_bytes += sys.getsizeof(this_array) 
+        this_array = None
+        i += 1
+    print(num_bytes, "bytes in small set")
+    print(len(small_set), "tiles in set")
+    print("full set num tiles divided by small set num tiles =", len(dataset) / len(small_set))
     return small_set
 
 

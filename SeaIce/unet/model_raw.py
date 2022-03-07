@@ -39,7 +39,7 @@ def train_net(net, device, image_type, dir_img,
 
     dataset = CustomImageDataset(img_list, False, "dict")
     
-    n_val, n_train, train_loader, val_loader = split_data(dataset, val_percent, batch_size, 2)
+    n_val, n_train, train_loader, val_loader = split_data(dataset, val_percent, batch_size, 1)
 
     # Initialize logging
     experiment = wandb.init(project='U-Net', resume='allow', anonymous='must')
