@@ -95,7 +95,7 @@ def train_and_validate(config=None, amp=False, device='cpu'):
                         loss = criterion(masks_pred, true_masks) \
                                + dice_loss(F.softmax(masks_pred, dim=1).float(),
                                            F.one_hot(true_masks, net.n_classes).permute(0, 3, 1, 2).float(),
-                                           multiclass=True)
+                                           multiclass=True, epsilon=config.weight_decay)
                         #loss = criterion(masks_pred, true_masks)
 
                     # Optimisation
@@ -112,7 +112,7 @@ def train_and_validate(config=None, amp=False, device='cpu'):
                     pbar.set_postfix(**{'loss (batch)': loss.item()})
                     n_batches += 1
 
-                val_score, _ = evaluate(net, val_loader, device)
+                val_score, _ = evaluate(net, val_loader, device, epsilon=config.weight_decay)
                 print(f'\nVal Score: {val_score}, Epoch: {epoch}')
 
                 #wandb.log({"Batch Loss, Validation": val_score_list[index]}, step=global_step-(len(val_score_list)+index))
