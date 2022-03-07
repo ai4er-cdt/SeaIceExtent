@@ -2,12 +2,12 @@
 
 try:
     from dataset_preparation import *
-    from evaluation import *
+    from evaluation_2loss import *
     from network_structure import *
-    from mini_network import *
+    #from mini_network import *
 except:
     from unet.dataset_preparation import *
-    from unet.evaluation import *
+    from unet.evaluation_2loss import *
     from unet.network_structure import *
     from unet.mini_network import *
 
@@ -33,7 +33,7 @@ def train_and_validate(config=None, amp=False, device='cpu'):
     image_type = 'sar'
     net = UNet(1, 2, True)
     return_type = 'dict'
-    workers = 2
+    workers = 12
 
     # Initialize a new wandb run
     with wandb.init(config=config):
@@ -144,7 +144,7 @@ if __name__ == '__main__':
     #wandb.init(project="test-hyptuning")
 
     # Model Name
-    model_name = 'unet'
+    #model_name = 'unet'
 
     # Configuring wandb settings
     sweep_config = {
@@ -166,17 +166,16 @@ if __name__ == '__main__':
         'learning_rate': {
             # a flat distribution between 0 and 0.1
             'distribution': 'uniform',
-            'min': 0,
+            'min': 0.00001,
             'max': 0.1
         },
         'batch_size': {
             # Uniformly-distributed between 5-15
             'distribution': 'int_uniform',
             'min': 5,
-            'max': 10,
+            'max': 25
         },
         'weight_decay': {
-            # a flat distribution between 0 and 0.1
             'distribution': 'int_uniform',
             'min': 1e-8,
             'max': 1e-2
@@ -189,14 +188,15 @@ if __name__ == '__main__':
         'momentum': {
             'value': 0.9},
         'validation_percent': {
-            'value': 0.5},
+            'value': 0.2},
         'img_scale': {
             'value': 0.5},
         'epochs': {
             'value': 10}
     })
 
-    sweep_id = wandb.sweep(sweep_config, project=model_name + "hyp-sweep-jasmin")
+    sweep_id = wandb.sweep(sweep_config, project="jasmin-gpu", name="unet_original")
 
     n_tuning = 30
     wandb.agent(sweep_id, function=train_and_validate, count=n_tuning)
+
