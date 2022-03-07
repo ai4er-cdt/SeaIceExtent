@@ -173,25 +173,23 @@ if __name__ == '__main__':
             # Uniformly-distributed between 5-15
             'distribution': 'int_uniform',
             'min': 5,
-            'max': 15,
+            'max': 10,
         },
-        'epochs': {
+        'weight_decay': {
             # a flat distribution between 0 and 0.1
             'distribution': 'int_uniform',
-            'min': 10,
-            'max': 11
+            'min': 1e-8,
+            'max': 1e-2
         }
     }
     sweep_config['parameters'] = parameters_dict
 
     # Fixed hyperparamters
     parameters_dict.update({
-        'weight_decay': {
-            'value': 1e-8},
         'momentum': {
             'value': 0.9},
         'validation_percent': {
-            'value': 0.2},
+            'value': 0.5},
         'img_scale': {
             'value': 0.5},
         'epochs': {
