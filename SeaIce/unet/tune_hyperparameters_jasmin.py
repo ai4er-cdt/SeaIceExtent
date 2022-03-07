@@ -2,17 +2,38 @@
 
 try:
     from dataset_preparation import *
-    from evaluation_2loss import *
+    from evaluation import *
     from network_structure import *
-    #from mini_network import *
 except:
     from unet.dataset_preparation import *
-    from unet.evaluation_2loss import *
+    from unet.evaluation import *
     from unet.network_structure import *
-    from unet.mini_network import *
 
 import wandb
 import torch.optim as optim
+from pathlib import Path
+import os
+from datetime import datetime
+
+
+def create_checkpoint_dir(folder_checkpoint, img_type, model_type, optimizer, lr, batchsize, weightdecay):
+    now = datetime.now()
+    dt_string = now.strftime("%d%m%Y_%H%M%S")
+    dir_list = os.listdir(folder_checkpoint)
+    FOLDER_EXISTS = True
+    x = 1
+    while FOLDER_EXISTS:
+        dir_checkpoint = str('{}_{}_optm{}_batchsize{}_learnrate{}_weightdecay{}_date{}_{}'.format(model_type, img_type,
+                                                   str(optimizer), str(batchsize), str(lr),
+                                                   str(weightdecay), str(dt_string), str(x)))
+        path = os.path.join(folder_checkpoint, Path(dir_checkpoint))
+        if dir_checkpoint in dir_list:
+            x += 1
+        else:
+            FOLDER_EXISTS = False
+            os.mkdir(path)
+            # print("Checkpoint directory {} created.".format(str(path)))
+            return (path)
 
 
 def build_optimiser(network, config):
@@ -30,10 +51,13 @@ def train_and_validate(config=None, amp=False, device='cpu'):
 
     # Inputs for the helper functions
     img_dir = '/home/users/jdr53/tiled512/'
+    checkpoint_dir = '/home/users/jdr53/checkpoints'
     image_type = 'sar'
     net = UNet(1, 2, True)
     return_type = 'dict'
     workers = 12
+    save_checkpoint = False
+    model_type = 'unet'
 
     # Initialize a new wandb run
     with wandb.init(config=config):
@@ -68,6 +92,7 @@ def train_and_validate(config=None, amp=False, device='cpu'):
         # Begin training
         run_loss_train = 0
         run_loss_val = 0
+        dir_checkpoint = ''
         for epoch in range(config.epochs):
             net.train()
             epoch_loss = 0
@@ -125,6 +150,11 @@ def train_and_validate(config=None, amp=False, device='cpu'):
             #run_loss_val += val_score
             print('Logging Epoch Scores')
             wandb.log({"Epoch Loss, Training": avg_epoch_training_loss, "Epoch Loss, Validation": val_score, "Epoch": epoch+1}, step=global_step)
+            if save_checkpoint:
+                if epoch == 0:
+                    dir_checkpoint = create_checkpoint_dir(folder_checkpoint, image_type, model_type, config.optimiser,
+                                                           config.learning_rate, config.batch_size, config.weight_decay)
+                torch.save(net.state_dict(), str(dir_checkpoint / 'checkpoint_epoch{}.pth'.format(epoch + 1)))
 
         wandb.log({"Run Loss, Training": run_loss_train / config.epochs, "Run Loss, Validation": val_score}, step=global_step)
 
@@ -173,7 +203,7 @@ if __name__ == '__main__':
             # Uniformly-distributed between 5-15
             'distribution': 'int_uniform',
             'min': 5,
-            'max': 25
+            'max': 30
         },
         'weight_decay': {
             'distribution': 'int_uniform',
@@ -192,11 +222,19 @@ if __name__ == '__main__':
         'img_scale': {
             'value': 0.5},
         'epochs': {
-            'value': 10}
+            'value': 10000},
+        'optimiser': {
+            'value': 'sgd'},
+        'learning_rate': {
+            'value': 0.002},
+        'batch_size': {
+            'value': 8},
+        'weight_decay': {
+            'value': 1e-8}
     })
 
-    sweep_id = wandb.sweep(sweep_config, project="jasmin-gpu", name="unet_original")
+    sweep_id = wandb.sweep(sweep_config, project="jasmin-gpu", name="1-run")
 
-    n_tuning = 30
+    n_tuning = 1
     wandb.agent(sweep_id, function=train_and_validate, count=n_tuning)
 
