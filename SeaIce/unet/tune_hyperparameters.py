@@ -167,19 +167,17 @@ if __name__ == '__main__':
             'min': 5,
             'max': 10,
         },
-        'epochs': {
+        'weight_decay': {
             # a flat distribution between 0 and 0.1
             'distribution': 'int_uniform',
-            'min': 4,
-            'max': 5
+            'min': 1e-8,
+            'max': 1e-2
         }
     }
     sweep_config['parameters'] = parameters_dict
 
     # Fixed hyperparamters
     parameters_dict.update({
-        'weight_decay': {
-            'value': 1e-8},
         'momentum': {
             'value': 0.9},
         'validation_percent': {
@@ -187,7 +185,7 @@ if __name__ == '__main__':
         'img_scale': {
             'value': 0.5},
         'epochs': {
-            'value': 3}
+            'value': 10}
     })
 
     sweep_id = wandb.sweep(sweep_config, project=model_name + "hyp-sweep")
