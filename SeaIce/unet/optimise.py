@@ -16,7 +16,8 @@ if __name__ == '__main__':
 
     model = net.to(device=processor)
     #print(receptive_field(model, input_size=(3, 256, 256)))
-    tile_sizes = [tiled256, tiled512, tiled768, tiled1024]
+    #tile_sizes = [tiled256, tiled512, tiled768, tiled1024]
+    tile_sizes = [tiled_mix]
     best_loss, worst_loss, iterations = 100, 0, 0
     losses = []
     #while best_loss > 0.5 and iterations < 10:

@@ -30,6 +30,7 @@ tiled256 = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled256/'.form
 tiled512 = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled512/'.format(prefix))
 tiled768 = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled768/'.format(prefix))
 tiled1024 = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled1024/'.format(prefix))
+tiled_mix = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata/mixed_tiles/'.format(prefix))
 path_checkpoint = Path(r'{}/Shared drives/2021-gtc-sea-ice/model/checkpoints/'.format(prefix))
 temp_files = Path(r"{}/temp/temporary_files".format(program_path))
 temp_buffer = Path(r"{}/temp/temporary_buffer".format(program_path))
@@ -39,6 +40,7 @@ temp_probabilities = Path(r"{}/temp/probabilities".format(program_path))
 temp_tiled = Path(r"{}/temp/tiled".format(program_path))
 model_sar = Path(r"{}/models/sar_model_example.pth".format(program_path))
 model_modis = Path(r"{}/models/modis_model_example.pth".format(program_path))
+sophie_key = '3de9912aecd3185084729569fe9474544d7d5de5'
 
 
 def get_contents(in_directory, search_terms = None, string_position = None):

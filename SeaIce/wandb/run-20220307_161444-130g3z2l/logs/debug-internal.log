@@ -1,0 +1,179 @@
+2022-03-07 16:14:45,222 INFO    MainThread:9292 [internal.py:wandb_internal():89] W&B internal server running at pid: 9292, started at: 2022-03-07 16:14:45.221774
+2022-03-07 16:14:45,223 INFO    WriterThread:9292 [datastore.py:open_for_write():77] open: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\run-130g3z2l.wandb
+2022-03-07 16:14:45,224 DEBUG   HandlerThread:9292 [handler.py:handle_request():131] handle_request: check_version
+2022-03-07 16:14:45,228 DEBUG   SenderThread:9292 [sender.py:send():235] send: header
+2022-03-07 16:14:45,228 DEBUG   SenderThread:9292 [sender.py:send_request():249] send_request: check_version
+2022-03-07 16:14:46,102 DEBUG   SenderThread:9292 [sender.py:send():235] send: run
+2022-03-07 16:14:46,104 INFO    SenderThread:9292 [sender.py:_maybe_setup_resume():489] checking resume status for None/U-Net/130g3z2l
+2022-03-07 16:14:47,323 INFO    SenderThread:9292 [dir_watcher.py:__init__():169] watching files in: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files
+2022-03-07 16:14:47,323 INFO    SenderThread:9292 [sender.py:_start_run_threads():809] run started: 130g3z2l with start time 1646669684
+2022-03-07 16:14:47,323 DEBUG   SenderThread:9292 [sender.py:send():235] send: summary
+2022-03-07 16:14:47,324 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2022-03-07 16:14:47,325 DEBUG   HandlerThread:9292 [handler.py:handle_request():131] handle_request: run_start
+2022-03-07 16:14:47,340 DEBUG   HandlerThread:9292 [meta.py:__init__():36] meta init
+2022-03-07 16:14:47,340 DEBUG   HandlerThread:9292 [meta.py:__init__():50] meta init done
+2022-03-07 16:14:47,341 DEBUG   HandlerThread:9292 [meta.py:probe():210] probe
+2022-03-07 16:14:47,362 DEBUG   HandlerThread:9292 [meta.py:_setup_git():200] setup git
+2022-03-07 16:14:47,422 DEBUG   HandlerThread:9292 [meta.py:_setup_git():207] setup git done
+2022-03-07 16:14:47,422 DEBUG   HandlerThread:9292 [meta.py:_save_pip():54] save pip
+2022-03-07 16:14:47,422 DEBUG   HandlerThread:9292 [meta.py:_save_pip():68] save pip done
+2022-03-07 16:14:47,422 DEBUG   HandlerThread:9292 [meta.py:probe():248] probe done
+2022-03-07 16:14:47,428 DEBUG   SenderThread:9292 [sender.py:send():235] send: files
+2022-03-07 16:14:47,428 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file wandb-metadata.json with policy now
+2022-03-07 16:14:47,442 DEBUG   HandlerThread:9292 [handler.py:handle_request():131] handle_request: stop_status
+2022-03-07 16:14:47,443 DEBUG   SenderThread:9292 [sender.py:send_request():249] send_request: stop_status
+2022-03-07 16:14:48,098 DEBUG   SenderThread:9292 [sender.py:send():235] send: config
+2022-03-07 16:14:48,324 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_created():217] file/dir created: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\requirements.txt
+2022-03-07 16:14:48,324 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_created():217] file/dir created: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\wandb-summary.json
+2022-03-07 16:14:48,324 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_created():217] file/dir created: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\wandb-metadata.json
+2022-03-07 16:14:48,325 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_created():217] file/dir created: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\output.log
+2022-03-07 16:14:49,036 INFO    Thread-17 :9292 [upload_job.py:push():137] Uploaded file C:\Users\sophi\AppData\Local\Temp\tmpys8tci5ewandb\3qagpuov-wandb-metadata.json
+2022-03-07 16:14:50,344 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\output.log
+2022-03-07 16:14:50,452 DEBUG   SenderThread:9292 [sender.py:send():235] send: history
+2022-03-07 16:14:50,453 DEBUG   SenderThread:9292 [sender.py:send():235] send: summary
+2022-03-07 16:14:50,454 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2022-03-07 16:14:50,686 DEBUG   SenderThread:9292 [sender.py:send():235] send: history
+2022-03-07 16:14:50,687 DEBUG   SenderThread:9292 [sender.py:send():235] send: summary
+2022-03-07 16:14:50,688 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2022-03-07 16:14:51,354 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\wandb-summary.json
+2022-03-07 16:14:51,851 DEBUG   SenderThread:9292 [sender.py:send():235] send: history
+2022-03-07 16:14:51,852 DEBUG   SenderThread:9292 [sender.py:send():235] send: summary
+2022-03-07 16:14:51,853 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2022-03-07 16:14:52,236 DEBUG   SenderThread:9292 [sender.py:send():235] send: history
+2022-03-07 16:14:52,237 DEBUG   SenderThread:9292 [sender.py:send():235] send: summary
+2022-03-07 16:14:52,239 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2022-03-07 16:14:52,365 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\wandb-summary.json
+2022-03-07 16:14:52,366 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\output.log
+2022-03-07 16:14:54,384 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\output.log
+2022-03-07 16:14:57,394 DEBUG   SenderThread:9292 [sender.py:send():235] send: history
+2022-03-07 16:14:57,394 DEBUG   SenderThread:9292 [sender.py:send():235] send: summary
+2022-03-07 16:14:57,396 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2022-03-07 16:14:57,409 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\wandb-summary.json
+2022-03-07 16:15:00,441 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\output.log
+2022-03-07 16:15:03,104 DEBUG   HandlerThread:9292 [handler.py:handle_request():131] handle_request: stop_status
+2022-03-07 16:15:03,104 DEBUG   SenderThread:9292 [sender.py:send_request():249] send_request: stop_status
+2022-03-07 16:15:04,478 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\output.log
+2022-03-07 16:15:06,497 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\output.log
+2022-03-07 16:15:07,326 DEBUG   SenderThread:9292 [sender.py:send():235] send: files
+2022-03-07 16:15:07,326 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file media\images\images_5_c99f667a9bc463292c76.png with policy now
+2022-03-07 16:15:07,328 DEBUG   SenderThread:9292 [sender.py:send():235] send: files
+2022-03-07 16:15:07,329 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file media\images\true_5_238d591b92c7e29dbb0a.png with policy now
+2022-03-07 16:15:07,333 DEBUG   SenderThread:9292 [sender.py:send():235] send: files
+2022-03-07 16:15:07,334 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file media\images\pred_5_a82bdf90170e0a01c5d3.png with policy now
+2022-03-07 16:15:07,352 DEBUG   SenderThread:9292 [sender.py:send():235] send: history
+2022-03-07 16:15:07,368 DEBUG   SenderThread:9292 [sender.py:send():235] send: summary
+2022-03-07 16:15:07,380 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2022-03-07 16:15:07,508 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\wandb-summary.json
+2022-03-07 16:15:07,509 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_created():217] file/dir created: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\media\images\images_5_c99f667a9bc463292c76.png
+2022-03-07 16:15:07,509 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_created():217] file/dir created: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\media\images\pred_5_a82bdf90170e0a01c5d3.png
+2022-03-07 16:15:07,510 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_created():217] file/dir created: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\media\images\true_5_238d591b92c7e29dbb0a.png
+2022-03-07 16:15:07,510 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_created():217] file/dir created: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\media
+2022-03-07 16:15:07,510 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_created():217] file/dir created: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\media\images
+2022-03-07 16:15:07,697 DEBUG   SenderThread:9292 [sender.py:send():235] send: history
+2022-03-07 16:15:07,698 DEBUG   SenderThread:9292 [sender.py:send():235] send: summary
+2022-03-07 16:15:07,711 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2022-03-07 16:15:08,186 INFO    Thread-19 :9292 [upload_job.py:push():137] Uploaded file C:\Users\sophi\AppData\Local\Temp\tmpys8tci5ewandb\35tmxr7e-media/images/true_5_238d591b92c7e29dbb0a.png
+2022-03-07 16:15:08,251 INFO    Thread-20 :9292 [upload_job.py:push():137] Uploaded file C:\Users\sophi\AppData\Local\Temp\tmpys8tci5ewandb\2grjrui2-media/images/pred_5_a82bdf90170e0a01c5d3.png
+2022-03-07 16:15:08,304 INFO    Thread-18 :9292 [upload_job.py:push():137] Uploaded file C:\Users\sophi\AppData\Local\Temp\tmpys8tci5ewandb\1geces3x-media/images/images_5_c99f667a9bc463292c76.png
+2022-03-07 16:15:08,516 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\wandb-summary.json
+2022-03-07 16:15:08,517 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\output.log
+2022-03-07 16:15:10,534 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\output.log
+2022-03-07 16:15:10,774 DEBUG   SenderThread:9292 [sender.py:send():235] send: history
+2022-03-07 16:15:10,774 DEBUG   SenderThread:9292 [sender.py:send():235] send: summary
+2022-03-07 16:15:10,784 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2022-03-07 16:15:11,134 DEBUG   SenderThread:9292 [sender.py:send():235] send: history
+2022-03-07 16:15:11,135 DEBUG   SenderThread:9292 [sender.py:send():235] send: summary
+2022-03-07 16:15:11,148 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2022-03-07 16:15:11,549 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\wandb-summary.json
+2022-03-07 16:15:12,564 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\output.log
+2022-03-07 16:15:15,710 DEBUG   SenderThread:9292 [sender.py:send():235] send: history
+2022-03-07 16:15:15,962 DEBUG   SenderThread:9292 [sender.py:send():235] send: summary
+2022-03-07 16:15:15,972 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2022-03-07 16:15:16,591 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\wandb-summary.json
+2022-03-07 16:15:16,592 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\config.yaml
+2022-03-07 16:15:17,603 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\output.log
+2022-03-07 16:15:18,310 DEBUG   SenderThread:9292 [sender.py:send():235] send: stats
+2022-03-07 16:15:18,730 DEBUG   HandlerThread:9292 [handler.py:handle_request():131] handle_request: stop_status
+2022-03-07 16:15:18,730 DEBUG   SenderThread:9292 [sender.py:send_request():249] send_request: stop_status
+2022-03-07 16:15:20,330 DEBUG   SenderThread:9292 [sender.py:send():235] send: history
+2022-03-07 16:15:20,331 DEBUG   SenderThread:9292 [sender.py:send():235] send: summary
+2022-03-07 16:15:20,338 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2022-03-07 16:15:20,608 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\wandb-summary.json
+2022-03-07 16:15:22,611 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\output.log
+2022-03-07 16:15:25,647 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\output.log
+2022-03-07 16:15:27,666 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\output.log
+2022-03-07 16:15:28,908 DEBUG   SenderThread:9292 [sender.py:send():235] send: files
+2022-03-07 16:15:28,908 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file media\images\images_11_aa479543b3660282d8dc.png with policy now
+2022-03-07 16:15:28,910 DEBUG   SenderThread:9292 [sender.py:send():235] send: files
+2022-03-07 16:15:28,910 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file media\images\true_11_79238174f0b3e2441720.png with policy now
+2022-03-07 16:15:28,911 DEBUG   SenderThread:9292 [sender.py:send():235] send: files
+2022-03-07 16:15:28,911 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file media\images\pred_11_c43e60bf74e2cbc14cb9.png with policy now
+2022-03-07 16:15:28,930 DEBUG   SenderThread:9292 [sender.py:send():235] send: history
+2022-03-07 16:15:28,941 DEBUG   SenderThread:9292 [sender.py:send():235] send: summary
+2022-03-07 16:15:28,950 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2022-03-07 16:15:29,578 INFO    Thread-22 :9292 [upload_job.py:push():137] Uploaded file C:\Users\sophi\AppData\Local\Temp\tmpys8tci5ewandb\1iyc14p5-media/images/true_11_79238174f0b3e2441720.png
+2022-03-07 16:15:29,626 INFO    Thread-21 :9292 [upload_job.py:push():137] Uploaded file C:\Users\sophi\AppData\Local\Temp\tmpys8tci5ewandb\1hjuuafd-media/images/images_11_aa479543b3660282d8dc.png
+2022-03-07 16:15:29,646 INFO    Thread-23 :9292 [upload_job.py:push():137] Uploaded file C:\Users\sophi\AppData\Local\Temp\tmpys8tci5ewandb\2j5nc4kw-media/images/pred_11_c43e60bf74e2cbc14cb9.png
+2022-03-07 16:15:29,694 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\wandb-summary.json
+2022-03-07 16:15:29,695 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\output.log
+2022-03-07 16:15:29,695 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_created():217] file/dir created: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\media\images\images_11_aa479543b3660282d8dc.png
+2022-03-07 16:15:29,695 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_created():217] file/dir created: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\media\images\true_11_79238174f0b3e2441720.png
+2022-03-07 16:15:29,695 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_created():217] file/dir created: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\media\images\pred_11_c43e60bf74e2cbc14cb9.png
+2022-03-07 16:15:29,695 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\media\images
+2022-03-07 16:15:30,100 DEBUG   SenderThread:9292 [sender.py:send():235] send: history
+2022-03-07 16:15:30,101 DEBUG   SenderThread:9292 [sender.py:send():235] send: summary
+2022-03-07 16:15:30,112 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2022-03-07 16:15:30,709 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\wandb-summary.json
+2022-03-07 16:15:31,311 DEBUG   SenderThread:9292 [sender.py:send():235] send: history
+2022-03-07 16:15:31,312 DEBUG   SenderThread:9292 [sender.py:send():235] send: summary
+2022-03-07 16:15:31,324 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2022-03-07 16:15:31,722 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\wandb-summary.json
+2022-03-07 16:15:31,722 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\output.log
+2022-03-07 16:15:33,815 DEBUG   SenderThread:9292 [sender.py:send():235] send: history
+2022-03-07 16:15:33,815 DEBUG   SenderThread:9292 [sender.py:send():235] send: summary
+2022-03-07 16:15:33,826 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2022-03-07 16:15:33,944 DEBUG   HandlerThread:9292 [handler.py:handle_request():131] handle_request: stop_status
+2022-03-07 16:15:33,945 DEBUG   SenderThread:9292 [sender.py:send_request():249] send_request: stop_status
+2022-03-07 16:15:34,162 DEBUG   SenderThread:9292 [sender.py:send():235] send: history
+2022-03-07 16:15:34,162 DEBUG   SenderThread:9292 [sender.py:send():235] send: summary
+2022-03-07 16:15:34,169 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2022-03-07 16:15:34,756 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\wandb-summary.json
+2022-03-07 16:15:35,341 DEBUG   SenderThread:9292 [sender.py:send():235] send: history
+2022-03-07 16:15:35,341 DEBUG   SenderThread:9292 [sender.py:send():235] send: summary
+2022-03-07 16:15:35,351 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2022-03-07 16:15:35,772 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\wandb-summary.json
+2022-03-07 16:15:35,772 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\output.log
+2022-03-07 16:15:39,814 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\output.log
+2022-03-07 16:15:41,822 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\output.log
+2022-03-07 16:15:43,719 DEBUG   SenderThread:9292 [sender.py:send():235] send: files
+2022-03-07 16:15:43,719 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file media\images\images_17_af5c42b6ecbfdac924bf.png with policy now
+2022-03-07 16:15:43,720 DEBUG   SenderThread:9292 [sender.py:send():235] send: files
+2022-03-07 16:15:43,720 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file media\images\true_17_e9c4a470ad900801f7de.png with policy now
+2022-03-07 16:15:43,722 DEBUG   SenderThread:9292 [sender.py:send():235] send: files
+2022-03-07 16:15:43,722 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file media\images\pred_17_dd02c6339af02e2cf15f.png with policy now
+2022-03-07 16:15:43,735 DEBUG   SenderThread:9292 [sender.py:send():235] send: history
+2022-03-07 16:15:43,754 DEBUG   SenderThread:9292 [sender.py:send():235] send: summary
+2022-03-07 16:15:43,765 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2022-03-07 16:15:43,844 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\wandb-summary.json
+2022-03-07 16:15:43,845 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\output.log
+2022-03-07 16:15:43,845 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_created():217] file/dir created: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\media\images\true_17_e9c4a470ad900801f7de.png
+2022-03-07 16:15:43,845 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_created():217] file/dir created: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\media\images\pred_17_dd02c6339af02e2cf15f.png
+2022-03-07 16:15:43,846 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_created():217] file/dir created: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\media\images\images_17_af5c42b6ecbfdac924bf.png
+2022-03-07 16:15:43,846 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\media\images
+2022-03-07 16:15:44,406 INFO    Thread-25 :9292 [upload_job.py:push():137] Uploaded file C:\Users\sophi\AppData\Local\Temp\tmpys8tci5ewandb\1dfcxp4d-media/images/true_17_e9c4a470ad900801f7de.png
+2022-03-07 16:15:44,450 INFO    Thread-26 :9292 [upload_job.py:push():137] Uploaded file C:\Users\sophi\AppData\Local\Temp\tmpys8tci5ewandb\3hpf5y1n-media/images/pred_17_dd02c6339af02e2cf15f.png
+2022-03-07 16:15:44,453 INFO    Thread-24 :9292 [upload_job.py:push():137] Uploaded file C:\Users\sophi\AppData\Local\Temp\tmpys8tci5ewandb\30yfahrc-media/images/images_17_af5c42b6ecbfdac924bf.png
+2022-03-07 16:15:48,128 DEBUG   SenderThread:9292 [sender.py:send():235] send: history
+2022-03-07 16:15:48,129 DEBUG   SenderThread:9292 [sender.py:send():235] send: summary
+2022-03-07 16:15:48,138 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2022-03-07 16:15:48,409 DEBUG   SenderThread:9292 [sender.py:send():235] send: history
+2022-03-07 16:15:48,409 DEBUG   SenderThread:9292 [sender.py:send():235] send: summary
+2022-03-07 16:15:48,416 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2022-03-07 16:15:48,908 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\wandb-summary.json
+2022-03-07 16:15:49,173 DEBUG   HandlerThread:9292 [handler.py:handle_request():131] handle_request: stop_status
+2022-03-07 16:15:49,173 DEBUG   SenderThread:9292 [sender.py:send_request():249] send_request: stop_status
+2022-03-07 16:15:49,924 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\output.log
+2022-03-07 16:15:50,912 DEBUG   SenderThread:9292 [sender.py:send():235] send: history
+2022-03-07 16:15:50,913 DEBUG   SenderThread:9292 [sender.py:send():235] send: summary
+2022-03-07 16:15:50,925 INFO    SenderThread:9292 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2022-03-07 16:15:50,937 INFO    Thread-12 :9292 [dir_watcher.py:_on_file_modified():230] file/dir modified: C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_161444-130g3z2l\files\wandb-summary.json
