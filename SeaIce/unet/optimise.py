@@ -20,7 +20,6 @@ if __name__ == '__main__':
         # Train the model with an assortment of different tile sizes. 
         permuted_tile_sizes = permute_tile_sizes()
         print("len permuted", len(permuted_tile_sizes))
-        print(permuted_tile_sizes)
         # Replace these parameters later with Jonnycode.
         loss = train_net(net=net,
                   device=processor,

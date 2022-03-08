@@ -69,6 +69,7 @@ def get_contents(in_directory, search_terms = None, string_position = None):
                     if term in item:
                         items.append(item)
                         full_paths.append("{}\{}".format(in_directory, item))
+    os.chdir(program_path)
     return items, full_paths
 
 
