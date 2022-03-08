@@ -40,13 +40,12 @@ temp_probabilities = Path(r"{}/temp/probabilities".format(program_path))
 temp_tiled = Path(r"{}/temp/tiled".format(program_path))
 model_sar = Path(r"{}/models/sar_model_example.pth".format(program_path))
 model_modis = Path(r"{}/models/modis_model_example.pth".format(program_path))
-all_sizes = [(256, tiled256), (512, tiled512), (768, tiled768), (1024, tiled1024)]
 
 
 def get_contents(in_directory, search_terms = None, string_position = None):
     """Traverses a directory to find a specified file or sub-directory.
        Parameters: in_directory: (string) the directory in which to look. search_term: None or list of search terms.
-                   string_position: (string) "prefix", "suffix" or None.
+                   string_position: (string) "prefix", "suffix" or None (any).
        Returns: items: (list of strings) the names of the search results (everything inside the directory if search_term == None).
                 full_paths: (list of strings) the file paths of the search results.  
     """
@@ -64,6 +63,10 @@ def get_contents(in_directory, search_terms = None, string_position = None):
                         full_paths.append("{}\{}".format(in_directory, item))
                 elif string_position == "suffix":
                     if item.endswith(term):
+                        items.append(item)
+                        full_paths.append("{}\{}".format(in_directory, item))
+                elif string_position == None: 
+                    if term in item:
                         items.append(item)
                         full_paths.append("{}\{}".format(in_directory, item))
     return items, full_paths
