@@ -4,7 +4,7 @@
 
 <br><br><br>
 
-# SeaIceExtent
+# SeaIceExtent 
 
 ![PyTorch - Version](https://img.shields.io/badge/PYTORCH-1.4+-red?style=for-the-badge&logo=pytorch) 
 ![Python - Version](https://img.shields.io/badge/PYTHON-3.6+-red?style=for-the-badge&logo=python&logoColor=white)
