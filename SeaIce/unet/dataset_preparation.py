@@ -13,6 +13,21 @@ torch.manual_seed(2022) # Setting random seed so that augmentations can be repro
 # And https://discuss.pytorch.org/t/how-make-customised-dataset-for-semantic-segmentation/30881
 
 
+def permute_tile_sizes():
+    """Get all the tiles but in different sizes per date. Tiles are not duplicated.
+       Returns: permuted_tiles: (list of strings) file paths to each tile.    
+    """
+    data = Path(r"{}/Shared drives/2021-gtc-sea-ice/data".format(prefix))
+    all_folder_names, _ = get_contents(data, "_", None)
+    permuted_tiles = []
+    for date in all_folder_names:
+        date = date.split("_", 1)[0]
+        size = all_sizes[random.randint(0, 3)]
+        _, date_tiles_paths = get_contents(size[1], [date], "prefix")
+        permuted_tiles += date_tiles_paths
+    return permuted_tiles
+
+
 def create_npy_list(image_directory, img_string):
     """A function that returns a list of the names of the SAR/MODIS and labelled .npy files in a directory. These lists can
     then be used as an argument for the Dataset class instantiation. The function also checks that the specified directory 

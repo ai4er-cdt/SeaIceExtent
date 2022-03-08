@@ -40,7 +40,7 @@ temp_probabilities = Path(r"{}/temp/probabilities".format(program_path))
 temp_tiled = Path(r"{}/temp/tiled".format(program_path))
 model_sar = Path(r"{}/models/sar_model_example.pth".format(program_path))
 model_modis = Path(r"{}/models/modis_model_example.pth".format(program_path))
-sophie_key = '3de9912aecd3185084729569fe9474544d7d5de5'
+all_sizes = [(256, tiled256), (512, tiled512), (768, tiled768), (1024, tiled1024)]
 
 
 def get_contents(in_directory, search_terms = None, string_position = None):

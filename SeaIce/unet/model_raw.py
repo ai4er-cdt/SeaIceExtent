@@ -7,7 +7,6 @@ import argparse
 import sys
 import wandb
 from torch import optim
-from pathlib import Path
 
 
 def train_net(net, device, image_type, dir_img,
@@ -34,8 +33,8 @@ def train_net(net, device, image_type, dir_img,
     
     # Create dataset
     img_list = create_npy_list(dir_img, image_type)
-    # Use this if you want a smaller dataset just to test things with
-    img_list = small_sample(img_list)
+    # Use this if you want a smaller dataset just to test things with.
+    img_list = small_sample(img_list) # Comment this line out if you want the full set.
 
     dataset = CustomImageDataset(img_list, False, "dict")
     
@@ -193,14 +192,15 @@ def run_training(image_type):
                  f'\t{net.n_channels} input channels\n'
                  f'\t{net.n_classes} output channels (classes)\n'
                  f'\t{"Bilinear" if net.bilinear else "Transposed conv"} upscaling')
-
+    # Train the model with an assortment of different tile sizes. 
+    permuted_tile_sizes = permute_tile_sizes()
     net.to(device=processor)
     try:
         train_net(net=net,
                   device=processor,
                   epochs=args.epochs, 
                   image_type="modis",
-                  dir_img=tiled512,
+                  dir_img=permuted_tile_sizes,
                   batch_size=args.batch_size,
                   learning_rate=args.lr,
                   save_checkpoint=args.save_checkpoint,

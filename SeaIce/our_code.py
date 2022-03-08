@@ -1,6 +1,5 @@
 # Code which we run specifically on our dataset, which would not be applicable to others.
 # This code is not really reuseable unless given as an example.
-import random
 import controller
 from preprocessing.data_handling import get_contents
 import fiona
@@ -62,21 +61,9 @@ def make_training_data(all_folder_names, all_folder_paths, all_sizes):
             controller.preprocess_training(shape_file_path, folder_name, modis_file_paths, sar_file_path, size[1], 40, [10, 9], [0, 2], 100, size[0], int(size[0]*0.75))
 
 
-def permute_tile_sizes(all_folder_names, all_sizes):
-    # Get all the tiles but in different sizes. Don't repeat tiles.
-    permuted_tiles, tile_size_list = [], []
-    for date in all_folder_names:
-        date = date.split("_", 1)[0]
-        size = all_sizes[random.randint(0, 3)]
-        _, date_tiles_paths = get_contents(size[1], [date], "prefix")
-        permuted_tiles += date_tiles_paths
-        tile_size_list.append(size[0])
-
-
-all_sizes = [(256, tiled256), (512, tiled512), (768, tiled768), (1024, tiled1024)]
 all_folder_names, all_folder_paths = get_contents(data, "_", None)
+
 #make_training_data(all_folder_names, all_folder_paths)
-permute_tile_sizes(all_folder_names, all_sizes)
 #controller.start_prediction(r"G:\Shared drives\2021-gtc-sea-ice\data\2011-01-13_021245\MODIS\Antarctica_r05c03.2011013.terra.367.250m.3031.tif")
 
 
