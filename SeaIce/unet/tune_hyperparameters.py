@@ -1,30 +1,15 @@
-<<<<<<< HEAD
 """This script runs best if you login to wandb through the terminal before running the script using: $wandb login"""
 
-=======
->>>>>>> fcd022f2e1e339f27e9d2e002bfc002aebfa3d1f
 try:
     from dataset_preparation import *
     from evaluation import *
     from network_structure import *
-<<<<<<< HEAD
 except:
     from unet.dataset_preparation import *
     from unet.evaluation import *
     from unet.network_structure import *
 
 import wandb
-=======
-    from mini_network import *
-except:
-    from unet.dataset_preparation import *
-    from unet.network_structure import *
-    from unet.evaluation import *
-    from unet.mini_network import *
-
-import wandb
-import os
->>>>>>> fcd022f2e1e339f27e9d2e002bfc002aebfa3d1f
 import torch.optim as optim
 from pathlib import Path
 import os
@@ -66,7 +51,6 @@ def build_optimiser(network, config):
     return optimiser
 
 
-<<<<<<< HEAD
 def train_and_validate(config=None, amp=False, device=torch.device('cuda')):
     # Inputs for the helper functions
     img_dir = '/home/users/jdr53/tiled512/'
@@ -81,15 +65,6 @@ def train_and_validate(config=None, amp=False, device=torch.device('cuda')):
     model_type = 'unet'
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     net.to(device)
-=======
-def train_and_validate(config=None, amp=False, device='cpu'):
-
-    img_dir = '../tiled/'
-    image_type = 'sar'
-    net = MiniUNet(1, 2, True)
-    return_type = 'dict'
-    workers = 2
->>>>>>> fcd022f2e1e339f27e9d2e002bfc002aebfa3d1f
 
     # Initialize a new wandb run
     with wandb.init(config=config):
@@ -109,14 +84,9 @@ def train_and_validate(config=None, amp=False, device='cpu'):
 
         train_dataset = CustomImageAugmentDataset(train_img_list, is_single_band, return_type, True)
         validation_dataset = CustomImageAugmentDataset(val_img_list, is_single_band, return_type, False)
-<<<<<<< HEAD
 
         train_loader, val_loader = create_dataloaders(train_dataset, validation_dataset, config.batch_size, workers)
-=======
->>>>>>> fcd022f2e1e339f27e9d2e002bfc002aebfa3d1f
 
-        train_loader, val_loader = create_dataloaders(train_dataset, validation_dataset, config.batch_size, workers)
-        
         # Optimiser
         optimiser = build_optimiser(net, config)
 
@@ -130,10 +100,7 @@ def train_and_validate(config=None, amp=False, device='cpu'):
         # Begin training
         run_loss_train = 0
         run_loss_val = 0
-<<<<<<< HEAD
         dir_checkpoint = ''
-=======
->>>>>>> fcd022f2e1e339f27e9d2e002bfc002aebfa3d1f
         for epoch in range(config.epochs):
             net.train()
             epoch_loss = 0
@@ -161,16 +128,10 @@ def train_and_validate(config=None, amp=False, device='cpu'):
                         loss = criterion(masks_pred, true_masks) \
                                + dice_loss(F.softmax(masks_pred, dim=1).float(),
                                            F.one_hot(true_masks, net.n_classes).permute(0, 3, 1, 2).float(),
-<<<<<<< HEAD
                                            multiclass=True, epsilon=config.weight_decay)
                         # loss = criterion(masks_pred, true_masks)
 
                         # Optimisation
-=======
-                                           multiclass=True)
-
-                    # Optimisation
->>>>>>> fcd022f2e1e339f27e9d2e002bfc002aebfa3d1f
                     optimiser.zero_grad(set_to_none=True)
                     grad_scaler.scale(loss).backward()
                     grad_scaler.step(optimiser)
@@ -183,7 +144,6 @@ def train_and_validate(config=None, amp=False, device='cpu'):
                     wandb.log({"Batch Loss, Training": batch_loss}, step=global_step)
                     pbar.set_postfix(**{'loss (batch)': loss.item()})
                     n_batches += 1
-<<<<<<< HEAD
                 val_score = evaluate(net, val_loader, device, epsilon=config.weight_decay)
                 print('6')
                 print(f'\nVal Score: {val_score}, Epoch: {epoch}')
@@ -253,11 +213,6 @@ if __name__ == '__main__':
             'distribution': 'int_uniform',
             'min': 5,
             'max': 25
-        },
-        'weight_decay': {
-            'distribution': 'uniform',
-            'min': 1e-8,
-            'max': 1e-2
         }
     }
     sweep_config['parameters'] = parameters_dict
@@ -271,99 +226,15 @@ if __name__ == '__main__':
         'img_scale': {
             'value': 0.5},
         'epochs': {
-            'value': 10}
+            'value': 15},
+        'weight_decay': {
+            'value': 1e-8}
     })
 
-    sweep_id = wandb.sweep(sweep_config, project="jasmin_gpu_8_02")
+    sweep_id = wandb.sweep(sweep_config, project="jasmin_gpu_9_02")
 
     n_tuning = 300
     wandb.agent(sweep_id, function=train_and_validate, count=n_tuning)
-=======
-
-                val_score = evaluate(net, val_loader, device)
-                print(f'\nVal Score: {val_score}, Epoch: {epoch}')
-
-                # wandb.log({"Batch Loss, Validation": val_score_list[index]}, step=global_step-(len(val_score_list)+index))
-                # wandb.log({"Epoch Validation Loss": val_score}) , step=global_step-(len(val_score_list)+index)
-                scheduler.step(val_score)
-
-            avg_epoch_training_loss = epoch_loss / n_batches
-            # wandb.log({"Epoch Training Loss": avg_epoch_training_loss})
-            run_loss_train += avg_epoch_training_loss
-            # run_loss_val += val_score
-            print('Logging Epoch Scores')
-            wandb.log({"Epoch Loss, Training": avg_epoch_training_loss, "Epoch Loss, Validation": val_score,
-                       "Epoch": epoch + 1}, step=global_step)
-
-        wandb.log({"Run Loss, Training": run_loss_train / config.epochs, "Run Loss, Validation": val_score},
-                  step=global_step)
 
 
 
-if __name__ == '__main__':
-
-    os.environ["WANDB_API_KEY"] = 'ENTER KEY'
->>>>>>> fcd022f2e1e339f27e9d2e002bfc002aebfa3d1f
-
-    wandb.init(project="test-hyptuning")
-
-    # Model Name
-    model_name = 'mini-unet'
-
-<<<<<<< HEAD
-=======
-    # Configuring wandb settings
-    sweep_config = {
-        'method': 'random',  # Random search method -- less computationally expensive yet effective.
-    }
-
-    metric = {
-        'name': 'Run Loss, Validation',
-        'goal': 'minimize'
-    }
-
-    sweep_config['metric'] = metric
-
-    # Tuned hyperparameters
-    parameters_dict = {
-        'optimiser': {
-            'values': ['adam', 'sgd']
-        },
-        'learning_rate': {
-            # a flat distribution between 0 and 0.1
-            'distribution': 'uniform',
-            'min': 0,
-            'max': 0.1
-        },
-        'batch_size': {
-            # Uniformly-distributed between 5-15
-            'distribution': 'int_uniform',
-            'min': 5,
-            'max': 10,
-        },
-        'weight_decay': {
-            # a flat distribution between 0 and 0.1
-            'distribution': 'int_uniform',
-            'min': 1e-8,
-            'max': 1e-2
-        }
-    }
-    sweep_config['parameters'] = parameters_dict
-
-    # Fixed hyperparamters
-    parameters_dict.update({
-        'momentum': {
-            'value': 0.9},
-        'validation_percent': {
-            'value': 0.5},
-        'img_scale': {
-            'value': 0.5},
-        'epochs': {
-            'value': 10}
-    })
-
-    sweep_id = wandb.sweep(sweep_config, project=model_name + "hyp-sweep")
-
-    n_tuning = 10
-    wandb.agent(sweep_id, function=train_and_validate, count=n_tuning)
->>>>>>> fcd022f2e1e339f27e9d2e002bfc002aebfa3d1f
