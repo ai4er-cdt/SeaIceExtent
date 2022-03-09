@@ -143,7 +143,8 @@ def train_and_validate(config=None, amp=False, device=torch.device('cuda')):
                     pbar.set_postfix(**{'loss (batch)': loss.item()})
                     n_batches += 1
 
-                val_score, _ = evaluate(net, val_loader, device)
+                val_score = evaluate(net, val_loader, device, epsilon=config.weight_decay)
+                #print('6')
                 print(f'\nVal Score: {val_score}, Epoch: {epoch}')
 
                 #wandb.log({"Batch Loss, Validation": val_score_list[index]}, step=global_step-(len(val_score_list)+index))
@@ -178,9 +179,6 @@ if __name__ == '__main__':
 
     #wandb.init(project="test-hyptuning")
 
-    # Model Name
-    model_name = 'unet'
-
     # Configuring wandb settings
     sweep_config = {
         'method': 'random',  # Random search method -- less computationally expensive yet effective.
@@ -208,15 +206,18 @@ if __name__ == '__main__':
             # Uniformly-distributed between 5-15
             'distribution': 'int_uniform',
             'min': 5,
-            'max': 30,
+            'max': 25
+        },
+        'weight_decay': {
+            'distribution': 'uniform',
+            'min': 1e-8,
+            'max': 1e-2
         }
     }
     sweep_config['parameters'] = parameters_dict
 
     # Fixed hyperparamters
     parameters_dict.update({
-        'weight_decay': {
-            'value': 1e-8},
         'momentum': {
             'value': 0.9},
         'validation_percent': {
@@ -227,7 +228,7 @@ if __name__ == '__main__':
             'value': 10}
     })
 
-    sweep_id = wandb.sweep(sweep_config, project=model_name + "hyp-sweep-jasmin")
+    sweep_id = wandb.sweep(sweep_config, project=model_name + "hyp-sweep-jasmin-mcl")
 
     n_tuning = 30
     wandb.agent(sweep_id, function=train_and_validate, count=n_tuning)
