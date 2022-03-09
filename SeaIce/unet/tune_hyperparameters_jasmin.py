@@ -47,17 +47,21 @@ def build_optimiser(network, config):
     return optimiser
 
 
-def train_and_validate(config=None, amp=False, device='cpu'):
+def train_and_validate(config=None, amp=False, device=torch.device('cuda')):
 
     # Inputs for the helper functions
     img_dir = '/home/users/jdr53/tiled512/'
-    checkpoint_dir = '/home/users/jdr53/checkpoints'
     image_type = 'sar'
     net = UNet(1, 2, True)
     return_type = 'dict'
-    workers = 12
-    save_checkpoint = False
+    workers = 10
+
+    save_checkpoint = True
+    folder_checkpoint = '/home/users/jdr53/checkpoints'
+
     model_type = 'unet'
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    net.to(device)
 
     # Initialize a new wandb run
     with wandb.init(config=config):
@@ -111,6 +115,7 @@ def train_and_validate(config=None, amp=False, device='cpu'):
                     images = images.to(device=device, dtype=torch.float32)
                     true_masks = true_masks.to(device=device, dtype=torch.long)
 
+
                     # Adding based on pytorch documentation
                     #optimiser.zero_grad()
 
@@ -123,7 +128,7 @@ def train_and_validate(config=None, amp=False, device='cpu'):
                                            multiclass=True, epsilon=config.weight_decay)
                         #loss = criterion(masks_pred, true_masks)
 
-                    # Optimisation
+                        # Optimisation
                     optimiser.zero_grad(set_to_none=True)
                     grad_scaler.scale(loss).backward()
                     grad_scaler.step(optimiser)
@@ -136,8 +141,8 @@ def train_and_validate(config=None, amp=False, device='cpu'):
                     wandb.log({"Batch Loss, Training": batch_loss}, step=global_step)
                     pbar.set_postfix(**{'loss (batch)': loss.item()})
                     n_batches += 1
-
-                val_score, _ = evaluate(net, val_loader, device, epsilon=config.weight_decay)
+                val_score = evaluate(net, val_loader, device, epsilon=config.weight_decay)
+                print('6')
                 print(f'\nVal Score: {val_score}, Epoch: {epoch}')
 
                 #wandb.log({"Batch Loss, Validation": val_score_list[index]}, step=global_step-(len(val_score_list)+index))
@@ -203,10 +208,10 @@ if __name__ == '__main__':
             # Uniformly-distributed between 5-15
             'distribution': 'int_uniform',
             'min': 5,
-            'max': 30
+            'max': 25
         },
         'weight_decay': {
-            'distribution': 'int_uniform',
+            'distribution': 'uniform',
             'min': 1e-8,
             'max': 1e-2
         }
@@ -222,19 +227,13 @@ if __name__ == '__main__':
         'img_scale': {
             'value': 0.5},
         'epochs': {
-            'value': 10000},
-        'optimiser': {
-            'value': 'sgd'},
-        'learning_rate': {
-            'value': 0.002},
-        'batch_size': {
-            'value': 8},
-        'weight_decay': {
-            'value': 1e-8}
+            'value': 10}
     })
 
-    sweep_id = wandb.sweep(sweep_config, project="jasmin-gpu", name="1-run")
+    sweep_id = wandb.sweep(sweep_config, project="jasmin_gpu_8_02")
 
-    n_tuning = 1
+    n_tuning = 300
     wandb.agent(sweep_id, function=train_and_validate, count=n_tuning)
+
+
 
