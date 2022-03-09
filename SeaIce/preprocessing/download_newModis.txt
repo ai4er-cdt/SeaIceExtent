@@ -1,6 +1,0 @@
-https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/61/MOD02HKM/2022/049/MOD02HKM.A2022049.0900.061.2022049213556.hdf
-https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/61/MOD02HKM/2022/049/MOD02HKM.A2022049.1350.061.2022050024722.hdf
-https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/61/MOD02HKM/2022/050/MOD02HKM.A2022050.0805.061.2022050193652.hdf
-https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/61/MOD02HKM/2022/050/MOD02HKM.A2022050.1255.061.2022051012944.hdf
-https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/61/MOD02HKM/2022/051/MOD02HKM.A2022051.1335.061.2022054185619.hdf
-https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/61/MOD02HKM/2022/052/MOD02HKM.A2022052.1420.061.2022053013001.hdf
