@@ -194,6 +194,10 @@ The following command can be used to see more details for a particular job:
 
 
 	$ scontrol show job <jobID>
+	
+If recieving errors related to formatting not being recognized (common in Windows), can convert the script to unix with:
+	
+	$ dos2unix myBatchFile.sh
 
 ## SLURM LOTUS GPU Cluster
 <br/>
