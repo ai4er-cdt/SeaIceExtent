@@ -76,7 +76,7 @@ def train_and_validate(config=None, amp=False, device=torch.device('cuda')):
         elif image_type == "modis":
             is_single_band = False
 
-                # Loader
+        # Loader
         img_list = create_npy_list(img_dir, image_type)
 
         train_img_list, val_img_list, n_train, n_val = split_img_list(img_list, config.validation_percent)
@@ -89,11 +89,11 @@ def train_and_validate(config=None, amp=False, device=torch.device('cuda')):
         # Optimiser
         optimiser = build_optimiser(net, config)
 
-        scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimiser, 'max', patience=2)  # CHECK goal: maximize Dice score
+        scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimiser, 'max',
+                                                         patience=2)  # CHECK goal: maximize Dice score
         grad_scaler = torch.cuda.amp.GradScaler(enabled=False)
         criterion = nn.CrossEntropyLoss()
         global_step = 0
-        #epoch_step
 
         # Begin training
         run_loss_train = 0

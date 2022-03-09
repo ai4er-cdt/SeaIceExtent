@@ -128,7 +128,7 @@ def train_and_validate(config=None, amp=False, device=torch.device('cuda')):
                                            multiclass=True, epsilon=config.weight_decay)
                         #loss = criterion(masks_pred, true_masks)
 
-                        # Optimisation
+                    # Optimisation
                     optimiser.zero_grad(set_to_none=True)
                     grad_scaler.scale(loss).backward()
                     grad_scaler.step(optimiser)
