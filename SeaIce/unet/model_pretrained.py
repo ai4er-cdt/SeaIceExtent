@@ -1,26 +1,25 @@
-from SeaIce.unet.shared import *
-from SeaIce.unet.dataset_preparation import *
+from shared import *
+from dataset_preparation import *
 
 
 torch.manual_seed(2022)  # Setting random seed so that augmentations can be reproduced.
-
-imagery = "sar"
+img_type = "sar"
 val_percent = 0.1
 batch_size = 1
 
 # Create dataset
-img_list = create_npy_list(dir_img, imagery)
+img_list = create_npy_list(tiled512, img_type)
 
-if imagery == "sar":
+if img_type == "sar":
     single_channel = True
     n_channels = 1
-elif imagery == "modis":
+elif img_type == "modis":
     single_channel = False
     n_channels = 3
 
 dataset = CustomImageDataset(img_list, single_channel, "values")
 
-_, _, train_loader, val_loader = split_data(dataset, val_percent, batch_size, 2)
+_, _, train_loader, val_loader = split_data(dataset, val_percent, batch_size, 1)
 
 loss = smp.utils.losses.DiceLoss()
 metrics = [smp.utils.metrics.IoU(threshold=0.5),]
@@ -48,7 +47,7 @@ valid_epoch = smp.utils.train.ValidEpoch(
     device=processor
 )
 
-# train model for 40 epochs
+# train model for n epochs
 
 max_score = 0
 n_epochs = 1
@@ -64,7 +63,8 @@ if __name__ == '__main__':
         # do something (save model, change lr, etc.)
         if max_score < valid_logs['iou_score']:
             max_score = valid_logs['iou_score']
-            torch.save(model, './best_{}_model.pth'.format(imagery)
+            dir_checkpoint = create_checkpoint_dir(path_checkpoint, img_type, model_type='pretrained')
+            torch.save(model, str(dir_checkpoint + 'best_model.pth'))
             print('Model saved!')
 
         if i == n_epochs/2:

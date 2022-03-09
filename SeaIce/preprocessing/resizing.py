@@ -15,8 +15,29 @@ def resize_to_match(image_to_change, image_to_match, out_path):
     del template_image
 
 
+def halve_size(image_path, out_path):
+    """Quarter the size of an image by halving both length and width.
+       Parameters:
+            image_path: (string) file path of large image.
+            out_path: (string) file path to write the new, smaller image.
+       Output: tiff image smaller copy of original.
+    """
+    large_image = gdal.Open(image_path) 
+    width, length = large_image.RasterXSize, large_image.RasterYSize 
+    gdal.Translate(out_path, image_path, width=round(width/2), height=round(length/2))
+    # Clean up.
+    large_image.FlushCache()
+    del large_image
+
+
 def change_resolution(in_path, out_path, new_resolution = 40):
-# Change the resolution.
+    """ Change the resolution.
+        Parameters:
+            in_path: (string) file path of original image.
+            out_path: (string) file path of new copy to write.
+            new_resolution: (int) desired resolution in metres.
+        Output: New tiff image.
+    """
     gdal.Warp(out_path, in_path, xRes=new_resolution, yRes=new_resolution)
     
 

@@ -1,0 +1,24 @@
+{
+    "os": "Windows-10-10.0.19042-SP0",
+    "python": "3.9.7",
+    "heartbeatAt": "2022-03-07T16:12:12.148819",
+    "startedAt": "2022-03-07T16:12:10.503447",
+    "docker": null,
+    "gpu": "NVIDIA T500",
+    "gpu_count": 1,
+    "cpu_count": 8,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "C:\\Users\\sophi\\SeaIceExtent\\SeaIce\\unet\\optimise.py",
+    "codePath": "SeaIce\\unet\\optimise.py",
+    "git": {
+        "remote": "https://github.com/ai4er-cdt/SeaIceExtent.git",
+        "commit": "82adeea692e82e135481fa9e480b4b213973c488"
+    },
+    "email": "st838@cam.ac.uk",
+    "root": "C:/Users/sophi/SeaIceExtent",
+    "host": "DESKTOP-MK484E0",
+    "username": "sophi",
+    "executable": "C:\\Users\\sophi\\AppData\\Local\\Programs\\Python\\Python39\\python.exe"
+}

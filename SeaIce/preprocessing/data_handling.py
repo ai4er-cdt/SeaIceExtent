@@ -5,16 +5,29 @@ import os
 import fiona
 import numpy as np
 from osgeo import ogr, gdal
+from PIL import Image
 
+
+# Allow imports to function the same in different environments
 program_path = os.getcwd()
-temp_folder = r"{}\SeaIce\temp\temporary_files".format(program_path)
-temp_buffer = r"{}\SeaIce\temp\temporary_buffer".format(program_path)
+if not program_path.endswith("SeaIce"):
+    os.chdir(r"{}/SeaIce".format(program_path))
+    program_path = os.getcwd()
+
+temp_files = r"{}\temp\temporary_files".format(program_path)
+temp_buffer = r"{}\temp\temporary_buffer".format(program_path)
+temp_binary = r"{}\temp\binary".format(program_path)
+temp_preprocessed = r"{}\temp\preprocessed".format(program_path)
+temp_probabilities = r"{}\temp\probabilities".format(program_path)
+temp_tiled = r"{}\temp\tiled".format(program_path)
+model_sar = r"{}\models\sar_model_example.pth".format(program_path)
+model_modis = r"{}\models\modis_model_example.pth".format(program_path)
 
 
 def get_contents(in_directory, search_terms = None, string_position = None):
     """Traverses a directory to find a specified file or sub-directory.
        Parameters: in_directory: (string) the directory in which to look. search_term: None or list of search terms.
-                   string_position: (string) "prefix", "suffix" or None.
+                   string_position: (string) "prefix", "suffix" or None (any).
        Returns: items: (list of strings) the names of the search results (everything inside the directory if search_term == None).
                 full_paths: (list of strings) the file paths of the search results.  
     """
@@ -34,21 +47,22 @@ def get_contents(in_directory, search_terms = None, string_position = None):
                     if item.endswith(term):
                         items.append(item)
                         full_paths.append("{}\{}".format(in_directory, item))
+                elif string_position == None: 
+                    if term in item:
+                        items.append(item)
+                        full_paths.append("{}\{}".format(in_directory, item))
+    os.chdir(program_path)
     return items, full_paths
 
 
-def name_file(out_name, file_type, out_path = "temp"):
+def name_file(out_name, file_type, out_path = temp_files):
     """Construct the full path for a new file.
-       Parameters: out_path: (string) the path to the folder in which to place the new item, or "temp" or "buffer"
+       Parameters: out_path: (string) the path to the folder in which to place the new item.
                    to store it temporarily with the program files for the duration of the run-time.
                    out_name: (string) the name of the new file. 
                    file_type: (string) the file extention on the new file.
        Returns: file_name: (string) the full path of the new file.
     """
-    if out_path == "temp":
-        out_path = temp_folder
-    elif out_path == "buffer":
-        out_path = temp_buffer
     file_name = "{}\{}{}".format(out_path, out_name, file_type)
     return file_name
 
@@ -56,13 +70,13 @@ def name_file(out_name, file_type, out_path = "temp"):
 def delete_temp_files():
     """Remove temporary files when no longer needed.
     """
-    for folder in [temp_folder, temp_buffer]:
+    for folder in [temp_files, temp_buffer, temp_binary, temp_preprocessed, temp_probabilities, temp_tiled]:
         os.chdir(folder)
         for temp_file in os.listdir():
             os.remove(temp_file)
 
 
-def save_tiff(image_array, image_metadata, out_name, out_path = "temp"):
+def save_tiff(image_array, image_metadata, out_name, out_path = temp_files):
     """Write a tiff image to a directory. 
        Parameters: image_array: (array) the pixel values of the image. 
                    image_metadata: the metadata for the image. out_path: (string) the directory in which to save the image.
@@ -76,7 +90,18 @@ def save_tiff(image_array, image_metadata, out_name, out_path = "temp"):
     return file_name
 
 
-def generate_metadata(tile, image, n_water, n_ice, coordinates, row, col, step_size, tile_size, json_directory = "temp"):
+def mask_to_image(mask: np.ndarray):
+    """ Convert numpy array to .png file.
+        Parameters: mask: (numpy array) pixel values of an image.
+        Returns: .png format image.
+    """
+    if mask.ndim == 2:
+        return Image.fromarray((mask * 255).astype(np.uint8))
+    elif mask.ndim == 3:
+        return Image.fromarray((np.argmax(mask, axis=0) * 255 / mask.shape[0]).astype(np.uint8))
+
+
+def generate_metadata(tile, image, n_water, n_ice, coordinates, row, col, step_size, tile_size, json_directory = temp_files):
     """Adds metadata for a tile to a JSON file.
        Parameters: json_directory: (string) the folder containing the metadata file or in which to place a new one.
                    tile: (numerical type or string) the tile number. image: (string) the name of the image that the tile came from.

@@ -9,6 +9,7 @@ import rasterio.mask
 import rasterio.merge
 import fiona
 from torch.utils.data import Dataset
+import torch
 
 
 def relabel_all(in_path, out_path):
@@ -568,11 +569,15 @@ def augment_dataset(original_dataset, flip_hor, flip_ver, rotate_90, rotate_180,
     return augmented_dataset
 
 
-raw = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\raw"
-test = r"C:\Users\sophi\test"
-testbuffer = r"C:\Users\sophi\testbuffer"
-data = r"G:\Shared drives\2021-gtc-sea-ice\data"
-clipped = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\clipped"
-tiled = r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled"
+#raw = r"\raw"
+#test = r"C:\Users\sophi\test"
+#testbuffer = r"C:\Users\sophi\testbuffer"
+#raw = r"\gws\nopw\j04\bas_climate\projects\SeaIceExtent\data"
+#clipped = r"\gws\nopw\j04\bas_climate\projects\SeaIceExtent\trainingdata\clipped"
+#tiled = r"\gws\nopw\j04\bas_climate\projects\SeaIceExtent\trainingdata\tiled"
 
-#tile_all(raw, clipped, tiled, 512, 384)
+raw = r"data"
+clipped = r"trainingdata\clipped"
+tiled = r"trainingdata\tiled"
+
+tile_all(raw, clipped, tiled, 512, 384)

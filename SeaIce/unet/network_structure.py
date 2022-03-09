@@ -1,5 +1,5 @@
 """ Parts of the U-Net model """
-from SeaIce.unet.shared import * 
+from shared import *
 
 
 class DoubleConv(nn.Module):
