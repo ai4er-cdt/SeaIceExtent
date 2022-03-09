@@ -1,0 +1,20 @@
+2022-03-07 18:11:47,956 INFO    MainThread:19688 [wandb_setup.py:_flush():75] Loading settings from C:\Users\sophi\.config\wandb\settings
+2022-03-07 18:11:47,957 INFO    MainThread:19688 [wandb_setup.py:_flush():75] Loading settings from C:\Users\sophi\SeaIceExtent\SeaIce\wandb\settings
+2022-03-07 18:11:47,957 INFO    MainThread:19688 [wandb_setup.py:_flush():75] Loading settings from environment variables: {'api_key': '***REDACTED***'}
+2022-03-07 18:11:47,957 INFO    MainThread:19688 [wandb_setup.py:_flush():75] Inferring run settings from compute environment: {'program_relpath': 'SeaIce\\unet\\tune_hyperparameters.py', 'program': 'C:\\Users\\sophi\\SeaIceExtent\\SeaIce\\unet\\tune_hyperparameters.py'}
+2022-03-07 18:11:47,957 INFO    MainThread:19688 [wandb_setup.py:_flush():75] Applying login settings: {'anonymous': 'must'}
+2022-03-07 18:11:47,957 INFO    MainThread:19688 [wandb_init.py:_log_setup():386] Logging user logs to C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_181147-2wr4kq3x\logs\debug.log
+2022-03-07 18:11:47,957 INFO    MainThread:19688 [wandb_init.py:_log_setup():387] Logging internal logs to C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_181147-2wr4kq3x\logs\debug-internal.log
+2022-03-07 18:11:47,957 INFO    MainThread:19688 [wandb_init.py:init():420] calling init triggers
+2022-03-07 18:11:47,958 INFO    MainThread:19688 [wandb_init.py:init():425] wandb.init called with sweep_config: {}
+config: {}
+2022-03-07 18:11:47,958 INFO    MainThread:19688 [wandb_init.py:init():471] starting backend
+2022-03-07 18:11:47,958 INFO    MainThread:19688 [backend.py:_multiprocessing_setup():99] multiprocessing start_methods=spawn, using: spawn
+2022-03-07 18:11:47,963 INFO    MainThread:19688 [backend.py:ensure_launched():219] starting backend process...
+2022-03-07 18:11:48,021 INFO    MainThread:19688 [backend.py:ensure_launched():224] started backend process with pid: 25572
+2022-03-07 18:11:48,023 INFO    MainThread:19688 [wandb_init.py:init():480] backend started and connected
+2022-03-07 18:11:48,024 INFO    MainThread:19688 [wandb_init.py:init():550] updated telemetry
+2022-03-07 18:11:48,163 INFO    MainThread:19688 [wandb_init.py:init():581] communicating current version
+2022-03-07 18:11:49,160 INFO    MainThread:19688 [wandb_init.py:init():586] got version response upgrade_message: "wandb version 0.12.11 is available!  To upgrade, please run:\n $ pip install wandb --upgrade"
+
+2022-03-07 18:11:49,161 INFO    MainThread:19688 [wandb_init.py:init():596] communicating run to backend with 30 second timeout

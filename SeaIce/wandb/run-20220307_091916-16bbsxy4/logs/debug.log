@@ -1,0 +1,111 @@
+2022-03-07 09:19:16,366 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Loading settings from C:\Users\sophi\.config\wandb\settings
+2022-03-07 09:19:16,367 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Loading settings from C:\Users\sophi\SeaIceExtent\SeaIce\wandb\settings
+2022-03-07 09:19:16,367 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Loading settings from environment variables: {}
+2022-03-07 09:19:16,368 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Inferring run settings from compute environment: {'program_relpath': 'SeaIce\\unet\\optimise.py', 'program': 'C:\\Users\\sophi\\SeaIceExtent\\SeaIce\\unet\\optimise.py'}
+2022-03-07 09:19:16,368 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Applying login settings: {'anonymous': 'must'}
+2022-03-07 09:19:16,370 INFO    MainThread:4848 [wandb_init.py:_log_setup():386] Logging user logs to C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_091916-16bbsxy4\logs\debug.log
+2022-03-07 09:19:16,371 INFO    MainThread:4848 [wandb_init.py:_log_setup():387] Logging internal logs to C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_091916-16bbsxy4\logs\debug-internal.log
+2022-03-07 09:19:16,371 INFO    MainThread:4848 [wandb_init.py:init():420] calling init triggers
+2022-03-07 09:19:16,372 INFO    MainThread:4848 [wandb_init.py:init():425] wandb.init called with sweep_config: {}
+config: {}
+2022-03-07 09:19:16,372 INFO    MainThread:4848 [wandb_init.py:init():471] starting backend
+2022-03-07 09:19:16,373 INFO    MainThread:4848 [backend.py:_multiprocessing_setup():99] multiprocessing start_methods=spawn, using: spawn
+2022-03-07 09:19:16,385 INFO    MainThread:4848 [backend.py:ensure_launched():219] starting backend process...
+2022-03-07 09:19:16,450 INFO    MainThread:4848 [backend.py:ensure_launched():224] started backend process with pid: 6536
+2022-03-07 09:19:16,452 INFO    MainThread:4848 [wandb_init.py:init():480] backend started and connected
+2022-03-07 09:19:16,455 INFO    MainThread:4848 [wandb_init.py:init():550] updated telemetry
+2022-03-07 09:19:16,510 INFO    MainThread:4848 [wandb_init.py:init():581] communicating current version
+2022-03-07 09:19:17,707 INFO    MainThread:4848 [wandb_init.py:init():586] got version response upgrade_message: "wandb version 0.12.11 is available!  To upgrade, please run:\n $ pip install wandb --upgrade"
+
+2022-03-07 09:19:17,707 INFO    MainThread:4848 [wandb_init.py:init():596] communicating run to backend with 30 second timeout
+2022-03-07 09:19:18,163 INFO    MainThread:4848 [wandb_init.py:init():624] starting run threads in backend
+2022-03-07 09:19:18,309 INFO    MainThread:4848 [wandb_run.py:_console_start():1827] atexit reg
+2022-03-07 09:19:18,311 INFO    MainThread:4848 [wandb_run.py:_redirect():1701] redirect: SettingsConsole.WRAP
+2022-03-07 09:19:18,311 INFO    MainThread:4848 [wandb_run.py:_redirect():1738] Wrapping output streams.
+2022-03-07 09:19:18,316 INFO    MainThread:4848 [wandb_run.py:_redirect():1762] Redirects installed.
+2022-03-07 09:19:18,316 INFO    MainThread:4848 [wandb_init.py:init():651] run started, returning control to user process
+2022-03-07 09:19:18,317 INFO    MainThread:4848 [wandb_run.py:_config_callback():966] config_cb None None {'epochs': 1, 'batch_size': 1, 'learning_rate': 0.0001, 'val_percent': 0.1, 'save_checkpoint': False, 'amp': False}
+2022-03-07 09:25:46,028 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Loading settings from C:\Users\sophi\.config\wandb\settings
+2022-03-07 09:25:46,028 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Loading settings from C:\Users\sophi\SeaIceExtent\SeaIce\wandb\settings
+2022-03-07 09:25:46,028 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Loading settings from environment variables: {}
+2022-03-07 09:25:46,029 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Inferring run settings from compute environment: {'program_relpath': 'SeaIce\\unet\\optimise.py', 'program': 'C:\\Users\\sophi\\SeaIceExtent\\SeaIce\\unet\\optimise.py'}
+2022-03-07 09:25:46,029 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Applying login settings: {'anonymous': 'must'}
+2022-03-07 09:25:46,029 INFO    MainThread:4848 [wandb_init.py:_log_setup():386] Logging user logs to C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_092546-3e8r47yl\logs\debug.log
+2022-03-07 09:25:46,030 INFO    MainThread:4848 [wandb_init.py:_log_setup():387] Logging internal logs to C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_092546-3e8r47yl\logs\debug-internal.log
+2022-03-07 09:25:46,030 INFO    MainThread:4848 [wandb_init.py:init():420] calling init triggers
+2022-03-07 09:25:46,030 INFO    MainThread:4848 [wandb_init.py:init():425] wandb.init called with sweep_config: {}
+config: {}
+2022-03-07 09:25:46,030 INFO    MainThread:4848 [wandb_init.py:init():466] wandb.init() called when a run is still active
+2022-03-07 09:25:46,031 INFO    MainThread:4848 [wandb_run.py:_config_callback():966] config_cb None None {'epochs': 1, 'batch_size': 1, 'learning_rate': 0.0001, 'val_percent': 0.1, 'save_checkpoint': False, 'amp': False}
+2022-03-07 09:30:17,491 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Loading settings from C:\Users\sophi\.config\wandb\settings
+2022-03-07 09:30:17,491 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Loading settings from C:\Users\sophi\SeaIceExtent\SeaIce\wandb\settings
+2022-03-07 09:30:17,491 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Loading settings from environment variables: {}
+2022-03-07 09:30:17,491 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Inferring run settings from compute environment: {'program_relpath': 'SeaIce\\unet\\optimise.py', 'program': 'C:\\Users\\sophi\\SeaIceExtent\\SeaIce\\unet\\optimise.py'}
+2022-03-07 09:30:17,491 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Applying login settings: {'anonymous': 'must'}
+2022-03-07 09:30:17,493 INFO    MainThread:4848 [wandb_init.py:_log_setup():386] Logging user logs to C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_093017-1d83vh9d\logs\debug.log
+2022-03-07 09:30:17,494 INFO    MainThread:4848 [wandb_init.py:_log_setup():387] Logging internal logs to C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_093017-1d83vh9d\logs\debug-internal.log
+2022-03-07 09:30:17,494 INFO    MainThread:4848 [wandb_init.py:init():420] calling init triggers
+2022-03-07 09:30:17,494 INFO    MainThread:4848 [wandb_init.py:init():425] wandb.init called with sweep_config: {}
+config: {}
+2022-03-07 09:30:17,495 INFO    MainThread:4848 [wandb_init.py:init():466] wandb.init() called when a run is still active
+2022-03-07 09:30:17,495 INFO    MainThread:4848 [wandb_run.py:_config_callback():966] config_cb None None {'epochs': 1, 'batch_size': 1, 'learning_rate': 0.0001, 'val_percent': 0.1, 'save_checkpoint': False, 'amp': False}
+2022-03-07 09:34:34,765 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Loading settings from C:\Users\sophi\.config\wandb\settings
+2022-03-07 09:34:34,766 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Loading settings from C:\Users\sophi\SeaIceExtent\SeaIce\wandb\settings
+2022-03-07 09:34:34,766 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Loading settings from environment variables: {}
+2022-03-07 09:34:34,767 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Inferring run settings from compute environment: {'program_relpath': 'SeaIce\\unet\\optimise.py', 'program': 'C:\\Users\\sophi\\SeaIceExtent\\SeaIce\\unet\\optimise.py'}
+2022-03-07 09:34:34,767 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Applying login settings: {'anonymous': 'must'}
+2022-03-07 09:34:34,769 INFO    MainThread:4848 [wandb_init.py:_log_setup():386] Logging user logs to C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_093434-3p1b56d9\logs\debug.log
+2022-03-07 09:34:34,770 INFO    MainThread:4848 [wandb_init.py:_log_setup():387] Logging internal logs to C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_093434-3p1b56d9\logs\debug-internal.log
+2022-03-07 09:34:34,770 INFO    MainThread:4848 [wandb_init.py:init():420] calling init triggers
+2022-03-07 09:34:34,771 INFO    MainThread:4848 [wandb_init.py:init():425] wandb.init called with sweep_config: {}
+config: {}
+2022-03-07 09:34:34,772 INFO    MainThread:4848 [wandb_init.py:init():466] wandb.init() called when a run is still active
+2022-03-07 09:34:34,773 INFO    MainThread:4848 [wandb_run.py:_config_callback():966] config_cb None None {'epochs': 1, 'batch_size': 1, 'learning_rate': 0.0001, 'val_percent': 0.1, 'save_checkpoint': False, 'amp': False}
+2022-03-07 09:47:48,335 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Loading settings from C:\Users\sophi\.config\wandb\settings
+2022-03-07 09:47:48,336 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Loading settings from C:\Users\sophi\SeaIceExtent\SeaIce\wandb\settings
+2022-03-07 09:47:48,336 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Loading settings from environment variables: {}
+2022-03-07 09:47:48,336 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Inferring run settings from compute environment: {'program_relpath': 'SeaIce\\unet\\optimise.py', 'program': 'C:\\Users\\sophi\\SeaIceExtent\\SeaIce\\unet\\optimise.py'}
+2022-03-07 09:47:48,336 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Applying login settings: {'anonymous': 'must'}
+2022-03-07 09:47:48,337 INFO    MainThread:4848 [wandb_init.py:_log_setup():386] Logging user logs to C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_094748-2cvvwbkk\logs\debug.log
+2022-03-07 09:47:48,337 INFO    MainThread:4848 [wandb_init.py:_log_setup():387] Logging internal logs to C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_094748-2cvvwbkk\logs\debug-internal.log
+2022-03-07 09:47:48,337 INFO    MainThread:4848 [wandb_init.py:init():420] calling init triggers
+2022-03-07 09:47:48,338 INFO    MainThread:4848 [wandb_init.py:init():425] wandb.init called with sweep_config: {}
+config: {}
+2022-03-07 09:47:48,338 INFO    MainThread:4848 [wandb_init.py:init():466] wandb.init() called when a run is still active
+2022-03-07 09:47:48,338 INFO    MainThread:4848 [wandb_run.py:_config_callback():966] config_cb None None {'epochs': 1, 'batch_size': 1, 'learning_rate': 0.0001, 'val_percent': 0.1, 'save_checkpoint': False, 'amp': False}
+2022-03-07 09:52:34,440 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Loading settings from C:\Users\sophi\.config\wandb\settings
+2022-03-07 09:52:34,440 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Loading settings from C:\Users\sophi\SeaIceExtent\SeaIce\wandb\settings
+2022-03-07 09:52:34,440 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Loading settings from environment variables: {}
+2022-03-07 09:52:34,441 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Inferring run settings from compute environment: {'program_relpath': 'SeaIce\\unet\\optimise.py', 'program': 'C:\\Users\\sophi\\SeaIceExtent\\SeaIce\\unet\\optimise.py'}
+2022-03-07 09:52:34,441 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Applying login settings: {'anonymous': 'must'}
+2022-03-07 09:52:34,442 INFO    MainThread:4848 [wandb_init.py:_log_setup():386] Logging user logs to C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_095234-2nhcpgdm\logs\debug.log
+2022-03-07 09:52:34,442 INFO    MainThread:4848 [wandb_init.py:_log_setup():387] Logging internal logs to C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_095234-2nhcpgdm\logs\debug-internal.log
+2022-03-07 09:52:34,442 INFO    MainThread:4848 [wandb_init.py:init():420] calling init triggers
+2022-03-07 09:52:34,443 INFO    MainThread:4848 [wandb_init.py:init():425] wandb.init called with sweep_config: {}
+config: {}
+2022-03-07 09:52:34,443 INFO    MainThread:4848 [wandb_init.py:init():466] wandb.init() called when a run is still active
+2022-03-07 09:52:34,444 INFO    MainThread:4848 [wandb_run.py:_config_callback():966] config_cb None None {'epochs': 1, 'batch_size': 1, 'learning_rate': 0.0001, 'val_percent': 0.1, 'save_checkpoint': False, 'amp': False}
+2022-03-07 09:56:05,880 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Loading settings from C:\Users\sophi\.config\wandb\settings
+2022-03-07 09:56:05,880 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Loading settings from C:\Users\sophi\SeaIceExtent\SeaIce\wandb\settings
+2022-03-07 09:56:05,880 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Loading settings from environment variables: {}
+2022-03-07 09:56:05,880 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Inferring run settings from compute environment: {'program_relpath': 'SeaIce\\unet\\optimise.py', 'program': 'C:\\Users\\sophi\\SeaIceExtent\\SeaIce\\unet\\optimise.py'}
+2022-03-07 09:56:05,881 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Applying login settings: {'anonymous': 'must'}
+2022-03-07 09:56:05,881 INFO    MainThread:4848 [wandb_init.py:_log_setup():386] Logging user logs to C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_095605-1tynh44u\logs\debug.log
+2022-03-07 09:56:05,882 INFO    MainThread:4848 [wandb_init.py:_log_setup():387] Logging internal logs to C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_095605-1tynh44u\logs\debug-internal.log
+2022-03-07 09:56:05,882 INFO    MainThread:4848 [wandb_init.py:init():420] calling init triggers
+2022-03-07 09:56:05,882 INFO    MainThread:4848 [wandb_init.py:init():425] wandb.init called with sweep_config: {}
+config: {}
+2022-03-07 09:56:05,882 INFO    MainThread:4848 [wandb_init.py:init():466] wandb.init() called when a run is still active
+2022-03-07 09:56:05,883 INFO    MainThread:4848 [wandb_run.py:_config_callback():966] config_cb None None {'epochs': 1, 'batch_size': 1, 'learning_rate': 0.0001, 'val_percent': 0.1, 'save_checkpoint': False, 'amp': False}
+2022-03-07 09:59:22,481 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Loading settings from C:\Users\sophi\.config\wandb\settings
+2022-03-07 09:59:22,481 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Loading settings from C:\Users\sophi\SeaIceExtent\SeaIce\wandb\settings
+2022-03-07 09:59:22,481 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Loading settings from environment variables: {}
+2022-03-07 09:59:22,482 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Inferring run settings from compute environment: {'program_relpath': 'SeaIce\\unet\\optimise.py', 'program': 'C:\\Users\\sophi\\SeaIceExtent\\SeaIce\\unet\\optimise.py'}
+2022-03-07 09:59:22,482 INFO    MainThread:4848 [wandb_setup.py:_flush():75] Applying login settings: {'anonymous': 'must'}
+2022-03-07 09:59:22,483 INFO    MainThread:4848 [wandb_init.py:_log_setup():386] Logging user logs to C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_095922-1c33vkzj\logs\debug.log
+2022-03-07 09:59:22,483 INFO    MainThread:4848 [wandb_init.py:_log_setup():387] Logging internal logs to C:\Users\sophi\SeaIceExtent\SeaIce\wandb\run-20220307_095922-1c33vkzj\logs\debug-internal.log
+2022-03-07 09:59:22,483 INFO    MainThread:4848 [wandb_init.py:init():420] calling init triggers
+2022-03-07 09:59:22,484 INFO    MainThread:4848 [wandb_init.py:init():425] wandb.init called with sweep_config: {}
+config: {}
+2022-03-07 09:59:22,484 INFO    MainThread:4848 [wandb_init.py:init():466] wandb.init() called when a run is still active
+2022-03-07 09:59:22,485 INFO    MainThread:4848 [wandb_run.py:_config_callback():966] config_cb None None {'epochs': 1, 'batch_size': 1, 'learning_rate': 0.0001, 'val_percent': 0.1, 'save_checkpoint': False, 'amp': False}

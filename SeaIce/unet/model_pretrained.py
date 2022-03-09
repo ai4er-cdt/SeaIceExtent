@@ -1,5 +1,5 @@
-from unet.shared import *
-from unet.dataset_preparation import *
+from shared import *
+from dataset_preparation import *
 
 
 torch.manual_seed(2022)  # Setting random seed so that augmentations can be reproduced.
@@ -19,7 +19,7 @@ elif img_type == "modis":
 
 dataset = CustomImageDataset(img_list, single_channel, "values")
 
-_, _, train_loader, val_loader = split_data(dataset, val_percent, batch_size, 2)
+_, _, train_loader, val_loader = split_data(dataset, val_percent, batch_size, 1)
 
 loss = smp.utils.losses.DiceLoss()
 metrics = [smp.utils.metrics.IoU(threshold=0.5),]

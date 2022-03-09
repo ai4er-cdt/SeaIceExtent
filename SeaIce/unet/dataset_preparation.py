@@ -1,10 +1,11 @@
 """ CNN Dataset preparation functions """
-from unet.shared import *
+from shared import *
 from torch.utils.data.dataset import Dataset  # For custom data-sets
 from torchvision import transforms
 import glob
 from datetime import datetime
 import random
+import sys
 
 torch.manual_seed(2022) # Setting random seed so that augmentations can be reproduced.
 
@@ -12,14 +13,36 @@ torch.manual_seed(2022) # Setting random seed so that augmentations can be repro
 # And https://discuss.pytorch.org/t/how-make-customised-dataset-for-semantic-segmentation/30881
 
 
-def create_npy_list(image_directory, img_string):
+def permute_tile_sizes():
+    """Get all the tiles but in different sizes per date. Tiles are not duplicated.
+       Returns: permuted_tiles: (list of strings) file paths to each tile.    
+    """
+    all_sizes = [(512, tiled512), (768, tiled768), (1024, tiled1024)]
+    data = Path(r"{}/Shared drives/2021-gtc-sea-ice/data".format(prefix))
+    all_folder_names, _ = get_contents(data, "_", None)
+    permuted_tiles = []
+    for date in all_folder_names:
+        date = date.split("_", 1)[0]
+        size = all_sizes[random.randint(0, 2)]
+        _, date_tiles_paths = get_contents(size[1], [date], "prefix")
+        permuted_tiles += date_tiles_paths
+    return permuted_tiles
+
+
+def create_npy_list(images, img_string):
     """A function that returns a list of the names of the SAR/MODIS and labelled .npy files in a directory. These lists can
     then be used as an argument for the Dataset class instantiation. The function also checks that the specified directory 
     contains matching sar or MODIS/labelled pairs -- specifically, a label.npy file for each image file."""
-
-    img_names = sorted(glob.glob(str(image_directory) + '/*_' + img_string + '.npy'))
-    label_names = sorted(glob.glob(str(image_directory) + '/*_labels.npy'))
-
+    if type(images) == list:
+        img_names, label_names = [], []
+        for each_file in images:
+            if img_string in each_file:
+                img_names.append(each_file)
+            if "labels" in each_file:
+                label_names.append(each_file)
+    else: # images is a directory path
+        img_names = sorted(glob.glob(str(images) + '/*_' + img_string + '.npy'))
+        label_names = sorted(glob.glob(str(images) + '/*_labels.npy'))
     # In-depth file-by-file check for matching sar-label pairs in the directory -- assuming  each sar image has a corresponding
     # labeled image.
     img_label_pairs = []
@@ -34,13 +57,23 @@ def create_npy_list(image_directory, img_string):
 
 
 def small_sample(dataset):
-    """A sample 1/10 the size of the dataset for faster code development.
+    """A 100 MB sample of the dataset for faster code development.
        Parameter: dataset: (list) file paths of all data in the set.
-       Returns: small_set: (list) 10 % of those files, randomly selected.
+       Returns: small_set: (list) 100 MB of those files, randomly selected.
     """
-    tenth = round(len(dataset)/10)
     random.shuffle(dataset)
-    small_set = dataset[0:tenth]
+    small_set, i, num_bytes = [], 0, 0
+    while num_bytes < 100000000 and len(small_set) < len(dataset):
+        this_pair = dataset[i]
+        small_set.append(this_pair)
+        this_array = np.load(this_pair[0])
+        num_bytes += sys.getsizeof(this_array) 
+        print("num_bytes", num_bytes)
+        this_array = None
+        i += 1
+    print(num_bytes, "bytes in small set")
+    print(len(small_set), "tiles in set")
+    print("full set num tiles divided by small set num tiles =", len(dataset) / len(small_set))
     return small_set
 
 

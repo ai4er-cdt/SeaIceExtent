@@ -131,7 +131,7 @@ def train_and_validate(config=None, amp=False, device='cpu'):
 
 if __name__ == '__main__':
 
-    os.environ["WANDB_API_KEY"] = 'ENTER API KEY'
+    os.environ["WANDB_API_KEY"] = 'ENTER KEY'
 
     wandb.init(project="test-hyptuning")
 

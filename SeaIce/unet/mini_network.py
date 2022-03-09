@@ -1,5 +1,5 @@
 """ Parts of the U-Net model """
-from unet.shared import *
+from shared import *
 
 
 class SingleConv(nn.Module):

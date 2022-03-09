@@ -10,8 +10,6 @@ def stitch(image_portions):
     for portion in image_portions:
         opened = rasterio.open(portion) 
         open_portions.append(opened)
-        # Not sure if this next line will work... remove if not!
-        opened.close()
     full_image, transform = rasterio.merge.merge(open_portions) 
     # New metadata.
     out_meta = opened.meta.copy()

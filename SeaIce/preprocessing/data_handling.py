@@ -27,7 +27,7 @@ model_modis = r"{}\models\modis_model_example.pth".format(program_path)
 def get_contents(in_directory, search_terms = None, string_position = None):
     """Traverses a directory to find a specified file or sub-directory.
        Parameters: in_directory: (string) the directory in which to look. search_term: None or list of search terms.
-                   string_position: (string) "prefix", "suffix" or None.
+                   string_position: (string) "prefix", "suffix" or None (any).
        Returns: items: (list of strings) the names of the search results (everything inside the directory if search_term == None).
                 full_paths: (list of strings) the file paths of the search results.  
     """
@@ -47,6 +47,11 @@ def get_contents(in_directory, search_terms = None, string_position = None):
                     if item.endswith(term):
                         items.append(item)
                         full_paths.append("{}\{}".format(in_directory, item))
+                elif string_position == None: 
+                    if term in item:
+                        items.append(item)
+                        full_paths.append("{}\{}".format(in_directory, item))
+    os.chdir(program_path)
     return items, full_paths
 
 

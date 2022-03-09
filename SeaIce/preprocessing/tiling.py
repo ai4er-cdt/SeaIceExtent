@@ -167,5 +167,5 @@ def reconstruct_from_tiles(tiles_path, out_path):
     full_image = mask_to_image(full_array)
     full_image.save(out_path)
 
-   
+
         
