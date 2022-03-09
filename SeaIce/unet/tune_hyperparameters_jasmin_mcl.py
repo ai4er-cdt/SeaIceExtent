@@ -1,40 +1,37 @@
 """This script runs best if you login to wandb through the terminal before running the script using: $wandb login"""
 
-try:
-    from dataset_preparation import *
-    from evaluation import *
-    from network_structure import *
-except:
-    from unet.dataset_preparation import *
-    from unet.evaluation import *
-    from unet.network_structure import *
-
+from dataset_preparation import *
+from evaluation import *
+from network_structure import *
 import wandb
 import torch.optim as optim
+
 from pathlib import Path
 import os
 from datetime import datetime
 
 
-def create_checkpoint_dir(folder_checkpoint, img_type, model_type, optimizer, lr, batchsize, weightdecay):
+def create_checkpoint_dir(folder_checkpoint, img_type, model_type,
+                         optimizer, lr, batchsize, weightdecay):
     now = datetime.now()
     dt_string = now.strftime("%d%m%Y_%H%M%S")
     dir_list = os.listdir(folder_checkpoint)
     FOLDER_EXISTS = True
     x = 1
-    while FOLDER_EXISTS:
-        dir_checkpoint = str('{}_{}_optm{}_batchsize{}_learnrate{}_weightdecay{}_date{}_{}'.format(model_type, img_type,
-                                                   str(optimizer), str(batchsize), str(lr),
+    
+    while FOLDER_EXISTS: 
+        dir_checkpoint = str('{}_{}_optm{}_batchsize{}_learnrate{}_weightdecay{}_date{}_{}'.format(model_type, img_type, 
+                                                   str(optimizer), str(batchsize), str(lr), 
                                                    str(weightdecay), str(dt_string), str(x)))
         path = os.path.join(folder_checkpoint, Path(dir_checkpoint))
         if dir_checkpoint in dir_list:
             x += 1
         else:
-            FOLDER_EXISTS = False
-            os.mkdir(path)
-            # print("Checkpoint directory {} created.".format(str(path)))
-            return (path)
-
+          FOLDER_EXISTS = False
+          os.mkdir(path)
+          #print("Checkpoint directory {} created.".format(str(path)))
+          return(path)
+        
 
 def build_optimiser(network, config):
     """Builds the training optimiser based on the parametersd in the config file"""
@@ -50,14 +47,12 @@ def build_optimiser(network, config):
 def train_and_validate(config=None, amp=False, device='cpu'):
 
     # Inputs for the helper functions
-    img_dir = '/home/users/jdr53/tiled512/'
-    checkpoint_dir = '/home/users/jdr53/checkpoints'
+    img_dir = '/home/users/mcl66/SeaIce/tiled512/'
+    checkpoint_dir = '/home/users/mcl66/SeaIce/checkpoints'
+    model_type = "unet"
     image_type = 'sar'
     net = UNet(1, 2, True)
     return_type = 'dict'
-    workers = 12
-    save_checkpoint = False
-    model_type = 'unet'
 
     # Initialize a new wandb run
     with wandb.init(config=config):
@@ -72,13 +67,11 @@ def train_and_validate(config=None, amp=False, device='cpu'):
 
         # Loader
         img_list = create_npy_list(img_dir, image_type)
-
-        train_img_list, val_img_list, n_train, n_val = split_img_list(img_list, config.validation_percent)
-
-        train_dataset = CustomImageAugmentDataset(train_img_list, is_single_band, return_type, True)
-        validation_dataset = CustomImageAugmentDataset(val_img_list, is_single_band, return_type, False)
-
-        train_loader, val_loader = create_dataloaders(train_dataset, validation_dataset, config.batch_size, workers)
+        # Use this if you want a smaller dataset just to test things with
+        img_list = small_sample(img_list)
+        dataset = CustomImageDataset(img_list, is_single_band, return_type)
+        print(config)
+        n_val, n_train, train_loader, val_loader = split_data(dataset, config.validation_percent, config.batch_size, 2)
 
         # Optimiser
         optimiser = build_optimiser(net, config)
@@ -120,7 +113,7 @@ def train_and_validate(config=None, amp=False, device='cpu'):
                         loss = criterion(masks_pred, true_masks) \
                                + dice_loss(F.softmax(masks_pred, dim=1).float(),
                                            F.one_hot(true_masks, net.n_classes).permute(0, 3, 1, 2).float(),
-                                           multiclass=True, epsilon=config.weight_decay)
+                                           multiclass=True)
                         #loss = criterion(masks_pred, true_masks)
 
                     # Optimisation
@@ -137,7 +130,7 @@ def train_and_validate(config=None, amp=False, device='cpu'):
                     pbar.set_postfix(**{'loss (batch)': loss.item()})
                     n_batches += 1
 
-                val_score, _ = evaluate(net, val_loader, device, epsilon=config.weight_decay)
+                val_score, _ = evaluate(net, val_loader, device)
                 print(f'\nVal Score: {val_score}, Epoch: {epoch}')
 
                 #wandb.log({"Batch Loss, Validation": val_score_list[index]}, step=global_step-(len(val_score_list)+index))
@@ -152,10 +145,9 @@ def train_and_validate(config=None, amp=False, device='cpu'):
             wandb.log({"Epoch Loss, Training": avg_epoch_training_loss, "Epoch Loss, Validation": val_score, "Epoch": epoch+1}, step=global_step)
             if save_checkpoint:
                 if epoch == 0:
-                    dir_checkpoint = create_checkpoint_dir(folder_checkpoint, image_type, model_type, config.optimiser,
+                    dir_checkpoint = create_checkpoint_dir(folder_checkpoint, image_type, model_type, config.optimiser, 
                                                            config.learning_rate, config.batch_size, config.weight_decay)
                 torch.save(net.state_dict(), str(dir_checkpoint / 'checkpoint_epoch{}.pth'.format(epoch + 1)))
-
         wandb.log({"Run Loss, Training": run_loss_train / config.epochs, "Run Loss, Validation": val_score}, step=global_step)
 
         #wandb.log({"Run Training Loss": run_loss_train})
@@ -174,7 +166,7 @@ if __name__ == '__main__':
     #wandb.init(project="test-hyptuning")
 
     # Model Name
-    #model_name = 'unet'
+    model_name = 'unet'
 
     # Configuring wandb settings
     sweep_config = {
@@ -203,18 +195,15 @@ if __name__ == '__main__':
             # Uniformly-distributed between 5-15
             'distribution': 'int_uniform',
             'min': 5,
-            'max': 30
-        },
-        'weight_decay': {
-            'distribution': 'int_uniform',
-            'min': 1e-8,
-            'max': 1e-2
+            'max': 30,
         }
     }
     sweep_config['parameters'] = parameters_dict
 
     # Fixed hyperparamters
     parameters_dict.update({
+        'weight_decay': {
+            'value': 1e-8},
         'momentum': {
             'value': 0.9},
         'validation_percent': {
@@ -222,19 +211,10 @@ if __name__ == '__main__':
         'img_scale': {
             'value': 0.5},
         'epochs': {
-            'value': 10000},
-        'optimiser': {
-            'value': 'sgd'},
-        'learning_rate': {
-            'value': 0.002},
-        'batch_size': {
-            'value': 8},
-        'weight_decay': {
-            'value': 1e-8}
+            'value': 10}
     })
 
-    sweep_id = wandb.sweep(sweep_config, project="jasmin-gpu", name="1-run")
+    sweep_id = wandb.sweep(sweep_config, project=model_name + "hyp-sweep-jasmin")
 
-    n_tuning = 1
+    n_tuning = 30
     wandb.agent(sweep_id, function=train_and_validate, count=n_tuning)
-
