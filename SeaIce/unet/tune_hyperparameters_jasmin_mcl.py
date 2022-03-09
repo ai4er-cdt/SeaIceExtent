@@ -55,6 +55,7 @@ def train_and_validate(config=None, amp=False, device=torch.device('cuda')):
     image_type = 'sar'
     net = UNet(1, 2, True)
     model_type = "unet"
+    workers = 10
     
     # for checkpoint saving
     checkpoint_dir = '/home/users/mcl66/SeaIce/checkpoints/'
