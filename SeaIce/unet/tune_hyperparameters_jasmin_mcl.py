@@ -16,26 +16,24 @@ import os
 from datetime import datetime
 
 
-def create_checkpoint_dir(folder_checkpoint, img_type, model_type,
+def create_checkpoint_dir(parent_folder_checkpoint, img_type, model_type,
                          optimizer, lr, batchsize, weightdecay):
     now = datetime.now()
     dt_string = now.strftime("%d%m%Y_%H%M%S")
-    dir_list = os.listdir(folder_checkpoint)
+    dir_list = os.listdir(parent_folder_checkpoint)
     FOLDER_EXISTS = True
-    x = 1
-    
+    x = 1 
     while FOLDER_EXISTS: 
         dir_checkpoint = str('{}_{}_optm{}_batchsize{}_learnrate{}_weightdecay{}_date{}_{}'.format(model_type, img_type, 
                                                    str(optimizer), str(batchsize), str(lr), 
                                                    str(weightdecay), str(dt_string), str(x)))
-        path = os.path.join(folder_checkpoint, Path(dir_checkpoint))
+        path = os.path.join(parent_folder_checkpoint, Path(dir_checkpoint))
         if dir_checkpoint in dir_list:
             x += 1
         else:
-          FOLDER_EXISTS = False
-          os.mkdir(path)
-          #print("Checkpoint directory {} created.".format(str(path)))
-          return(path)
+            FOLDER_EXISTS = False
+            os.mkdir(path)
+            return(path)
         
 
 def build_optimiser(network, config):
@@ -49,15 +47,23 @@ def build_optimiser(network, config):
     return optimiser
 
 
-def train_and_validate(config=None, amp=False, device='cpu'):
+def train_and_validate(config=None, amp=False, device=torch.device('cuda')):
 
     # Inputs for the helper functions
+    # Image and model params
     img_dir = '/home/users/mcl66/SeaIce/tiled512/'
-    checkpoint_dir = '/home/users/mcl66/SeaIce/checkpoints'
-    model_type = "unet"
     image_type = 'sar'
     net = UNet(1, 2, True)
+    model_type = "unet"
+    
+    # for checkpoint saving
+    checkpoint_dir = '/home/users/mcl66/SeaIce/checkpoints/'
+    save_checkpoint = True
+    
+    # unlikely to need modification
     return_type = 'dict'
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    net.to(device)
 
     # Initialize a new wandb run
     with wandb.init(config=config):
@@ -70,13 +76,15 @@ def train_and_validate(config=None, amp=False, device='cpu'):
         elif image_type == "modis":
             is_single_band = False
 
-        # Loader
+                # Loader
         img_list = create_npy_list(img_dir, image_type)
-        # Use this if you want a smaller dataset just to test things with
-        img_list = small_sample(img_list)
-        dataset = CustomImageDataset(img_list, is_single_band, return_type)
-        print(config)
-        n_val, n_train, train_loader, val_loader = split_data(dataset, config.validation_percent, config.batch_size, 2)
+
+        train_img_list, val_img_list, n_train, n_val = split_img_list(img_list, config.validation_percent)
+
+        train_dataset = CustomImageAugmentDataset(train_img_list, is_single_band, return_type, True)
+        validation_dataset = CustomImageAugmentDataset(val_img_list, is_single_band, return_type, False)
+
+        train_loader, val_loader = create_dataloaders(train_dataset, validation_dataset, config.batch_size, workers)
 
         # Optimiser
         optimiser = build_optimiser(net, config)
