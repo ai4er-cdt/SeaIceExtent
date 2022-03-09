@@ -1,11 +1,16 @@
 """This script runs best if you login to wandb through the terminal before running the script using: $wandb login"""
 
-from dataset_preparation import *
-from evaluation import *
-from network_structure import *
+try:
+    from dataset_preparation import *
+    from evaluation import *
+    from network_structure import *
+except:
+    from unet.dataset_preparation import *
+    from unet.evaluation import *
+    from unet.network_structure import *
+
 import wandb
 import torch.optim as optim
-
 from pathlib import Path
 import os
 from datetime import datetime
