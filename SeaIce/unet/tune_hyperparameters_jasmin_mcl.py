@@ -228,7 +228,7 @@ if __name__ == '__main__':
             'value': 10}
     })
 
-    sweep_id = wandb.sweep(sweep_config, project=model_name + "hyp-sweep-jasmin-mcl")
+    sweep_id = wandb.sweep(sweep_config, project="hyp-sweep-jasmin-mcl")
 
     n_tuning = 30
     wandb.agent(sweep_id, function=train_and_validate, count=n_tuning)
