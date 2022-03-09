@@ -16,10 +16,6 @@ tiled256 = Path(r"{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled256".forma
 tiled512 = Path(r"{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled512".format(prefix))
 tiled768 = Path(r"{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled768".format(prefix))
 tiled1024 = Path(r"{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled1024".format(prefix))
-prediction_raw = Path(r"{}/Shared drives/2021-gtc-sea-ice/trainingdata/test_raw/sar".format(prefix))
-prediction_tiles = Path(r"{}/Shared drives/2021-gtc-sea-ice/prediction".format(prefix))
-dir_test = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata/test_tiles/'.format(prefix))
-dir_out = Path(r'{}/Shared drives/2021-gtc-sea-ice/model/outtiles/'.format(prefix))
 
 
 def make_training_data(all_folder_names, all_folder_paths, all_sizes):
@@ -77,8 +73,11 @@ def test_split(folder):
 
 all_folder_names, all_folder_paths = get_contents(data, "_", None)
 
-test_split(r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled512")
 #make_training_data(all_folder_names, all_folder_paths, [])
-#controller.start_prediction(r"G:\Shared drives\2021-gtc-sea-ice\data\2011-01-13_021245\MODIS\Antarctica_r05c03.2011013.terra.367.250m.3031.tif")
+#controller.start_prediction(r"something.tif")
+from unet.shared import *
+from unet import predict
+predict.make_predictions(r"G:\Shared drives\2021-gtc-sea-ice\model\checkpoints\unet_orig_batch10\checkpoint_epoch4.pth", 
+                         "raw", "sar", r"{}/test".format(tiled512), temp_binary, temp_probabilities, metrics = True, save = True)
 
 

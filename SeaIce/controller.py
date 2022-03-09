@@ -129,4 +129,3 @@ def start_prediction(image_path):
         # Clean up.
         delete_temp_files()
         del open_image
-
