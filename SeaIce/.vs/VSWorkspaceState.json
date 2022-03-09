@@ -4,6 +4,6 @@
     "\\preprocessing",
     "\\unet"
   ],
-  "SelectedNode": "\\preprocessing\\download_newModis.txt",
+  "SelectedNode": "\\unet\\predict.py",
   "PreviewInSolutionExplorer": false
 }
