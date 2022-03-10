@@ -27,7 +27,6 @@ if not program_path.endswith("SeaIce"):
 #processor = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 processor = torch.device('cpu')
 training_root = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata'.format(prefix))
-training_tiles = Path(r'{}/tiled512/train'.format(training_root)) 
 training_tiles, test_tiles = [], [] 
 sizes = [256, 512, 768, 1024]
 for size in sizes:

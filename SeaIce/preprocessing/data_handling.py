@@ -146,4 +146,26 @@ def generate_metadata(tile, image, n_water, n_ice, coordinates, row, col, step_s
             json_file.write(json.dumps(feeds, indent=4))
 
 
+def hdf_to_tif():
+    hdf = r"G:\Shared drives\2021-gtc-sea-ice\prediction\modis\MOD02HKM.A2022050.0805.061.2022050193652.hdf"
+    hdf_smaller = r"G:\Shared drives\2021-gtc-sea-ice\prediction\modis\smaller.hdf"
+    tif = r"G:\Shared drives\2021-gtc-sea-ice\prediction\modis\MOD02HKM.A2022050.0805.061.2022050193652.tif"
+    from osgeo import gdal
+    open_hdf = gdal.Open(hdf) 
+    bands = gdal.Open(open_hdf.GetSubDatasets()[0][0])
+    print("number of subsets", len(open_hdf.GetSubDatasets()))
+    print("bands", bands)
+    band_array = bands.ReadAsArray()
+    print("band array shape", band_array.shape)
+    print("number of bands:", bands.RasterCount)
+    driver = gdal.GetDriverByName("GTiff")
+    #width, height = int(round(bands.RasterXSize/2)), int(round(bands.RasterYSize/2))
+    width, height = bands.RasterXSize, bands.RasterYSize
+    new_tif = driver.Create(utf8_path=tif, xsize=width, ysize=height, bands=5, 
+                        eType=gdal.GDT_Byte, options=["INTERLEAVE=PIXEL"])
+    new_tif.WriteRaster(0, 0, width, height, band_array.tobytes())
+    new_tif.FlushCache()
+    del new_tif
+
+
 create_temp_folders()
