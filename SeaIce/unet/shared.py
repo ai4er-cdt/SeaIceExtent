@@ -26,11 +26,12 @@ if not program_path.endswith("SeaIce"):
 
 #processor = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 processor = torch.device('cpu')
-tiled256 = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled256/'.format(prefix))
-tiled512 = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled512/'.format(prefix))
-tiled768 = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled768/'.format(prefix))
-tiled1024 = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled1024/'.format(prefix))
-tiled_mix = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata/mixed_tiles/'.format(prefix))
+training_root = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata'.format(prefix))
+training_tiles, test_tiles = [], [] 
+sizes = [256, 512, 768, 1024]
+for size in sizes:
+    training_tiles.append(Path(r'{}/tiled{}/train'.format(training_root, size)))
+    test_tiles.append(Path(r'{}/tiled{}/test'.format(training_root, size)))
 path_checkpoint = Path(r'{}/Shared drives/2021-gtc-sea-ice/model/checkpoints/'.format(prefix))
 temp_files = Path(r"{}/temp/temporary_files".format(program_path))
 temp_buffer = Path(r"{}/temp/temporary_buffer".format(program_path))
@@ -40,6 +41,7 @@ temp_probabilities = Path(r"{}/temp/probabilities".format(program_path))
 temp_tiled = Path(r"{}/temp/tiled".format(program_path))
 model_sar = Path(r"{}/models/sar_model_example.pth".format(program_path))
 model_modis = Path(r"{}/models/modis_model_example.pth".format(program_path))
+temp_folders = [temp_files, temp_buffer, temp_binary, temp_preprocessed, temp_probabilities, temp_tiled]
 
 
 def get_contents(in_directory, search_terms = None, string_position = None):
@@ -88,7 +90,19 @@ def name_file(out_name, file_type, out_path = temp_files):
 def delete_temp_files():
     """Remove temporary files when no longer needed.
     """
-    for folder in [temp_files, temp_buffer, temp_binary, temp_preprocessed, temp_probabilities, temp_tiled]:
+    for folder in temp_folders:
         os.chdir(folder)
         for temp_file in os.listdir():
             os.remove(temp_file)
+
+
+
+def create_temp_folders():
+    temp_root = Path(r"{}/temp".format(program_path))
+    if not os.path.isdir(temp_root):
+        os.mkdir(temp_root)
+        for temp_folder in temp_folders:
+            os.mkdir(temp_folder)
+
+
+create_temp_folders()

@@ -55,7 +55,7 @@ def preprocess_training(shape_file_path, folder_name, modis_paths = None, sar_pa
         relabelling.shp_to_tif(shape_file_path, modis_file_path, labels_path)
 
    relabelling.relabel(labels_path, relabel_from, relabel_to, relabel_scale)
-
+   
     # Tile    
    tiling.tile_training_images(labels_path, out_path, tile_size, step_size, folder_name, modis_file_path, sar_path)
 
@@ -83,7 +83,7 @@ def preprocess_prediction(image_path, image_type, resolution, tile_size):
    tiling.tile_prediction_image(image_path, image_type, temp_tiled, tile_size)
 
 
-def start_prediction(image_path):
+def new_image_prediction(image_path):
     """Controls pipeline of taking in a new image and passing it through prediction procedure.
        Parameter: image_path: (string) file path to tiff image to be predicted, or path of folder containing tiff images to be predicted.
        Output: two png images next to the original image's location(s); one for classes and one for probabilities. 

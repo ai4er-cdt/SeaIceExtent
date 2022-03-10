@@ -23,7 +23,7 @@ if __name__ == '__main__':
         # Replace these parameters later with Jonnycode.
         loss = train_net(net=net,
                   device=processor,
-                  image_type="modis",
+                  image_type="sar",
                   dir_img=permuted_tile_sizes,
                   epochs=args.epochs, 
                   batch_size=args.batch_size,

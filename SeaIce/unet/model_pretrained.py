@@ -8,7 +8,7 @@ val_percent = 0.1
 batch_size = 1
 
 # Create dataset
-img_list = create_npy_list(tiled512, img_type)
+img_list = create_npy_list(training_tiles[1], img_type)
 
 if img_type == "sar":
     single_channel = True

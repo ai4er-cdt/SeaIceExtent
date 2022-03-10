@@ -6,6 +6,7 @@ import fiona
 import numpy as np
 from osgeo import ogr, gdal
 from PIL import Image
+from sklearn.preprocessing import StandardScaler
 
 
 # Allow imports to function the same in different environments
@@ -14,14 +15,15 @@ if not program_path.endswith("SeaIce"):
     os.chdir(r"{}/SeaIce".format(program_path))
     program_path = os.getcwd()
 
-temp_files = r"{}\temp\temporary_files".format(program_path)
-temp_buffer = r"{}\temp\temporary_buffer".format(program_path)
-temp_binary = r"{}\temp\binary".format(program_path)
-temp_preprocessed = r"{}\temp\preprocessed".format(program_path)
-temp_probabilities = r"{}\temp\probabilities".format(program_path)
-temp_tiled = r"{}\temp\tiled".format(program_path)
-model_sar = r"{}\models\sar_model_example.pth".format(program_path)
-model_modis = r"{}\models\modis_model_example.pth".format(program_path)
+temp_files = r"{}/temp/temporary_files".format(program_path)
+temp_buffer = r"{}/temp/temporary_buffer".format(program_path)
+temp_binary = r"{}/temp/binary".format(program_path)
+temp_preprocessed = r"{}/temp/preprocessed".format(program_path)
+temp_probabilities = r"{}/temp/probabilities".format(program_path)
+temp_tiled = r"{}/temp/tiled".format(program_path)
+model_sar = r"{}/models/sar_model_example.pth".format(program_path)
+model_modis = r"{}/models/modis_model_example.pth".format(program_path)
+temp_folders = [temp_files, temp_buffer, temp_binary, temp_preprocessed, temp_probabilities, temp_tiled]
 
 
 def get_contents(in_directory, search_terms = None, string_position = None):
@@ -36,21 +38,21 @@ def get_contents(in_directory, search_terms = None, string_position = None):
     for item in os.listdir():
         if search_terms == None:
             items.append(item)
-            full_paths.append("{}\{}".format(in_directory, item))
+            full_paths.append("{}/{}".format(in_directory, item))
         else:
             for term in search_terms:
                 if string_position == "prefix":
                     if item.startswith(term):
                         items.append(item)
-                        full_paths.append("{}\{}".format(in_directory, item))
+                        full_paths.append("{}/{}".format(in_directory, item))
                 elif string_position == "suffix":
                     if item.endswith(term):
                         items.append(item)
-                        full_paths.append("{}\{}".format(in_directory, item))
+                        full_paths.append("{}/{}".format(in_directory, item))
                 elif string_position == None: 
                     if term in item:
                         items.append(item)
-                        full_paths.append("{}\{}".format(in_directory, item))
+                        full_paths.append("{}/{}".format(in_directory, item))
     os.chdir(program_path)
     return items, full_paths
 
@@ -63,17 +65,25 @@ def name_file(out_name, file_type, out_path = temp_files):
                    file_type: (string) the file extention on the new file.
        Returns: file_name: (string) the full path of the new file.
     """
-    file_name = "{}\{}{}".format(out_path, out_name, file_type)
+    file_name = "{}/{}{}".format(out_path, out_name, file_type)
     return file_name
 
 
 def delete_temp_files():
     """Remove temporary files when no longer needed.
     """
-    for folder in [temp_files, temp_buffer, temp_binary, temp_preprocessed, temp_probabilities, temp_tiled]:
+    for folder in temp_folders:
         os.chdir(folder)
         for temp_file in os.listdir():
             os.remove(temp_file)
+
+
+def create_temp_folders():
+    temp_root = r"{}/temp".format(program_path)
+    if not os.path.isdir(temp_root):
+        os.mkdir(temp_root)
+        for temp_folder in temp_folders:
+            os.mkdir(temp_folder)
 
 
 def save_tiff(image_array, image_metadata, out_name, out_path = temp_files):
@@ -95,6 +105,8 @@ def mask_to_image(mask: np.ndarray):
         Parameters: mask: (numpy array) pixel values of an image.
         Returns: .png format image.
     """
+    # Scale up the pixels so they can be seen.
+    mask = mask * 100
     if mask.ndim == 2:
         return Image.fromarray((mask * 255).astype(np.uint8))
     elif mask.ndim == 3:
@@ -135,3 +147,38 @@ def generate_metadata(tile, image, n_water, n_ice, coordinates, row, col, step_s
         feeds.append(tile_info)
         with open(json_path, mode='w') as json_file:
             json_file.write(json.dumps(feeds, indent=4))
+
+
+def scale_tif(tif_path):
+    # Scale images to normalise extreme values.
+    image = gdal.Open(tif_path, gdal.GA_Update)
+    for i in range(image.RasterCount):
+        # Turn the data into an array.
+        band_array = image.GetRasterBand(i+1).ReadAsArray()
+        scaler = StandardScaler()
+        band_array = scaler.fit_transform(band_array)
+        # Replace the file with the new raster.
+        image.GetRasterBand(i+1).WriteArray(band_array)
+
+
+def hdf_to_tif():
+    hdf = r"G:\Shared drives\2021-gtc-sea-ice\prediction\modis\MOD02HKM.A2022050.0805.061.2022050193652.hdf"
+    tif = r"G:\Shared drives\2021-gtc-sea-ice\prediction\modis\MOD02HKM.A2022050.0805.061.2022050193652.tif"
+    from osgeo import gdal
+    open_hdf = gdal.Open(hdf) 
+    bands = gdal.Open(open_hdf.GetSubDatasets()[0][0])
+    print("number of subsets", len(open_hdf.GetSubDatasets()))
+    print("bands", bands)
+    band_array = bands.ReadAsArray()
+    print("band array shape", band_array.shape)
+    print("number of bands:", bands.RasterCount)
+    driver = gdal.GetDriverByName("GTiff")
+    width, height = bands.RasterXSize, bands.RasterYSize
+    new_tif = driver.Create(utf8_path=tif, xsize=width, ysize=height, bands=5, 
+                        eType=gdal.GDT_Byte)
+    new_tif.WriteRaster(0, 0, width, height, band_array.tobytes())
+    new_tif.FlushCache()
+    del new_tif
+
+
+create_temp_folders()
