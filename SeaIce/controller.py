@@ -55,7 +55,7 @@ def preprocess_training(shape_file_path, folder_name, modis_paths = None, sar_pa
         relabelling.shp_to_tif(shape_file_path, modis_file_path, labels_path)
 
    relabelling.relabel(labels_path, relabel_from, relabel_to, relabel_scale)
-
+   
     # Tile    
    tiling.tile_training_images(labels_path, out_path, tile_size, step_size, folder_name, modis_file_path, sar_path)
 

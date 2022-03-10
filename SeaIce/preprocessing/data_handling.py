@@ -6,6 +6,7 @@ import fiona
 import numpy as np
 from osgeo import ogr, gdal
 from PIL import Image
+from sklearn.preprocessing import StandardScaler
 
 
 # Allow imports to function the same in different environments
@@ -104,6 +105,8 @@ def mask_to_image(mask: np.ndarray):
         Parameters: mask: (numpy array) pixel values of an image.
         Returns: .png format image.
     """
+    # Scale up the pixels so they can be seen.
+    mask = mask * 100
     if mask.ndim == 2:
         return Image.fromarray((mask * 255).astype(np.uint8))
     elif mask.ndim == 3:
@@ -146,9 +149,20 @@ def generate_metadata(tile, image, n_water, n_ice, coordinates, row, col, step_s
             json_file.write(json.dumps(feeds, indent=4))
 
 
+def scale_tif(tif_path):
+    # Scale images to normalise extreme values.
+    image = gdal.Open(tif_path, gdal.GA_Update)
+    for i in range(len(image.RasterCount)):
+        # Turn the data into an array.
+        band_array = image.GetRasterBand(i+1).ReadAsArray()
+        scaler = StandardScaler()
+        band_array = scaler.fit_transform(band_array)
+        # Replace the file with the new raster.
+        image.GetRasterBand(i+1).WriteArray(band_array)
+
+
 def hdf_to_tif():
     hdf = r"G:\Shared drives\2021-gtc-sea-ice\prediction\modis\MOD02HKM.A2022050.0805.061.2022050193652.hdf"
-    hdf_smaller = r"G:\Shared drives\2021-gtc-sea-ice\prediction\modis\smaller.hdf"
     tif = r"G:\Shared drives\2021-gtc-sea-ice\prediction\modis\MOD02HKM.A2022050.0805.061.2022050193652.tif"
     from osgeo import gdal
     open_hdf = gdal.Open(hdf) 
@@ -159,10 +173,9 @@ def hdf_to_tif():
     print("band array shape", band_array.shape)
     print("number of bands:", bands.RasterCount)
     driver = gdal.GetDriverByName("GTiff")
-    #width, height = int(round(bands.RasterXSize/2)), int(round(bands.RasterYSize/2))
     width, height = bands.RasterXSize, bands.RasterYSize
     new_tif = driver.Create(utf8_path=tif, xsize=width, ysize=height, bands=5, 
-                        eType=gdal.GDT_Byte, options=["INTERLEAVE=PIXEL"])
+                        eType=gdal.GDT_Byte)
     new_tif.WriteRaster(0, 0, width, height, band_array.tobytes())
     new_tif.FlushCache()
     del new_tif
