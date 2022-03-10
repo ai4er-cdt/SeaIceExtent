@@ -53,7 +53,6 @@ def train_and_validate(config=None, amp=False, device=torch.device('cuda')):
     # Image and model params
     img_dir = '/home/users/mcl66/SeaIce/tiled512/'
     image_type = 'sar'
-    net = UNet(1, 2, True)
     model_type = "unet"
     workers = 10
     
@@ -64,6 +63,12 @@ def train_and_validate(config=None, amp=False, device=torch.device('cuda')):
     # unlikely to need modification
     return_type = 'dict'
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    if image_type == "sar":
+        is_single_band = True
+        net = UNet (1, 2, True)
+    elif image_type == "modis":
+        is_single_band = False
+        net = UNet (3, 2, True)
     net.to(device)
 
     # Initialize a new wandb run
