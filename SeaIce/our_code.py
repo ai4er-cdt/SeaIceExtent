@@ -77,7 +77,7 @@ all_folder_names, all_folder_paths = get_contents(data, "_", None)
 #controller.start_prediction(r"something.tif")
 from unet.shared import *
 from unet import predict
-predict.make_predictions(r"G:\Shared drives\2021-gtc-sea-ice\model\checkpoints\unet_orig_batch10\checkpoint_epoch4.pth", 
-                         "raw", "sar", r"{}/test".format(tiled512), temp_binary, temp_probabilities, metrics = True, save = True)
+predict.make_predictions(r"C:\Users\sophi\SeaIceExtent\SeaIce\models\model_example.pth", 
+                         "raw", "sar", r"{}/test".format(tiled512), temp_binary, temp_probabilities, metrics = True, save = False)
 
 
