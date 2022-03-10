@@ -152,7 +152,7 @@ def generate_metadata(tile, image, n_water, n_ice, coordinates, row, col, step_s
 def scale_tif(tif_path):
     # Scale images to normalise extreme values.
     image = gdal.Open(tif_path, gdal.GA_Update)
-    for i in range(len(image.RasterCount)):
+    for i in range(image.RasterCount):
         # Turn the data into an array.
         band_array = image.GetRasterBand(i+1).ReadAsArray()
         scaler = StandardScaler()
