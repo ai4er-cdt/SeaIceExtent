@@ -58,7 +58,6 @@ def preprocess_training(shape_file_path, folder_name, modis_paths = None, sar_pa
    
     # Tile    
    tiling.tile_training_images(labels_path, out_path, tile_size, step_size, folder_name, modis_file_path, sar_path)
-
    delete_temp_files()
 
 
@@ -123,9 +122,9 @@ def new_image_prediction(image_path):
         make_predictions(model, "raw", image_type, temp_tiled, temp_binary, temp_probabilities, save = True)
         # Construct a mosaic of tiles to match the original image.
         out_path = name_file("{}_predicted_classes".format(filename), ".png", folder)
-        tiling.reconstruct_from_tiles(temp_binary, out_path)
+        tiling.reconstruct_from_tiles(temp_binary, out_path, scale_up=True)
         out_path = name_file("{}_predicted_probabilities".format(filename), ".png", folder)
-        tiling.reconstruct_from_tiles(temp_probabilities, out_path)
+        tiling.reconstruct_from_tiles(temp_probabilities, out_path, scale_up=False)
         # Clean up.
         delete_temp_files()
         del open_image

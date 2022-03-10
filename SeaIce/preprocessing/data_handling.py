@@ -106,7 +106,6 @@ def mask_to_image(mask: np.ndarray):
         Returns: .png format image.
     """
     # Scale up the pixels so they can be seen.
-    mask = mask * 100
     if mask.ndim == 2:
         return Image.fromarray((mask * 255).astype(np.uint8))
     elif mask.ndim == 3:
