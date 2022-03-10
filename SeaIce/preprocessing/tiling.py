@@ -20,6 +20,7 @@ def tile_training_images(labels_path, out_path, tile_size, step_size, date_name,
     labels_window = tif_to_window(labels_path, window_shape, step_size)
     if sar_path != None:
         has_sar = True
+        scale_tif(sar_path) # Standardise input values.
         sar_window = tif_to_window(sar_path, window_shape, step_size)
         image_data = gdal.Open(sar_path)
         image_window = sar_window
@@ -28,6 +29,7 @@ def tile_training_images(labels_path, out_path, tile_size, step_size, date_name,
     if modis_path != None:
         has_modis = True
         window_shape = (tile_size, tile_size, 3)
+        scale_tif(modis_path) # Standardise input values.
         modis_window = tif_to_window(modis_path, window_shape, step_size)
         image_data = gdal.Open(modis_path)
         image_window = modis_window
@@ -88,10 +90,9 @@ def tile_prediction_image(image_path, image_type, out_path, tile_size):
         window_shape = (tile_size, tile_size, 3)
     elif image_type == "sar":
         window_shape = (tile_size, tile_size)
+    scale_tif(image_path) # Standardise input values.
     image_window = tif_to_window(image_path, window_shape, step_size)
     image_data = gdal.Open(image_path)
-    geography = image_data.GetGeoTransform()
-    top_left = geography[0], geography[3]
     image_data.FlushCache()
     del image_data
     for row_count, (row_image) in enumerate(image_window):

@@ -112,7 +112,7 @@ def make_predictions(model_path, unet_type, image_type, dir_in, dir_out_bin, dir
 
     for filename in img_list:
         if metrics: 
-            filename = filename[1][0]
+            filename = filename[0]
             groundtruth_filename = filename.replace(image_type,'labels')
             gt_npy = np.vstack(np.load(groundtruth_filename))
             gt100 = np.where(gt_npy == 100, 0, gt_npy)

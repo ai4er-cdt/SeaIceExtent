@@ -1,6 +1,7 @@
 """ Implementation of model """
 from shared import *
 from evaluation import evaluate, dice_loss
+from predict import make_predictions
 from dataset_preparation import *
 from network_structure import UNet
 import argparse
@@ -139,6 +140,8 @@ def train_net(net, device, image_type, dir_img,
             
             torch.save(net.state_dict(), str(dir_checkpoint / 'checkpoint_epoch{}.pth'.format(epoch + 1)))
             logging.info(f'Checkpoint {epoch + 1} saved!')
+            print("Using the model for predictions...")
+            make_predictions(dir_checkpoint, "raw", image_type, r"{}/test".format(training_tiles[2]), temp_binary, temp_probabilities, metrics = True, save = False)
 
     return loss
 
