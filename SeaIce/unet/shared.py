@@ -26,11 +26,13 @@ if not program_path.endswith("SeaIce"):
 
 #processor = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 processor = torch.device('cpu')
-tiled256 = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled256/'.format(prefix))
-tiled512 = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled512/'.format(prefix))
-tiled768 = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled768/'.format(prefix))
-tiled1024 = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled1024/'.format(prefix))
-tiled_mix = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata/mixed_tiles/'.format(prefix))
+training_root = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata'.format(prefix))
+training_tiles = Path(r'{}/tiled512/train'.format(training_root)) 
+training_tiles, test_tiles = [], [] 
+sizes = [256, 512, 768, 1024]
+for size in sizes:
+    training_tiles.append(Path(r'{}/tiled{}/train'.format(training_root, size)))
+    test_tiles.append(Path(r'{}/tiled{}/test'.format(training_root, size)))
 path_checkpoint = Path(r'{}/Shared drives/2021-gtc-sea-ice/model/checkpoints/'.format(prefix))
 temp_files = Path(r"{}/temp/temporary_files".format(program_path))
 temp_buffer = Path(r"{}/temp/temporary_buffer".format(program_path))

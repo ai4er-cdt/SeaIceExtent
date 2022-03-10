@@ -17,7 +17,7 @@ def permute_tile_sizes():
     """Get all the tiles but in different sizes per date. Tiles are not duplicated.
        Returns: permuted_tiles: (list of strings) file paths to each tile.    
     """
-    all_sizes = [(512, tiled512), (768, tiled768), (1024, tiled1024)]
+    all_sizes = [(512, training_tiles[1]), (768, training_tiles[2]), (1024, training_tiles[3])]
     data = Path(r"{}/Shared drives/2021-gtc-sea-ice/data".format(prefix))
     all_folder_names, _ = get_contents(data, "_", None)
     permuted_tiles = []

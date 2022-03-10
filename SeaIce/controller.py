@@ -83,7 +83,7 @@ def preprocess_prediction(image_path, image_type, resolution, tile_size):
    tiling.tile_prediction_image(image_path, image_type, temp_tiled, tile_size)
 
 
-def start_prediction(image_path):
+def new_image_prediction(image_path):
     """Controls pipeline of taking in a new image and passing it through prediction procedure.
        Parameter: image_path: (string) file path to tiff image to be predicted, or path of folder containing tiff images to be predicted.
        Output: two png images next to the original image's location(s); one for classes and one for probabilities. 
@@ -129,3 +129,4 @@ def start_prediction(image_path):
         # Clean up.
         delete_temp_files()
         del open_image
+

@@ -10,12 +10,13 @@ import os
 prefix = "G:"
 #prefix = "/mnt/g"
 
-#test = r"C:\Users\sophi\test"
 data = Path(r"{}/Shared drives/2021-gtc-sea-ice/data".format(prefix))
-tiled256 = Path(r"{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled256".format(prefix))
-tiled512 = Path(r"{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled512".format(prefix))
-tiled768 = Path(r"{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled768".format(prefix))
-tiled1024 = Path(r"{}/Shared drives/2021-gtc-sea-ice/trainingdata/tiled1024".format(prefix))
+training_root = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata'.format(prefix))
+training_tiles, test_tiles = [], [] 
+tile_sizes = [256, 512, 768, 1024]
+for size in tile_sizes:
+    training_tiles.append(Path(r'{}/tiled{}/train'.format(training_root, size)))
+    test_tiles.append(Path(r'{}/tiled{}/test'.format(training_root, size)))
 
 
 def make_training_data(all_folder_names, all_folder_paths, all_sizes):
@@ -54,7 +55,7 @@ def make_training_data(all_folder_names, all_folder_paths, all_sizes):
             # Old format: 0 = no data. 1 = ice free. 2 = sea ice. 9 = on land or ice shelf. 10 = unclassified.        
             # New format: 0 = ignore (for now). 1 = water. 2 = ice.
             # 1 is already water and 2 is already ice so there is no need to waste time checking or changing these.
-            controller.preprocess_training(shape_file_path, folder_name, modis_file_paths, sar_file_path, tiled512, 40, [10, 9], [0, 2], 100, 512, int(512*0.75))
+            controller.preprocess_training(shape_file_path, folder_name, modis_file_paths, sar_file_path, training_tiles[1], 40, [10, 9], [0, 2], 100, 512, int(512*0.75))
 
 
 def test_split(folder):
@@ -73,11 +74,7 @@ def test_split(folder):
 
 all_folder_names, all_folder_paths = get_contents(data, "_", None)
 
-#make_training_data(all_folder_names, all_folder_paths, [])
-#controller.start_prediction(r"something.tif")
-from unet.shared import *
-from unet import predict
-predict.make_predictions(r"C:\Users\sophi\SeaIceExtent\SeaIce\models\model_example.pth", 
-                         "raw", "sar", r"{}/test".format(tiled512), temp_binary, temp_probabilities, metrics = True, save = False)
+#make_training_data(all_folder_names, all_folder_paths, training_tiles)
+#controller.new_image_prediction(r"something.tif")
 
 
