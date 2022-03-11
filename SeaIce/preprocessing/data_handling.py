@@ -180,5 +180,5 @@ def hdf_to_tif():
 
 
 create_temp_folders()
-#delete_temp_files()
+delete_temp_files()
 os.chdir(program_path)
