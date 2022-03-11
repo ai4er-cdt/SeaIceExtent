@@ -105,7 +105,6 @@ def mask_to_image(mask: np.ndarray):
         Parameters: mask: (numpy array) pixel values of an image.
         Returns: .png format image.
     """
-    # Scale up the pixels so they can be seen.
     if mask.ndim == 2:
         return Image.fromarray((mask * 255).astype(np.uint8))
     elif mask.ndim == 3:
@@ -181,3 +180,5 @@ def hdf_to_tif():
 
 
 create_temp_folders()
+#delete_temp_files()
+os.chdir(program_path)

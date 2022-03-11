@@ -90,7 +90,7 @@ def tile_prediction_image(image_path, image_type, out_path, tile_size):
         window_shape = (tile_size, tile_size, 3)
     elif image_type == "sar":
         window_shape = (tile_size, tile_size)
-    scale_tif(image_path) # Standardise input values.
+    #scale_tif(image_path) # Standardise input values. Don't do this unless the model was trained with the same scaling.
     image_window = tif_to_window(image_path, window_shape, step_size)
     image_data = gdal.Open(image_path)
     image_data.FlushCache()
@@ -134,7 +134,7 @@ def tif_to_window(tif_path, window_shape, step_size):
     return image_window
 
 
-def reconstruct_from_tiles(tiles_path, out_path, scale_up = False):
+def reconstruct_from_tiles(tiles_path, out_path):
     """Piece together a mosaic image from tiles ordered by row and col.
        Parameters: 
             tiles_path: (string) directory containing numpy tiles.
@@ -165,8 +165,6 @@ def reconstruct_from_tiles(tiles_path, out_path, scale_up = False):
             full_array = row_array
         else:
             full_array = np.concatenate((full_array, row_array), axis=0)
-    if scale_up:
-        full_array *= 100 # Scale up the pixel values so they can be seen. 
     full_image = mask_to_image(full_array)
     full_image.save(out_path)
 

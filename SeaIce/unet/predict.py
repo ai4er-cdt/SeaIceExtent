@@ -155,8 +155,10 @@ def make_predictions(model_path, unet_type, image_type, dir_in, dir_out_bin, dir
              filename = filename[::-1]
              filename = filename.split(".")[0]
              out_filename = name_file(filename, ".npy", dir_out_bin)
+             print("predicted binary classification", filename)
              np.save(out_filename, mask_bin)
              out_filename = name_file(filename, ".npy", dir_out_prob)
+             print("predicted probabilities", filename)
              np.save(out_filename, mask_prob)
              logging.info(f'Mask saved to {out_filename}')
 

@@ -120,11 +120,12 @@ def new_image_prediction(image_path):
         preprocess_prediction(image_path, image_type, 40, 512)
         # Pass the tiles into the model.
         make_predictions(model, "raw", image_type, temp_tiled, temp_binary, temp_probabilities, save = True)
+        test_array = np.load(r"C:\Users\sophi\SeaIceExtent\SeaIce\temp\tiled\row004_col011.npy")
         # Construct a mosaic of tiles to match the original image.
         out_path = name_file("{}_predicted_classes".format(filename), ".png", folder)
-        tiling.reconstruct_from_tiles(temp_binary, out_path, scale_up=True)
+        tiling.reconstruct_from_tiles(temp_binary, out_path)
         out_path = name_file("{}_predicted_probabilities".format(filename), ".png", folder)
-        tiling.reconstruct_from_tiles(temp_probabilities, out_path, scale_up=False)
+        tiling.reconstruct_from_tiles(temp_probabilities, out_path)
         # Clean up.
         delete_temp_files()
         del open_image
