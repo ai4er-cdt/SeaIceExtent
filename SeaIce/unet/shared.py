@@ -106,3 +106,5 @@ def create_temp_folders():
 
 
 create_temp_folders()
+delete_temp_files()
+os.chdir(program_path)

@@ -90,7 +90,7 @@ def tile_prediction_image(image_path, image_type, out_path, tile_size):
         window_shape = (tile_size, tile_size, 3)
     elif image_type == "sar":
         window_shape = (tile_size, tile_size)
-    scale_tif(image_path) # Standardise input values.
+    #scale_tif(image_path) # Standardise input values. Don't do this unless the model was trained with the same scaling.
     image_window = tif_to_window(image_path, window_shape, step_size)
     image_data = gdal.Open(image_path)
     image_data.FlushCache()
