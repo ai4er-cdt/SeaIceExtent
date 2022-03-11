@@ -15,8 +15,8 @@ import segmentation_models_pytorch as smp
 
 
 # Shared constants
-#prefix = "/mnt/g" # Maddy
-prefix = "G:" # Sophie
+prefix = "/mnt/g" # Maddy
+#prefix = "G:" # Sophie
 
 # Allow imports to function the same in different environments
 program_path = os.getcwd()
