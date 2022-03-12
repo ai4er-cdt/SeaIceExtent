@@ -131,9 +131,10 @@ def create_dataloaders(train_dataset, val_dataset, batch_size, workers):
     Outputs: train_loader = training dataset loader.
              val_loader = validation dataset loader.
     """
-    loader_args = dict(batch_size=batch_size, num_workers=workers, pin_memory=True)
-    train_loader = DataLoader(train_dataset, shuffle=True, **loader_args)
-    val_loader = DataLoader(val_dataset, shuffle=False, drop_last=True, **loader_args)
+    loader_args_train = dict(batch_size=batch_size, num_workers=workers, pin_memory=True)
+    loader_args_val = dict(batch_size=batch_size, num_workers=workers/2, pin_memory=True)
+    train_loader = DataLoader(train_dataset, shuffle=True, **loader_args_train)
+    val_loader = DataLoader(val_dataset, shuffle=False, drop_last=True, **loader_args_val)
 
     return train_loader, val_loader
 
