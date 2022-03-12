@@ -52,7 +52,7 @@ def train_and_validate(config=None, amp=False, device=torch.device('cuda')):
     # Inputs for the helper functions
     img_dir = '/home/users/jdr53/tiled512/'
     image_type = 'sar'
-    net = UNet(1, 2, True)
+    #net = UNet(1, 2, True)
     return_type = 'dict'
     workers = 10
 
@@ -61,6 +61,14 @@ def train_and_validate(config=None, amp=False, device=torch.device('cuda')):
 
     model_type = 'unet'
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+    if image_type == "sar":
+        is_single_band = True
+        net = UNet(1, 2, True)
+    elif image_type == "modis":
+        is_single_band = False
+        net = UNet(3, 2, True)
+
     net.to(device)
 
     # Initialize a new wandb run
@@ -68,11 +76,6 @@ def train_and_validate(config=None, amp=False, device=torch.device('cuda')):
         # If called by wandb.agent, as below,
         # this config will be set by Sweep Controller
         config = wandb.config
-
-        if image_type == "sar":
-            is_single_band = True
-        elif image_type == "modis":
-            is_single_band = False
 
         # Loader
         img_list = create_npy_list(img_dir, image_type)
