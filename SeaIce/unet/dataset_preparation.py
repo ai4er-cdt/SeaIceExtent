@@ -63,7 +63,7 @@ def small_sample(dataset):
     """
     random.shuffle(dataset)
     small_set, i, num_bytes = [], 0, 0
-    while num_bytes < 100000000 and len(small_set) < len(dataset):
+    while num_bytes < 10000000 and len(small_set) < len(dataset):
         this_pair = dataset[i]
         small_set.append(this_pair)
         this_array = np.load(this_pair[0])
