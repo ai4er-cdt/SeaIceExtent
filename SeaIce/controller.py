@@ -61,7 +61,7 @@ def preprocess_training(shape_file_path, folder_name, modis_paths = None, sar_pa
    delete_temp_files()
 
 
-def preprocess_prediction(image_path, image_type, resolution, tile_size):
+def preprocess_prediction(image_path, image_type, resolution, log_scale, tile_size):
    """Perform preprocessing on new images to be consistent with training.
       Parameters: 
             image_path: (string) file path to image.
@@ -71,18 +71,18 @@ def preprocess_prediction(image_path, image_type, resolution, tile_size):
       Output: preprocessed images in temporary folders, and tiles of image. 
    """
    if image_type == "modis" and resolution != None:
-           # Alter resolution of modis image
+           # Alter resolution of modis image.
            new_resolution_path = name_file("new_resolution", ".tif", temp_preprocessed)
            resizing.change_resolution(image_path, new_resolution_path, resolution)
-           # The image will be too large
+           # The image will be too large.
            new_size_path = name_file("resized", ".tif", temp_preprocessed)
            resizing.halve_size(new_resolution_path, new_size_path)
            image_path = new_size_path
-   # Tile
-   tiling.tile_prediction_image(image_path, image_type, temp_tiled, tile_size)
+   # Tile.
+   tiling.tile_prediction_image(image_path, image_type, temp_tiled, tile_size, log_scale)
 
 
-def new_image_prediction(image_path):
+def new_image_prediction(image_path, log_scale):
     """Controls pipeline of taking in a new image and passing it through prediction procedure.
        Parameter: image_path: (string) file path to tiff image to be predicted, or path of folder containing tiff images to be predicted.
        Output: two png images next to the original image's location(s); one for classes and one for probabilities. 
@@ -117,10 +117,9 @@ def new_image_prediction(image_path):
             image_path = name_file("rebanded", ".tif", folder)
             rebanding.select_bands(open_image, image_path)
         # Tile and do any necessary resizing.
-        preprocess_prediction(image_path, image_type, 40, 512)
+        preprocess_prediction(image_path, image_type, 40, log_scale, 512)
         # Pass the tiles into the model.
         make_predictions(model, "raw", image_type, temp_tiled, temp_binary, temp_probabilities, save = True)
-        test_array = np.load(r"C:\Users\sophi\SeaIceExtent\SeaIce\temp\tiled\row004_col011.npy")
         # Construct a mosaic of tiles to match the original image.
         out_path = name_file("{}_predicted_classes".format(filename), ".png", folder)
         tiling.reconstruct_from_tiles(temp_binary, out_path)

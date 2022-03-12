@@ -75,4 +75,4 @@ def test_split(folder):
 all_folder_names, all_folder_paths = get_contents(data, "_", None)
 
 #make_training_data(all_folder_names, all_folder_paths, training_tiles)
-#controller.new_image_prediction(r"C:\Users\sophi\sar.tif")
+controller.new_image_prediction(r"G:\Shared drives\2021-gtc-sea-ice\prediction\sar", True)

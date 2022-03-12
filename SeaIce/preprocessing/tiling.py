@@ -78,7 +78,7 @@ def tile_training_images(labels_path, out_path, tile_size, step_size, date_name,
                 generate_metadata(tile_num, date_name, n_water, n_ice, top_left, row_count, tile_count, step_size, tile_size, out_path)
 
 
-def tile_prediction_image(image_path, image_type, out_path, tile_size): 
+def tile_prediction_image(image_path, image_type, out_path, tile_size, log_scale): 
     """Divide image into tiles and save the tiles and their metadata.
        Parameters: image_path: (string) file path of image.
                    image_type: (string) modis or sar.
@@ -91,7 +91,7 @@ def tile_prediction_image(image_path, image_type, out_path, tile_size):
     elif image_type == "sar":
         window_shape = (tile_size, tile_size)
     #scale_tif(image_path) # Standardise input values. Don't do this unless the model was trained with the same scaling.
-    image_window = tif_to_window(image_path, window_shape, step_size)
+    image_window = tif_to_window(image_path, window_shape, step_size, log_scale)
     image_data = gdal.Open(image_path)
     image_data.FlushCache()
     del image_data
@@ -112,7 +112,7 @@ def tile_prediction_image(image_path, image_type, out_path, tile_size):
             np.save(image_name, tile_image)
 
 
-def tif_to_window(tif_path, window_shape, step_size):
+def tif_to_window(tif_path, window_shape, step_size, log_scale):
     """Create a sliding window over a tiff image.
        Parameters: 
             tif_path: (string) file path to tiff image.
@@ -128,7 +128,8 @@ def tif_to_window(tif_path, window_shape, step_size):
     except:
         image_tif = gdal.Open(tif_path)
         image_array = np.array(image_tif.GetRasterBand(1).ReadAsArray())
-    
+    if log_scale:
+        image_array = np.power(image_array, 10)
     del image_tif
     image_window = np.lib.stride_tricks.sliding_window_view(x=image_array, window_shape=(window_shape))[::step_size, ::step_size]
     return image_window
