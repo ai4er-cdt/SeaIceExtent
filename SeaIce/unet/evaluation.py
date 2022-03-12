@@ -23,11 +23,8 @@ def evaluate(net, dataloader, device, epsilon):
         image = image.to(device=device, dtype=torch.float32)
         mask_true = mask_true.to(device=device, dtype=torch.long)
         mask_true = F.one_hot(mask_true, net.n_classes).permute(0, 3, 1, 2).float()
-<<<<<<< HEAD
-        criterion = nn.BCELoss()
-=======
+
         criterion = nn.CrossEntropyLoss()
->>>>>>> fcd022f2e1e339f27e9d2e002bfc002aebfa3d1f
 
         with torch.no_grad():
             # predict the mask
