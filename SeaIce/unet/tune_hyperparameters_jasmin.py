@@ -4,10 +4,12 @@ try:
     from dataset_preparation import *
     from evaluation import *
     from network_structure import *
+    from shared import *
 except:
     from unet.dataset_preparation import *
     from unet.evaluation import *
     from unet.network_structure import *
+    from unet.shared import *
 
 import wandb
 import torch.optim as optim
@@ -24,8 +26,12 @@ def create_checkpoint_dir(folder_checkpoint, img_type, model_type, optimizer, lr
     x = 1
     while FOLDER_EXISTS:
         dir_checkpoint = str('{}_{}_optm{}_batchsize{}_learnrate{}_weightdecay{}_date{}_{}'.format(model_type, img_type,
-                                                   str(optimizer), str(batchsize), str(lr),
-                                                   str(weightdecay), str(dt_string), str(x)))
+                                                                                                   str(optimizer),
+                                                                                                   str(batchsize),
+                                                                                                   str(lr),
+                                                                                                   str(weightdecay),
+                                                                                                   str(dt_string),
+                                                                                                   str(x)))
         path = os.path.join(folder_checkpoint, Path(dir_checkpoint))
         if dir_checkpoint in dir_list:
             x += 1
@@ -48,26 +54,30 @@ def build_optimiser(network, config):
 
 
 def train_and_validate(config=None, amp=False, device=torch.device('cuda')):
-
     # Inputs for the helper functions
-    img_dir = '/home/users/jdr53/tiled512/'
-    image_type = 'sar'
-    #net = UNet(1, 2, True)
+    img_dir = '/home/users/jdr53/tiled1024/'
+    image_type = 'modis'
+
     return_type = 'dict'
     workers = 10
 
     save_checkpoint = True
     folder_checkpoint = '/home/users/jdr53/hyp_tuning/checkpoints/'
 
-    model_type = 'unet'
+    model_type = 'unet_onerun_' + image_type
+    num_output_channels = 1
+    loss_function = "BCE"
+
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     if image_type == "sar":
         is_single_band = True
-        net = UNet(1, 2, True)
+        net = UNet(1, num_output_channels, True)
     elif image_type == "modis":
         is_single_band = False
-        net = UNet(3, 2, True)
+        net = UNet(3, num_output_channels, True)
+    else:
+        raise Exception(f'Invalid image type detected: {image_type}. Expected "sar" or "modis".')
 
     net.to(device)
 
@@ -90,16 +100,21 @@ def train_and_validate(config=None, amp=False, device=torch.device('cuda')):
         # Optimiser
         optimiser = build_optimiser(net, config)
 
-        scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimiser, 'max', patience=2)  # CHECK goal: maximize Dice score
+        scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimiser, 'max',
+                                                         patience=2)  # CHECK goal: maximize Dice score
         grad_scaler = torch.cuda.amp.GradScaler(enabled=False)
-        criterion = nn.CrossEntropyLoss()
         global_step = 0
-        #epoch_step
+        # epoch_step
 
         # Begin training
         run_loss_train = 0
-        run_loss_val = 0
-        dir_checkpoint = ''
+        if loss_function == "BCE":
+            criterion = nn.BCELoss()
+        elif loss_function == "CE":
+            criterion = nn.CrossEntropyLoss()
+        else:
+            raise Exception(f'Invalid loss_function detected: {loss_function}. Expected "BCE" or "CE".')
+
         for epoch in range(config.epochs):
             net.train()
             epoch_loss = 0
@@ -119,11 +134,29 @@ def train_and_validate(config=None, amp=False, device=torch.device('cuda')):
                     true_masks = true_masks.to(device=device, dtype=torch.long)
 
                     with torch.cuda.amp.autocast(enabled=amp):
-                        masks_pred = net(images)
-                        loss = criterion(masks_pred, true_masks) \
-                               + dice_loss(F.softmax(masks_pred, dim=1).float(),
-                                           F.one_hot(true_masks, net.n_classes).permute(0, 3, 1, 2).float(),
-                                           multiclass=True, epsilon=config.weight_decay)
+
+                        mask_pred = net(images)
+                        if net.n_classes == 1:
+                            # mask_pred = torch.flatten(mask_pred, start_dim=1, end_dim=2)
+                            true_masks = (torch.sigmoid(true_masks) > 0.5).float()
+                            mask_pred = (torch.sigmoid(mask_pred) > 0.5).float()
+                            if loss_function == "BCE":
+                                mask_pred.requires_grad = True
+                            true_masks = true_masks[:, None, :, :]
+                            # compute the Dice score
+                            loss = dice_loss(mask_pred, true_masks, multiclass=False,
+                                             epsilon=config.weight_decay) + criterion(mask_pred, true_masks)
+                        else:
+                            true_masks = F.one_hot(true_masks, net.n_classes).permute(0, 3, 1, 2).float()
+                            if loss_function == "BCE":
+                                mask_pred = F.one_hot(mask_pred.argmax(dim=1), net.n_classes).permute(0, 3, 1,
+                                                                                                      2).float()
+                                mask_pred.requires_grad = True
+                            else:
+                                mask_pred = F.softmax(mask_pred, dim=1).float()
+                            # compute the Dice score, ignoring background
+                            loss = dice_loss(mask_pred, true_masks, multiclass=True,
+                                             epsilon=config.weight_decay) + criterion(mask_pred, true_masks)
 
                         # Optimisation
                     optimiser.zero_grad(set_to_none=True)
@@ -142,29 +175,30 @@ def train_and_validate(config=None, amp=False, device=torch.device('cuda')):
 
                 print(f'\nVal Score: {val_score}, Epoch: {epoch}')
 
-                #wandb.log({"Batch Loss, Validation": val_score_list[index]}, step=global_step-(len(val_score_list)+index))
-                #wandb.log({"Epoch Validation Loss": val_score}) , step=global_step-(len(val_score_list)+index)
+                # wandb.log({"Batch Loss, Validation": val_score_list[index]}, step=global_step-(len(val_score_list)+index))
+                # wandb.log({"Epoch Validation Loss": val_score}) , step=global_step-(len(val_score_list)+index)
                 scheduler.step(val_score)
 
             avg_epoch_training_loss = epoch_loss / n_batches
-            #wandb.log({"Epoch Training Loss": avg_epoch_training_loss})
+            # wandb.log({"Epoch Training Loss": avg_epoch_training_loss})
             run_loss_train += avg_epoch_training_loss
-            #run_loss_val += val_score
+            # run_loss_val += val_score
             print('Logging Epoch Scores')
-            wandb.log({"Epoch Loss, Training": avg_epoch_training_loss, "Epoch Loss, Validation": val_score, "Epoch": epoch+1}, step=global_step)
+            wandb.log({"Epoch Loss, Training": avg_epoch_training_loss, "Epoch Loss, Validation": val_score,
+                       "Epoch": epoch + 1}, step=global_step)
             if save_checkpoint:
                 if epoch == 0:
-
                     dir_checkpoint = create_checkpoint_dir(folder_checkpoint, image_type, model_type, config.optimiser,
                                                            config.learning_rate, config.batch_size, config.weight_decay)
-                torch.save(net.state_dict(), dir_checkpoint+f'checkpoint_epoch{epoch + 1}.pth')
+                torch.save(net.state_dict(), dir_checkpoint + f'/checkpoint_epoch{epoch + 1}.pth')
 
+        wandb.log({"Run Loss, Training": run_loss_train / config.epochs, "Run Loss, Validation": val_score},
+                  step=global_step)
 
-        wandb.log({"Run Loss, Training": run_loss_train / config.epochs, "Run Loss, Validation": val_score}, step=global_step)
+        # wandb.log({"Run Training Loss": run_loss_train})
+        # wandb.log({"Run Validation Loss": run_loss_val})
+        # wandb.log({"loss": run_loss_train})
 
-        #wandb.log({"Run Training Loss": run_loss_train})
-        #wandb.log({"Run Validation Loss": run_loss_val})
-        #wandb.log({"loss": run_loss_train})
 
 # Improvements:
 # Remove Epoch log -- DONE
@@ -221,14 +255,14 @@ if __name__ == '__main__':
         'img_scale': {
             'value': 0.5},
         'epochs': {
-            'value': 15},
+            'value': 20},
         'weight_decay': {
             'value': 1e-8}
     })
 
-    sweep_id = wandb.sweep(sweep_config, project="jasmin_gpu_10_02")
+    sweep_id = wandb.sweep(sweep_config, project="jasmin_gpu_12_02")
 
-    n_tuning = 100
+    n_tuning = 1000
     wandb.agent(sweep_id, function=train_and_validate, count=n_tuning)
 
 
