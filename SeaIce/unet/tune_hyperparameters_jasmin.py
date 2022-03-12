@@ -171,7 +171,7 @@ def train_and_validate(config=None, amp=False, device=torch.device('cuda')):
                     wandb.log({"Batch Loss, Training": batch_loss}, step=global_step)
                     pbar.set_postfix(**{'loss (batch)': loss.item()})
                     n_batches += 1
-                val_score = evaluate(net, val_loader, device, epsilon=config.weight_decay)
+                val_score = evaluate(net, val_loader, device, config.weight_decay, loss_function)
 
                 print(f'\nVal Score: {val_score}, Epoch: {epoch}')
 
