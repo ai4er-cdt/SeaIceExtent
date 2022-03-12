@@ -147,13 +147,25 @@ def generate_metadata(tile, image, n_water, n_ice, coordinates, row, col, step_s
             json_file.write(json.dumps(feeds, indent=4))
 
 
-def scale_tif(tif_path):
-    # Scale images to normalise extreme values.
+def delog(tif_path):
+    # Reverse a logarithmic scale.
     image = gdal.Open(tif_path, gdal.GA_Update)
     for i in range(image.RasterCount):
         # Turn the data into an array.
         band_array = image.GetRasterBand(i+1).ReadAsArray()
-        scaler = StandardScaler()
+        base_array = np.full(band_array.shape, 10)
+        band_array = np.power(base_array, band_array)
+        # Replace the file with the new raster.
+        image.GetRasterBand(i+1).WriteArray(band_array)
+
+
+def scale_tif(tif_path):
+    # Scale images to normalise extreme values.
+    image = gdal.Open(tif_path, gdal.GA_Update)
+    scaler = StandardScaler()
+    for i in range(image.RasterCount):
+        # Turn the data into an array.
+        band_array = image.GetRasterBand(i+1).ReadAsArray()
         band_array = scaler.fit_transform(band_array)
         # Replace the file with the new raster.
         image.GetRasterBand(i+1).WriteArray(band_array)

@@ -69,7 +69,9 @@ def preprocess_prediction(image_path, image_type, resolution, log_scale, tile_si
             resolution: (int) required resolutin in metres.
             tile_size: (int) height and width of image tiles.
       Output: preprocessed images in temporary folders, and tiles of image. 
-   """
+   """   
+   if log_scale:
+           delog(image_path)
    if image_type == "modis" and resolution != None:
            # Alter resolution of modis image.
            new_resolution_path = name_file("new_resolution", ".tif", temp_preprocessed)
@@ -79,7 +81,7 @@ def preprocess_prediction(image_path, image_type, resolution, log_scale, tile_si
            resizing.halve_size(new_resolution_path, new_size_path)
            image_path = new_size_path
    # Tile.
-   tiling.tile_prediction_image(image_path, image_type, temp_tiled, tile_size, log_scale)
+   tiling.tile_prediction_image(image_path, image_type, temp_tiled, tile_size)
 
 
 def new_image_prediction(image_path, log_scale):
@@ -117,7 +119,7 @@ def new_image_prediction(image_path, log_scale):
             image_path = name_file("rebanded", ".tif", folder)
             rebanding.select_bands(open_image, image_path)
         # Tile and do any necessary resizing.
-        preprocess_prediction(image_path, image_type, 40, log_scale, 512)
+        preprocess_prediction(image_path, image_type, 40, log_scale, 1024)
         # Pass the tiles into the model.
         make_predictions(model, "raw", image_type, temp_tiled, temp_binary, temp_probabilities, save = True)
         # Construct a mosaic of tiles to match the original image.

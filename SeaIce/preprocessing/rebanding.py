@@ -53,7 +53,7 @@ def select_bands(open_image, out_path):
 
     dst_ds = driver.Create(out_path, columns, rows, 1, band3.DataType)    
 
-    ##writting output raster
+    #writing output raster
     dst_ds.GetRasterBand(1).WriteArray(new_band_1)
     dst_ds.GetRasterBand(2).WriteArray(new_band_2)
     dst_ds.GetRasterBand(3).WriteArray(new_band_3)
