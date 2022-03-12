@@ -194,3 +194,31 @@ The following command can be used to see more details for a particular job:
 
 
 	$ scontrol show job <jobID>
+	
+If recieving errors related to formatting not being recognized (common in Windows), can convert the script to unix with:
+	
+	$ dos2unix myBatchFile.sh
+
+## SLURM LOTUS GPU Cluster
+<br/>
+After being added to the LOTUS gpu users group it is possible to run scripts using the GPUs, provided a few minor changes are made to the batch scripts.
+
+Essential changes are changing the partition and account to lotus_gpu, and adding a gres=gpu:1 line. For performance and to try and reduce out of memory errors, the following should also be added:
+ --ntasks=32 ; --ntasks-per-node=32 ; --mem=32000
+
+The lotus_gpu partition has a runtime limit of 24 hours (much reduced from the purported 168hrs runtime on their webpages).
+
+Here is an example batch script for the GPU cluser.
+
+	#!/bin/bash
+	#SBATCH --partition=lotus_gpu
+	#SBATCH --account=lotus_gpu
+	#SBATCH --gres=gpu:1
+	#SBATCH -o outputname.out
+	#SBATCH -e outputname.err
+	#SBATCH --time=24:00:00
+	#SBATCH --ntasks=32
+	#SBATCH --ntasks-per-node=32
+	#SBATCH --mem=32000
+	# executable
+	python3 python_script.py

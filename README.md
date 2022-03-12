@@ -14,7 +14,7 @@ AI4EO GTC 2021/2. Repository for group 2: detecting sea ice extent in visible/ S
 
 - [Description](#description)
 - [GitHub Organization](#github-organization)
-- [Usage](#usage)
+- [Contributors](#contributors)
 
 
 ## Description
@@ -41,5 +41,5 @@ Imagery from Google Maps, 2022
 └──  Notes              <- For markdown files associated with our project.
 ```
 
-## Usage
-**Note : Use Python 3.6 or newer**
+## Contributors
+AI4ER CDT Students Madeline Lisaius, Jonathan Roberts and Sophie Turner have all contributed equally to all aspects of this project.  

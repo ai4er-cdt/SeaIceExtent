@@ -11,6 +11,7 @@ def evaluate(net, dataloader, device, epsilon):
             epsilon: weight decay
        Returns: dice score over the validation set.
     """
+
     net.eval()
     num_val_batches = len(dataloader)
     dice_score = 0
@@ -22,7 +23,11 @@ def evaluate(net, dataloader, device, epsilon):
         image = image.to(device=device, dtype=torch.float32)
         mask_true = mask_true.to(device=device, dtype=torch.long)
         mask_true = F.one_hot(mask_true, net.n_classes).permute(0, 3, 1, 2).float()
+<<<<<<< HEAD
+        criterion = nn.BCELoss()
+=======
         criterion = nn.CrossEntropyLoss()
+>>>>>>> fcd022f2e1e339f27e9d2e002bfc002aebfa3d1f
 
         with torch.no_grad():
             # predict the mask
@@ -37,13 +42,18 @@ def evaluate(net, dataloader, device, epsilon):
                 mask_pred = F.one_hot(mask_pred.argmax(dim=1), net.n_classes).permute(0, 3, 1, 2).float()
                 # compute the Dice score, ignoring background
                 dice_score += multiclass_dice_coeff(mask_pred[:, 1:, ...], mask_true[:, 1:, ...], reduce_batch_first=False, epsilon=epsilon) + criterion(mask_pred, mask_true)
-
     net.train()
+    print(num_val_batches)
+    print(dice_score.item() / num_val_batches)
+
 
     # Fixes a potential division by zero error
     if num_val_batches == 0:
-        return dice_score
-    return dice_score / num_val_batches
+        output = dice_score.item()
+    else:
+        output = dice_score.item() / num_val_batches
+
+    return output
 
 
 def dice_coeff(input: Tensor, target: Tensor, reduce_batch_first: bool = False, epsilon=1e-6):
@@ -90,4 +100,5 @@ def view_model(model_path):
     model.eval()
     print(model)
     return model
+
 
