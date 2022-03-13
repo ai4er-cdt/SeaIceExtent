@@ -1,3 +1,8 @@
+"""This is the stitching module for the Sea Ice Extent GTC Project data preprocessing step.
+
+This module contains a function to stitch together two modis images and creates new metadata.
+"""
+
 import rasterio.merge
 
 
