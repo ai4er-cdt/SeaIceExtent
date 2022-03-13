@@ -1,5 +1,9 @@
-# Some of this code has been copied from here:
-# https://gis.stackexchange.com/questions/190724/remove-subset-raster-bands-in-python-gdal
+"""This is the rebanding module for the Sea Ice Extent GTC Project data preprocessing step.
+
+This module contains a function to select specific bands of the MODIS optical imagery.
+Some of the code was copied from: 
+https://gis.stackexchange.com/questions/190724/remove-subset-raster-bands-in-python-gdal
+"""
 
 from preprocessing.data_handling import *
 import struct
@@ -7,7 +11,7 @@ from osgeo import osr
 
 
 def select_bands(open_image, out_path):
-    """Copies light bands 3, 6 and 7 to a new image so that extra bands are not included.
+    """Copies visible wavelength bands 3, 6 and 7 to a new image so that extra bands are not included.
        Parameters: 
             open_image: (gdal opened image) the image which contains extra bands.
             out_path: (string) the file path of the new image to write.

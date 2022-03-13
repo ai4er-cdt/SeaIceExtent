@@ -1,4 +1,4 @@
-"""This is the evaluation module for the Sea Ice Extent GTC Project.
+"""This is the clipping module for the Sea Ice Extent GTC Project data preprocessing step.
 
 This module contains a function to clip multiple images to the same bounds. 
 """
