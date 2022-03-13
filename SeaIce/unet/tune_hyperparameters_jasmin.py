@@ -64,7 +64,7 @@ def train_and_validate(config=None, amp=False, device=torch.device('cuda')):
     save_checkpoint = True
     folder_checkpoint = '/home/users/jdr53/hyp_tuning/checkpoints/'
 
-    model_type = 'unet_onerun_' + image_type
+    model_type = 'unet'
     num_output_channels = 1
     loss_function = "BCE"
 
@@ -269,7 +269,7 @@ if __name__ == '__main__':
             'value': 1e-8}
     })
 
-    sweep_id = wandb.sweep(sweep_config, project="jasmin_gpu_12_02")
+    sweep_id = wandb.sweep(sweep_config, project="jasmin_gpu_13_02")
 
     n_tuning = 1000
     wandb.agent(sweep_id, function=train_and_validate, count=n_tuning)
