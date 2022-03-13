@@ -1,3 +1,11 @@
+"""This is the relabelling module for the Sea Ice Extent GTC Project data preprocessing step.
+
+This module contains functions that add in the relabelling of the given labels data that the Sea
+Ice team was presented with (format of geometries and polygons in Shapefile format). The functions
+here convert the shapefile to a GeoTIFF and remap the values from the shapefile to binary 0 and 1
+rather than the given multiple labels that included land and unknown values. 
+"""
+
 from preprocessing.data_handling import *
 
 
