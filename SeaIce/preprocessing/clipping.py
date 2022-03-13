@@ -1,3 +1,8 @@
+"""This is the evaluation module for the Sea Ice Extent GTC Project.
+
+This module contains a function to clip multiple images to the same bounds. 
+"""
+
 from preprocessing.data_handling import *
 import rasterio.mask
 

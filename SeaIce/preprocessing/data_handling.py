@@ -1,3 +1,10 @@
+"""This is the data_handling module for the Sea Ice Extent GTC Project data preprocessing step.
+
+This module contains functions for tasks such as getting contents of particular types from indicated
+directories, converting masks to images, naming or deleting files, creating metadata, and other
+helper tasks for working with the data as it was originally presented to the Sea Ice team. 
+"""
+
 # Moves data around and writes output.
 import json
 import rasterio
