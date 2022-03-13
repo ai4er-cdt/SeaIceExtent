@@ -1,4 +1,19 @@
-""" CNN Dataset preparation functions """
+""" This is the dataset_preparation module for the Sea Ice Extent GTC Project.
+
+This module contains functions to prepare data for the PyTorch U-Nets used in this work. 
+At the highest level, the CustomImageDataset and the CustomImageAugmentDataset define classes,
+respectively, which return either dictionaries of or tuple torch tensors as required for
+the U-Net. 
+
+The create_npy_list and split functions prepare lists of images and split them accorroding to
+percentage of train and test sets, to be fed into the Dataset classes. small_sample takes
+a subsample of either of image lists to allow for training on a smaller set of images for testing. 
+
+permute_tile_sizes allows for multiple folders of tile sizes (512, 768 and 1024 dimensions)
+to be mixed in creating the list of images for multi-size training. The create_checkpoint_dir
+function can be used to create the directory for model checkpoints to be saved during training. 
+"""
+
 from unet.shared import *
 from torch.utils.data.dataset import Dataset  # For custom data-sets
 from torchvision import transforms
@@ -124,22 +139,6 @@ def split_img_list(img_list, val_percent):
     return train_img_list, val_img_list, n_train, n_val
 
 
-def create_dataloaders(train_dataset, val_dataset, batch_size, workers):
-    """Creates dataloaders for the separate train and validation datasets.
-    Inputs: train_dataset = training dataset class with augmentation.
-            val_dataset = validation dataset class with no augmentation.
-            batch_size = dataloader batch size.
-            workers = number of parallel workers.
-    Outputs: train_loader = training dataset loader.
-             val_loader = validation dataset loader.
-    """
-    loader_args = dict(batch_size=batch_size, num_workers=workers, pin_memory=True)
-    train_loader = DataLoader(train_dataset, shuffle=True, **loader_args)
-    val_loader = DataLoader(val_dataset, shuffle=False, drop_last=True, **loader_args)
-
-    return train_loader, val_loader
-
-
 class CustomImageDataset(Dataset):
     """GTC Code for a dataset class. The class is instantiated with list of filenames within a directory (created using
     the list_npy_filenames function). The __getitem__ method pairs up corresponding image-label .npy file pairs. This
@@ -253,7 +252,23 @@ class CustomImageAugmentDataset(Dataset):
             augmented_image, augmented_mask = augment_function(augmented_image), augment_function(augmented_mask)
         """
         return augmented_image, augmented_mask
- 
+
+    
+def create_dataloaders(train_dataset, val_dataset, batch_size, workers):
+    """Creates dataloaders for the separate train and validation datasets.
+    Inputs: train_dataset = training dataset class with augmentation.
+            val_dataset = validation dataset class with no augmentation.
+            batch_size = dataloader batch size.
+            workers = number of parallel workers.
+    Outputs: train_loader = training dataset loader.
+             val_loader = validation dataset loader.
+    """
+    loader_args = dict(batch_size=batch_size, num_workers=workers, pin_memory=True)
+    train_loader = DataLoader(train_dataset, shuffle=True, **loader_args)
+    val_loader = DataLoader(val_dataset, shuffle=False, drop_last=True, **loader_args)
+
+    return train_loader, val_loader
+
     
 def create_checkpoint_dir(path_checkpoint, img_type, model_type):
     """ A function that checks for a custom directory based on a model type, image type and if
