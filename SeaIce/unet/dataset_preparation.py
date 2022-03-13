@@ -145,18 +145,18 @@ class CustomImageDataset(Dataset):
     the list_npy_filenames function). The __getitem__ method pairs up corresponding image-label .npy file pairs. This
     dataset can then be input to a dataloader. return_type = "values" or "dict"."""
     
-    def __init__(self, paths, is_single_band, return_type):
-        self.paths = paths
-        self.is_single_band = is_single_band
-        self.return_type = return_type
+    def __init__(cls, paths, is_single_band, return_type):
+        cls.paths = paths
+        cls.is_single_band = is_single_band
+        cls.return_type = return_type
     
-    def __getitem__(self, index):
-        image = torch.from_numpy(np.vstack(np.load(self.paths[index][0])).astype(float))
-        if self.is_single_band:
+    def __getitem__(cls, index):
+        image = torch.from_numpy(np.vstack(np.load(cls.paths[index][0])).astype(float))
+        if cls.is_single_band:
             image = image[None,:]
         else:
             image = torch.permute(image, (2, 0, 1))
-        mask_raw = (np.load(self.paths[index][1]))
+        mask_raw = (np.load(cls.paths[index][1]))
         maskremap100 = np.where(mask_raw == 100, 0, mask_raw)
         maskremap200 = np.where(maskremap100 == 200, 1, maskremap100)
         mask = torch.from_numpy(np.vstack(maskremap200).astype(float))
@@ -164,15 +164,14 @@ class CustomImageDataset(Dataset):
         #assert image.size == mask.size, \
         #    'Image and mask {name} should be the same size, but are {img.size} and {mask.size}'
         
-        if self.return_type == "dict":
+        if cls.return_type == "dict":
             return {'image': image, 'mask': mask}
-        elif self.return_type == "values":
+        elif cls.return_type == "values":
             mask = mask[None, :]
             return image, mask
 
-
-    def __len__(self):
-        return len(self.paths) 
+    def __len__(cls):
+        return len(cls.paths) 
 
 
 class CustomImageAugmentDataset(Dataset):
@@ -183,35 +182,35 @@ class CustomImageAugmentDataset(Dataset):
     flip, 90 degree rotation (anti-clockwise & clockwise), 180 degree rotation, random crop. Multiple augmentations are
     applied in sequence. This dataset can then be input to a dataloader."""
 
-    def __init__(self, paths, is_single_band, return_type, augmentation):
-        self.paths = paths
-        self.is_single_band = is_single_band
-        self.return_type = return_type
-        self.augmentation = augmentation
+    def __init__(cls, paths, is_single_band, return_type, augmentation):
+        cls.paths = paths
+        cls.is_single_band = is_single_band
+        cls.return_type = return_type
+        cls.augmentation = augmentation
 
-    def __len__(self):
-        return len(self.paths)
+    def __len__(cls):
+        return len(cls.paths)
 
-    def __getitem__(self, index):
-        image = torch.from_numpy(np.vstack(np.load(self.paths[index][0])).astype(float))
-        if self.is_single_band:
+    def __getitem__(cls, index):
+        image = torch.from_numpy(np.vstack(np.load(cls.paths[index][0])).astype(float))
+        if cls.is_single_band:
             image = image[None,:]
         else:
             image = torch.permute(image, (2, 0, 1))
-        mask_raw = (np.load(self.paths[index][1]))
+        mask_raw = (np.load(cls.paths[index][1]))
         maskremap100 = np.where(mask_raw == 100, 0, mask_raw)
         maskremap200 = np.where(maskremap100 == 200, 1, maskremap100)
         mask = torch.from_numpy(np.vstack(maskremap200).astype(float))
 
-        if self.augmentation:
-            image, mask = self.augment_image(image, mask)
+        if cls.augmentation:
+            image, mask = cls.augment_image(image, mask)
 
         #assert image.size == mask.size, \
         #    'Image and mask {name} should be the same size, but are {img.size} and {mask.size}'
         
-        if self.return_type == "dict":
+        if cls.return_type == "dict":
             return {'image': image, 'mask': mask}
-        elif self.return_type == "values":
+        elif cls.return_type == "values":
             mask = mask[None, :]
             return image, mask
 
