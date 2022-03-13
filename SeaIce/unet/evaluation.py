@@ -1,4 +1,13 @@
-""" Model evaluation functions and Dice Loss scoring functions """
+"""This is the evaluation module for the Sea Ice Extent GTC Project.
+
+This module contains functions for evalating the U-Net and with Dice Loss scoring functions. 
+The evaluate function takes in the U-Net structure, the dataloader etc. and returns the dice score
+across the batches. 
+
+The dice functionalities were carried over from the original implementation of the U-Net found
+at (https://github.com/milesial/Pytorch-UNet) which was accessed in January 2022. 
+"""
+
 from shared import *
 
 
@@ -41,11 +50,11 @@ def evaluate(net, dataloader, device, epsilon):
             else:
                 mask_pred = F.one_hot(mask_pred.argmax(dim=1), net.n_classes).permute(0, 3, 1, 2).float()
                 # compute the Dice score, ignoring background
-                dice_score += multiclass_dice_coeff(mask_pred[:, 1:, ...], mask_true[:, 1:, ...], reduce_batch_first=False, epsilon=epsilon) + criterion(mask_pred, mask_true)
+                dice_score += multiclass_dice_coeff(mask_pred[:, 1:, ...], mask_true[:, 1:, ...], 
+                                                    reduce_batch_first=False, epsilon=epsilon) + criterion(mask_pred, mask_true)
     net.train()
     print(num_val_batches)
     print(dice_score.item() / num_val_batches)
-
 
     # Fixes a potential division by zero error
     if num_val_batches == 0:
@@ -95,10 +104,8 @@ def dice_loss(input: Tensor, target: Tensor, multiclass: bool = False, epsilon=1
 
 
 def view_model(model_path):
-    # Load and view a previously trained model from a .pth or .pt file.
+    """ Load and view a previously trained model from a .pth or .pt file. """
     model = torch.load(model_path)
     model.eval()
     print(model)
     return model
-
-
