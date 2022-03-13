@@ -64,7 +64,7 @@ def train_and_validate(config=None, amp=False, device=torch.device('cuda')):
     save_checkpoint = True
     folder_checkpoint = '/home/users/jdr53/hyp_tuning/checkpoints/'
 
-    model_type = 'unet'
+    model_type = 'unet_onerun_' + image_type
     num_output_channels = 1
     loss_function = "BCE"
 
@@ -186,23 +186,14 @@ def train_and_validate(config=None, amp=False, device=torch.device('cuda')):
             print('Logging Epoch Scores')
             wandb.log({"Epoch Loss, Training": avg_epoch_training_loss, "Epoch Loss, Validation": val_score,
                        "Epoch": epoch + 1}, step=global_step)
-
-            if epoch == 0:
-                best_run_loss_val = val_score
-                best_epoch = epoch
-            else:
-                if val_score < best_run_loss_val:
-                    best_run_loss_val = val_score
-                    best_epoch = epoch
-
             if save_checkpoint:
                 if epoch == 0:
                     dir_checkpoint = create_checkpoint_dir(folder_checkpoint, image_type, model_type, config.optimiser,
                                                            config.learning_rate, config.batch_size, config.weight_decay)
                 torch.save(net.state_dict(), dir_checkpoint + f'/checkpoint_epoch{epoch + 1}.pth')
 
-        wandb.log({"Run Loss, Training": run_loss_train / config.epochs, "Run Loss, Validation": best_run_loss_val,
-                   "Run Best Epoch": best_epoch}, step=global_step)
+        wandb.log({"Run Loss, Training": run_loss_train / config.epochs, "Run Loss, Validation": val_score},
+                  step=global_step)
 
         # wandb.log({"Run Training Loss": run_loss_train})
         # wandb.log({"Run Validation Loss": run_loss_val})
@@ -215,13 +206,11 @@ def train_and_validate(config=None, amp=False, device=torch.device('cuda')):
 # Loss in chart is 0 -- DONE
 
 
-
 if __name__ == '__main__':
-
-    #wandb.init(project="test-hyptuning")
+    # wandb.init(project="test-hyptuning")
 
     # Model Name
-    #model_name = 'unet'
+    # model_name = 'unet'
 
     # Configuring wandb settings
     sweep_config = {
@@ -264,14 +253,20 @@ if __name__ == '__main__':
         'img_scale': {
             'value': 0.5},
         'epochs': {
-            'value': 20},
+            'value': 10000},
+        'optimiser': {
+            'value': 'sgd'},
+        'learning_rate': {
+            'value': 0.002},
+        'batch_size': {
+            'value': 8},
         'weight_decay': {
             'value': 1e-8}
     })
 
-    sweep_id = wandb.sweep(sweep_config, project="jasmin_gpu_13_02")
+    sweep_id = wandb.sweep(sweep_config, project="jasmin_gpu_12_02_onerun_modis")
 
-    n_tuning = 1000
+    n_tuning = 1
     wandb.agent(sweep_id, function=train_and_validate, count=n_tuning)
 
 
