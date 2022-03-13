@@ -43,6 +43,7 @@ def create_npy_list(images, img_string):
     else: # images is a directory path
         img_names = sorted(glob.glob(str(images) + '/*_' + img_string + '.npy'))
         label_names = sorted(glob.glob(str(images) + '/*_labels.npy'))
+        
     # In-depth file-by-file check for matching sar-label pairs in the directory -- assuming  each sar image has a corresponding
     # labeled image.
     img_label_pairs = []
@@ -94,6 +95,7 @@ def split_data(dataset, val_percent, batch_size, workers):
     n_val = int(len(dataset) * val_percent)
     n_train = len(dataset) - n_val
     train_set, val_set = random_split(dataset, [n_train, n_val], generator=torch.Generator().manual_seed(0))
+    
     # Create data loaders
     loader_args = dict(batch_size=batch_size, num_workers=workers, pin_memory=True)
     train_loader = DataLoader(train_set, shuffle=True, **loader_args)
@@ -153,7 +155,6 @@ class CustomImageDataset(Dataset):
         if self.is_single_band:
             image = image[None,:]
         else:
-            #image = torch.permute(image, (3, 1, 2, 0))
             image = torch.permute(image, (2, 0, 1))
         mask_raw = (np.load(self.paths[index][1]))
         maskremap100 = np.where(mask_raw == 100, 0, mask_raw)
@@ -162,6 +163,7 @@ class CustomImageDataset(Dataset):
 
         #assert image.size == mask.size, \
         #    'Image and mask {name} should be the same size, but are {img.size} and {mask.size}'
+        
         if self.return_type == "dict":
             return {'image': image, 'mask': mask}
         elif self.return_type == "values":
@@ -195,7 +197,6 @@ class CustomImageAugmentDataset(Dataset):
         if self.is_single_band:
             image = image[None,:]
         else:
-            #image = torch.permute(image, (3, 1, 2, 0))
             image = torch.permute(image, (2, 0, 1))
         mask_raw = (np.load(self.paths[index][1]))
         maskremap100 = np.where(mask_raw == 100, 0, mask_raw)
@@ -207,6 +208,7 @@ class CustomImageAugmentDataset(Dataset):
 
         #assert image.size == mask.size, \
         #    'Image and mask {name} should be the same size, but are {img.size} and {mask.size}'
+        
         if self.return_type == "dict":
             return {'image': image, 'mask': mask}
         elif self.return_type == "values":
@@ -241,7 +243,7 @@ class CustomImageAugmentDataset(Dataset):
             augmented_image = torch.rot90(augmented_image, k=-1, dims=[1, 2])
             augmented_mask = torch.rot90(augmented_mask, k=-1, dims=[0, 1])
 
-        if False:#aug_probabilities[5]: # Random crop (and resize)
+        if False: # aug_probabilities[5]: # Random crop (and resize)
             augment_function = transforms.Compose([transforms.RandomCrop(size=256),
                                                    transforms.Resize(512)])
             augmented_image, augmented_mask = augment_function(augmented_image), augment_function(augmented_mask)
@@ -252,13 +254,12 @@ class CustomImageAugmentDataset(Dataset):
             augmented_image, augmented_mask = augment_function(augmented_image), augment_function(augmented_mask)
         """
         return augmented_image, augmented_mask
-
+ 
     
 def create_checkpoint_dir(path_checkpoint, img_type, model_type):
     """ A function that checks for a custom directory based on a model type, image type and if
     that directory does not exist, creates it and returns the value for use in checkpoint saving.
     Input img_type can be sar or modis. Includes the datetime in the string name.""" 
-    
     
     now = datetime.now()
     dt_string = now.strftime("%d%m%Y_%H%M%S")
