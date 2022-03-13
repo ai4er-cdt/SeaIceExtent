@@ -15,6 +15,7 @@ function can be used to create the directory for model checkpoints to be saved d
 """
 
 from unet.shared import *
+
 from torch.utils.data.dataset import Dataset  # For custom data-sets
 from torchvision import transforms
 import glob
@@ -23,9 +24,6 @@ import random
 import sys
 
 torch.manual_seed(2022) # Setting random seed so that augmentations can be reproduced.
-
-# From https://discuss.pytorch.org/t/beginner-how-do-i-write-a-custom-dataset-that-allows-me-to-return-image-and-its-target-image-not-label-as-a-pair/13988/4
-# And https://discuss.pytorch.org/t/how-make-customised-dataset-for-semantic-segmentation/30881
 
 
 def permute_tile_sizes():
