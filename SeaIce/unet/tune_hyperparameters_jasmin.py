@@ -186,14 +186,23 @@ def train_and_validate(config=None, amp=False, device=torch.device('cuda')):
             print('Logging Epoch Scores')
             wandb.log({"Epoch Loss, Training": avg_epoch_training_loss, "Epoch Loss, Validation": val_score,
                        "Epoch": epoch + 1}, step=global_step)
+
+            if epoch == 0:
+                best_run_loss_val = val_score
+                best_epoch = epoch
+            else:
+                if val_score < best_run_loss_val:
+                    best_run_loss_val = val_score
+                    best_epoch = epoch
+
             if save_checkpoint:
                 if epoch == 0:
                     dir_checkpoint = create_checkpoint_dir(folder_checkpoint, image_type, model_type, config.optimiser,
                                                            config.learning_rate, config.batch_size, config.weight_decay)
                 torch.save(net.state_dict(), dir_checkpoint + f'/checkpoint_epoch{epoch + 1}.pth')
 
-        wandb.log({"Run Loss, Training": run_loss_train / config.epochs, "Run Loss, Validation": val_score},
-                  step=global_step)
+        wandb.log({"Run Loss, Training": run_loss_train / config.epochs, "Run Loss, Validation": best_run_loss_val,
+                   "Run Best Epoch": best_epoch}, step=global_step)
 
         # wandb.log({"Run Training Loss": run_loss_train})
         # wandb.log({"Run Validation Loss": run_loss_val})
