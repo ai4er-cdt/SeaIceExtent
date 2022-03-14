@@ -4,6 +4,6 @@
     "\\preprocessing",
     "\\unet"
   ],
-  "SelectedNode": "\\controller.py",
+  "SelectedNode": "\\unet\\predict.py",
   "PreviewInSolutionExplorer": false
 }

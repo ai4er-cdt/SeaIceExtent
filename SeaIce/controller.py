@@ -81,14 +81,10 @@ def preprocess_prediction(image_path, image_type, resolution, log_scale, tile_si
            resizing.halve_size(new_resolution_path, new_size_path)
            image_path = new_size_path
    # Tile.
-   if image_type == "labels":
-       tile_dir = temp_labels
-   else:
-       tile_dir = temp_tiled
-   tiling.tile_prediction_image(image_path, image_type, tile_dir, tile_size)
+   tiling.tile_prediction_image(image_path, image_type, temp_tiled, tile_size)
 
 
-def new_image_prediction(image_path, test=False, log_scale=False):
+def new_image_prediction(image_path, save=False, metrics=False, log_scale=False):
     """Controls pipeline of taking in a new image and passing it through prediction procedure.
        Parameter: image_path: (string) file path to tiff image to be predicted, or path of folder containing tiff images to be predicted.
        Output: two png images next to the original image's location(s); one for classes and one for probabilities. 
@@ -109,41 +105,35 @@ def new_image_prediction(image_path, test=False, log_scale=False):
     for i in range(len(image_paths)):
         image = image_paths[i]
         filename = image_names[i]
-        # Make sure we don't try and classify labels!
         filename = filename.split(".")[0]
         image_path = r'{}'.format(image)
-        if "labels" in filename:
-            image_type = "labels"
-            delete_temp_files([temp_labels])
-        else:
-            # Find out if the image is modis or sar.
-            open_image = gdal.Open(image_path)
-            image_type = "modis"
-            model = model_modis
-            if open_image.RasterCount == 1:
-                image_type = "sar"
-                model = model_sar
-            elif open_image.RasterCount > 3:
-                # name rebanded image path.
-                image_path = name_file("rebanded", ".tif", folder)
-                rebanding.select_bands(open_image, image_path)
-            del open_image
+        # Find out if the image is modis or sar.
+        open_image = gdal.Open(image_path)
+        image_type = "modis"
+        model = model_modis
+        if open_image.RasterCount == 1:
+            image_type = "sar"
+            model = model_sar
+        elif open_image.RasterCount > 3:
+            # name rebanded image path.
+            image_path = name_file("rebanded", ".tif", folder)
+            rebanding.select_bands(open_image, image_path)
+        del open_image
         # Tile and do any necessary resizing.
         preprocess_prediction(image_path, image_type, 40, log_scale, 1024)
         # Pass the tiles into the model.
-        if image_type != "labels":
-            if test:
-                precision, recall, accuracy = make_predictions(model, "raw", image_type, temp_tiled, temp_binary, temp_probabilities, metrics = True, save = True)
-                # Save the metrics.
-                out_path = name_file("{}_results".format(filename), ".json", folder)
-                save_metrics(precision, recall, accuracy, model, out_path)
-            else:
-                make_predictions(model, "raw", image_type, temp_tiled, temp_binary, temp_probabilities, save = True)
+        if save:
+            make_predictions(model, "raw", image_type, temp_tiled, temp_binary, temp_probabilities, metrics = metrics, save = save)
             # Construct a mosaic of tiles to match the original image.
             out_path = name_file("{}_predicted_classes".format(filename), ".png", folder)
             tiling.reconstruct_from_tiles(temp_binary, out_path)
             out_path = name_file("{}_predicted_probabilities".format(filename), ".png", folder)
-            tiling.reconstruct_from_tiles(temp_probabilities, out_path)
+            tiling.reconstruct_from_tiles(temp_probabilities, out_path)        
+        elif metrics:
+            precision, recall, accuracy = make_predictions(model, "raw", image_type, temp_tiled, temp_binary, temp_probabilities, metrics = metrics, save = save)
+            # Save the metrics.
+            out_path = name_file("{}_results".format(filename), ".json", folder)
+            save_metrics(precision, recall, accuracy, model, out_path)
         # Clean up.
         delete_temp_files(temp_folders)
         

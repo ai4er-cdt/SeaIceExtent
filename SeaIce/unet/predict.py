@@ -101,14 +101,11 @@ def predict_img(net,
         return F.one_hot(full_mask.argmax(dim=0), net.n_classes).permute(2, 0, 1).numpy(), full_mask
     
 
-def make_predictions(model_path, unet_type, image_type, dir_in, dir_out_bin, dir_out_prob, log = False, metrics = False, viz = False, save = False):
+def make_predictions(model_path, unet_type, image_type, dir_in, dir_out_bin=None, dir_out_prob=None, log = False, metrics = False, viz = False, save = False):
     if viz:
         import matplotlib.pyplot as plt
     if metrics:
-        img_list = create_npy_list(dir_in, image_type, temp_labels)
-        print("img list", img_list)
-        print("dir in", dir_in)
-        print("img type", image_type)
+        img_list = create_npy_list(dir_in, image_type)
         # Build up all the metrics to get an average for the whole image.
         all_precision, all_recall, all_accuracy = [], [], []
     else:
@@ -169,7 +166,7 @@ def make_predictions(model_path, unet_type, image_type, dir_in, dir_out_bin, dir
              print("predicted", filename)
              np.save(out_filename, mask_prob)
              logging.info(f'Mask saved to {out_filename}')
-    if metrics and save:
+    if metrics:
         num_tiles = len(img_list)
         total_precision = sum(all_precision) / num_tiles
         total_recall = sum(all_recall) / num_tiles

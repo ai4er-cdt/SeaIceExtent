@@ -42,12 +42,10 @@ def permute_tile_sizes():
     return permuted_tiles
 
 
-def create_npy_list(images, img_string, labels_path=None):
+def create_npy_list(images, img_string):
     """A function that returns a list of the names of the SAR/MODIS and labelled .npy files in a directory. These lists can
     then be used as an argument for the Dataset class instantiation. The function also checks that the specified directory 
     contains matching sar or MODIS/labelled pairs -- specifically, a label.npy file for each image file."""
-    if labels_path == None:
-            labels_path = images
     if type(images) == list:
         img_names, label_names = [], []
         for each_file in images:
@@ -55,13 +53,10 @@ def create_npy_list(images, img_string, labels_path=None):
                 img_names.append(each_file)
             if "labels" in each_file:
                 label_names.append(each_file)
-        if labels_path != None:
-            for each_file in labels_path:
-                if "labels" in each_file:
-                    label_names.append(each_file)
     else: # images is a directory path
-        img_names = sorted(glob.glob(str(images) + '/*' + img_string + '*.npy'))
-        label_names = sorted(glob.glob(str(labels_path) + '/*labels*.npy'))        
+        img_names = sorted(glob.glob(str(images) + '/*_' + img_string + '.npy'))
+        label_names = sorted(glob.glob(str(images) + '/*_labels.npy'))
+        
     # In-depth file-by-file check for matching sar-label pairs in the directory -- assuming  each sar image has a corresponding
     # labeled image.
     img_label_pairs = []
