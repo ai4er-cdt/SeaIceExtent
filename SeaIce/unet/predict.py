@@ -14,11 +14,13 @@ def load_model(model_path, unet_type, image_type):
        Returns: the model instance loaded into PyTorch, ready for eval().
     """
     if image_type == "modis":
+        classes = 1
         channels = 3
     elif image_type == "sar":
+        classes = 2
         channels = 1
     if unet_type == "raw":
-        model = UNet(n_channels=channels, n_classes=2, bilinear=True)
+        model = UNet(n_channels=channels, n_classes=classes, bilinear=True)
     elif unet_type == "pretrained":
         model = smp.Unet(encoder_name='resnet34', encoder_weights='imagenet', decoder_use_batchnorm=True,
                  decoder_attention_type=None, in_channels=channels, classes=1, encoder_depth=5)
@@ -103,7 +105,10 @@ def make_predictions(model_path, unet_type, image_type, dir_in, dir_out_bin, dir
     if viz:
         import matplotlib.pyplot as plt
     if metrics:
-        img_list = create_npy_list(dir_in, image_type)
+        img_list = create_npy_list(dir_in, image_type, temp_labels)
+        print("img list", img_list)
+        print("dir in", dir_in)
+        print("img type", image_type)
         # Build up all the metrics to get an average for the whole image.
         all_precision, all_recall, all_accuracy = [], [], []
     else:

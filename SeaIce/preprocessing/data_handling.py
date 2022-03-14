@@ -29,6 +29,7 @@ temp_binary = r"{}/temp/binary".format(program_path)
 temp_preprocessed = r"{}/temp/preprocessed".format(program_path)
 temp_probabilities = r"{}/temp/probabilities".format(program_path)
 temp_tiled = r"{}/temp/tiled".format(program_path)
+temp_labels = r"{}/temp/labels".format(program_path)
 model_sar = r"{}/models/sar_model.pth".format(program_path)
 model_modis = r"{}/models/modis_model.pth".format(program_path)
 temp_folders = [temp_files, temp_buffer, temp_binary, temp_preprocessed, temp_probabilities, temp_tiled]
@@ -77,10 +78,10 @@ def name_file(out_name, file_type, out_path = temp_files):
     return file_name
 
 
-def delete_temp_files():
+def delete_temp_files(location):
     """Remove temporary files when no longer needed.
     """
-    for folder in temp_folders:
+    for folder in location:
         os.chdir(folder)
         for temp_file in os.listdir():
             os.remove(temp_file)
@@ -92,6 +93,7 @@ def create_temp_folders():
         os.mkdir(temp_root)
         for temp_folder in temp_folders:
             os.mkdir(temp_folder)
+        os.mkdir(temp_labels)
 
 
 def save_tiff(image_array, image_metadata, out_name, out_path = temp_files):
@@ -212,5 +214,6 @@ def save_metrics(precision, recall, accuracy, model_path, out_path):
 
 
 create_temp_folders()
-delete_temp_files()
+delete_temp_files(temp_folders)
+delete_temp_files([temp_labels])
 os.chdir(program_path)
