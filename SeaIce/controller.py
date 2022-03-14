@@ -124,7 +124,10 @@ def new_image_prediction(image_path, log_scale=False):
         # Tile and do any necessary resizing.
         preprocess_prediction(image_path, image_type, 40, log_scale, 1024)
         # Pass the tiles into the model.
-        make_predictions(model, "raw", image_type, temp_tiled, temp_binary, temp_probabilities, metrics = True, save = True)
+        precision, recall, accuracy = make_predictions(model, "raw", image_type, temp_tiled, temp_binary, temp_probabilities, metrics = True, save = True)
+        # Save the metrics.
+        out_path = name_file("{}_results".format(filename), ".json", folder)
+        save_metrics(precision, recall, accuracy, model, out_path)
         # Construct a mosaic of tiles to match the original image.
         out_path = name_file("{}_predicted_classes".format(filename), ".png", folder)
         tiling.reconstruct_from_tiles(temp_binary, out_path)

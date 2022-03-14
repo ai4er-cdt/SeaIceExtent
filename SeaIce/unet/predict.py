@@ -104,6 +104,8 @@ def make_predictions(model_path, unet_type, image_type, dir_in, dir_out_bin, dir
         import matplotlib.pyplot as plt
     if metrics:
         img_list = create_npy_list(dir_in, image_type)
+        # Build up all the metrics to get an average for the whole image.
+        all_precision, all_recall, all_accuracy = [], [], []
     else:
         _, img_list = get_contents(dir_in, ".npy", "suffix")
     
@@ -143,7 +145,10 @@ def make_predictions(model_path, unet_type, image_type, dir_in, dir_out_bin, dir
             recall = TP / (TP+FN)
             accuracy = (TP+TN) / N
             print("Precision: {}, Recall: {}, Accuracy: {}".format(precision, recall, accuracy))
-        
+            # Build up all the metrics to get an average for the whole image.
+            all_precision.append(precision) 
+            all_recall.append(recall) 
+            all_accuracy.append(accuracy)
         if viz:
              logging.info(f'Visualizing results for image {filename}, close to continue...')
              plot_img_and_mask(img.squeeze(), mask_bin, image_type)
@@ -154,10 +159,16 @@ def make_predictions(model_path, unet_type, image_type, dir_in, dir_out_bin, dir
              filename = filename[::-1]
              filename = filename.split(".")[0]
              out_filename = name_file(filename, ".npy", dir_out_bin)
-             print("predicted binary classification", filename)
              np.save(out_filename, mask_bin)
              out_filename = name_file(filename, ".npy", dir_out_prob)
-             print("predicted probabilities", filename)
+             print("predicted", filename)
              np.save(out_filename, mask_prob)
              logging.info(f'Mask saved to {out_filename}')
+    if metrics and save:
+        num_tiles = len(img_list)
+        total_precision = sum(all_precision) / num_tiles
+        total_recall = sum(all_recall) / num_tiles
+        total_accuracy = sum(all_accuracy) / num_tiles
+        return total_precision, total_recall, total_accuracy
+
 

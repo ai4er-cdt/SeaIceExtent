@@ -6,13 +6,14 @@ helper tasks for working with the data as it was originally presented to the Sea
 """
 
 # Moves data around and writes output.
-import json
 import rasterio
 import os
 import fiona
 import numpy as np
 from osgeo import ogr, gdal
 from PIL import Image
+import torch
+import json
 from sklearn.preprocessing import StandardScaler
 
 
@@ -196,6 +197,18 @@ def hdf_to_tif():
     new_tif.WriteRaster(0, 0, width, height, band_array.tobytes())
     new_tif.FlushCache()
     del new_tif
+
+
+def save_metrics(precision, recall, accuracy, model_path, out_path):
+    """Save results of a complete image prediction in a json file with the image."""
+    model_details = torch.load(model_path)
+    results_info = {"Precision" : precision,
+                    "Recall" : recall,
+                    "Accuracy" : accuracy,
+                    "Tile size" : 1024,
+                    "Model" : model_details}
+    with open(out_path, mode='w') as json_file:
+        json_file.write(json.dumps(results_info, indent=4))
 
 
 create_temp_folders()
