@@ -135,7 +135,6 @@ def tif_to_window(tif_path, window_shape, step_size):
     except:
         image_tif = gdal.Open(tif_path)
         image_array = np.array(image_tif.GetRasterBand(1).ReadAsArray())
-    
     del image_tif
     image_window = np.lib.stride_tricks.sliding_window_view(x=image_array, window_shape=(window_shape))[::step_size, ::step_size]
     return image_window
