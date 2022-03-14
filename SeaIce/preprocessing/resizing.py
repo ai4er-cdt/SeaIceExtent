@@ -1,3 +1,8 @@
+"""This is the resizing module for the Sea Ice Extent GTC Project data preprocessing step.
+
+This module contains functions to resize and reproject GeoTIFF images in preprocessing.
+"""
+
 from preprocessing.data_handling import *
 
 

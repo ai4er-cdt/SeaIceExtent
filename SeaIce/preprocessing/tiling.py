@@ -1,3 +1,10 @@
+"""This is the tiling module for the Sea Ice Extent GTC Project data preprocessing step.
+
+This module contains functions to tile images per specific dimension requirements, both for purposes 
+of training and for testing, and functionality to then combine the tiled prediction image back together
+using the predicted outputs into a full image again.
+"""
+
 from preprocessing.data_handling import *
 
 

@@ -1,8 +1,17 @@
-""" Model evaluation functions and Dice Loss scoring functions """
+"""This is the evaluation module for the Sea Ice Extent GTC Project.
+
+This module contains functions for evalating the U-Net and with Dice Loss scoring functions. 
+The evaluate function takes in the U-Net structure, the dataloader etc. and returns the dice score
+across the batches. 
+
+The dice functionalities were carried over from the original implementation of the U-Net found
+at (https://github.com/milesial/Pytorch-UNet) which was accessed in January 2022. 
+"""
+
 from shared import *
 
 
-def evaluate(net, dataloader, device, epsilon):
+def evaluate(net, dataloader, device, epsilon, loss_function="CE"):
     """Evaluate the model during training.
        Parameters:
             net: the unet model instance.
@@ -11,6 +20,12 @@ def evaluate(net, dataloader, device, epsilon):
             epsilon: weight decay
        Returns: dice score over the validation set.
     """
+    if loss_function == "BCE":
+        criterion = nn.BCELoss()
+    elif loss_function == "CE":
+        criterion = nn.CrossEntropyLoss()
+    else:
+        raise Exception(f'Invalid loss_function detected: {loss_function}. Expected "BCE" or "CE".')
 
     net.eval()
     num_val_batches = len(dataloader)
@@ -22,12 +37,6 @@ def evaluate(net, dataloader, device, epsilon):
         # move images and labels to correct device and type
         image = image.to(device=device, dtype=torch.float32)
         mask_true = mask_true.to(device=device, dtype=torch.long)
-        mask_true = F.one_hot(mask_true, net.n_classes).permute(0, 3, 1, 2).float()
-<<<<<<< HEAD
-        criterion = nn.BCELoss()
-=======
-        criterion = nn.CrossEntropyLoss()
->>>>>>> fcd022f2e1e339f27e9d2e002bfc002aebfa3d1f
 
         with torch.no_grad():
             # predict the mask
@@ -35,17 +44,24 @@ def evaluate(net, dataloader, device, epsilon):
 
             # convert to one-hot format
             if net.n_classes == 1:
-                mask_pred = (F.sigmoid(mask_pred) > 0.5).float()
+
+                mask_true = (torch.sigmoid(mask_true) > 0.5).float()
+                mask_pred = (torch.sigmoid(mask_pred) > 0.5).float()
+                mask_true = mask_true[:, None, :, :]
                 # compute the Dice score
-                dice_score += dice_coeff(mask_pred, mask_true, reduce_batch_first=False, epsilon=epsilon) + criterion(mask_pred, mask_true)
+                dice_score += dice_coeff(mask_pred, mask_true, reduce_batch_first=False, epsilon=epsilon) + \
+                              criterion(mask_pred, mask_true)
             else:
+
+                mask_true = F.one_hot(mask_true, net.n_classes).permute(0, 3, 1, 2).float()
                 mask_pred = F.one_hot(mask_pred.argmax(dim=1), net.n_classes).permute(0, 3, 1, 2).float()
                 # compute the Dice score, ignoring background
-                dice_score += multiclass_dice_coeff(mask_pred[:, 1:, ...], mask_true[:, 1:, ...], reduce_batch_first=False, epsilon=epsilon) + criterion(mask_pred, mask_true)
+                dice_score += multiclass_dice_coeff(mask_pred[:, 1:, ...], mask_true[:, 1:, ...],
+                                                    reduce_batch_first=False, epsilon=epsilon) + criterion(mask_pred,
+                                                                                                           mask_true)
     net.train()
     print(num_val_batches)
     print(dice_score.item() / num_val_batches)
-
 
     # Fixes a potential division by zero error
     if num_val_batches == 0:
@@ -95,10 +111,8 @@ def dice_loss(input: Tensor, target: Tensor, multiclass: bool = False, epsilon=1
 
 
 def view_model(model_path):
-    # Load and view a previously trained model from a .pth or .pt file.
+    """ Load and view a previously trained model from a .pth or .pt file. """
     model = torch.load(model_path)
     model.eval()
     print(model)
     return model
-
-

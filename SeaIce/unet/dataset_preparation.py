@@ -1,5 +1,21 @@
-""" CNN Dataset preparation functions """
+""" This is the dataset_preparation module for the Sea Ice Extent GTC Project.
+
+This module contains functions to prepare data for the PyTorch U-Nets used in this work. 
+At the highest level, the CustomImageDataset and the CustomImageAugmentDataset define classes,
+respectively, which return either dictionaries of or tuple torch tensors as required for
+the U-Net. 
+
+The create_npy_list and split functions prepare lists of images and split them accorroding to
+percentage of train and test sets, to be fed into the Dataset classes. small_sample takes
+a subsample of either of image lists to allow for training on a smaller set of images for testing. 
+
+permute_tile_sizes allows for multiple folders of tile sizes (512, 768 and 1024 dimensions)
+to be mixed in creating the list of images for multi-size training. The create_checkpoint_dir
+function can be used to create the directory for model checkpoints to be saved during training. 
+"""
+
 from unet.shared import *
+
 from torch.utils.data.dataset import Dataset  # For custom data-sets
 from torchvision import transforms
 import glob
@@ -8,9 +24,6 @@ import random
 import sys
 
 torch.manual_seed(2022) # Setting random seed so that augmentations can be reproduced.
-
-# From https://discuss.pytorch.org/t/beginner-how-do-i-write-a-custom-dataset-that-allows-me-to-return-image-and-its-target-image-not-label-as-a-pair/13988/4
-# And https://discuss.pytorch.org/t/how-make-customised-dataset-for-semantic-segmentation/30881
 
 
 def permute_tile_sizes():
@@ -43,6 +56,7 @@ def create_npy_list(images, img_string):
     else: # images is a directory path
         img_names = sorted(glob.glob(str(images) + '/*_' + img_string + '.npy'))
         label_names = sorted(glob.glob(str(images) + '/*_labels.npy'))
+        
     # In-depth file-by-file check for matching sar-label pairs in the directory -- assuming  each sar image has a corresponding
     # labeled image.
     img_label_pairs = []
@@ -94,6 +108,7 @@ def split_data(dataset, val_percent, batch_size, workers):
     n_val = int(len(dataset) * val_percent)
     n_train = len(dataset) - n_val
     train_set, val_set = random_split(dataset, [n_train, n_val], generator=torch.Generator().manual_seed(0))
+    
     # Create data loaders
     loader_args = dict(batch_size=batch_size, num_workers=workers, pin_memory=True)
     train_loader = DataLoader(train_set, shuffle=True, **loader_args)
@@ -131,46 +146,46 @@ def create_dataloaders(train_dataset, val_dataset, batch_size, workers):
     Outputs: train_loader = training dataset loader.
              val_loader = validation dataset loader.
     """
-    loader_args = dict(batch_size=batch_size, num_workers=workers, pin_memory=True)
-    train_loader = DataLoader(train_dataset, shuffle=True, **loader_args)
-    val_loader = DataLoader(val_dataset, shuffle=False, drop_last=True, **loader_args)
+    loader_args_train = dict(batch_size=batch_size, num_workers=workers, pin_memory=True)
+    loader_args_val = dict(batch_size=batch_size, num_workers=workers/2, pin_memory=True)
+    train_loader = DataLoader(train_dataset, shuffle=True, **loader_args_train)
+    val_loader = DataLoader(val_dataset, shuffle=False, drop_last=True, **loader_args_val)
 
     return train_loader, val_loader
 
-
+  
 class CustomImageDataset(Dataset):
     """GTC Code for a dataset class. The class is instantiated with list of filenames within a directory (created using
     the list_npy_filenames function). The __getitem__ method pairs up corresponding image-label .npy file pairs. This
     dataset can then be input to a dataloader. return_type = "values" or "dict"."""
     
-    def __init__(self, paths, is_single_band, return_type):
-        self.paths = paths
-        self.is_single_band = is_single_band
-        self.return_type = return_type
+    def __init__(cls, paths, is_single_band, return_type):
+        cls.paths = paths
+        cls.is_single_band = is_single_band
+        cls.return_type = return_type
     
-    def __getitem__(self, index):
-        image = torch.from_numpy(np.vstack(np.load(self.paths[index][0])).astype(float))
-        if self.is_single_band:
+    def __getitem__(cls, index):
+        image = torch.from_numpy(np.vstack(np.load(cls.paths[index][0])).astype(float))
+        if cls.is_single_band:
             image = image[None,:]
         else:
-            #image = torch.permute(image, (3, 1, 2, 0))
             image = torch.permute(image, (2, 0, 1))
-        mask_raw = (np.load(self.paths[index][1]))
+        mask_raw = (np.load(cls.paths[index][1]))
         maskremap100 = np.where(mask_raw == 100, 0, mask_raw)
         maskremap200 = np.where(maskremap100 == 200, 1, maskremap100)
         mask = torch.from_numpy(np.vstack(maskremap200).astype(float))
 
         #assert image.size == mask.size, \
         #    'Image and mask {name} should be the same size, but are {img.size} and {mask.size}'
-        if self.return_type == "dict":
+        
+        if cls.return_type == "dict":
             return {'image': image, 'mask': mask}
-        elif self.return_type == "values":
+        elif cls.return_type == "values":
             mask = mask[None, :]
             return image, mask
 
-
-    def __len__(self):
-        return len(self.paths) 
+    def __len__(cls):
+        return len(cls.paths) 
 
 
 class CustomImageAugmentDataset(Dataset):
@@ -181,35 +196,35 @@ class CustomImageAugmentDataset(Dataset):
     flip, 90 degree rotation (anti-clockwise & clockwise), 180 degree rotation, random crop. Multiple augmentations are
     applied in sequence. This dataset can then be input to a dataloader."""
 
-    def __init__(self, paths, is_single_band, return_type, augmentation):
-        self.paths = paths
-        self.is_single_band = is_single_band
-        self.return_type = return_type
-        self.augmentation = augmentation
+    def __init__(cls, paths, is_single_band, return_type, augmentation):
+        cls.paths = paths
+        cls.is_single_band = is_single_band
+        cls.return_type = return_type
+        cls.augmentation = augmentation
 
-    def __len__(self):
-        return len(self.paths)
+    def __len__(cls):
+        return len(cls.paths)
 
-    def __getitem__(self, index):
-        image = torch.from_numpy(np.vstack(np.load(self.paths[index][0])).astype(float))
-        if self.is_single_band:
+    def __getitem__(cls, index):
+        image = torch.from_numpy(np.vstack(np.load(cls.paths[index][0])).astype(float))
+        if cls.is_single_band:
             image = image[None,:]
         else:
-            #image = torch.permute(image, (3, 1, 2, 0))
             image = torch.permute(image, (2, 0, 1))
-        mask_raw = (np.load(self.paths[index][1]))
+        mask_raw = (np.load(cls.paths[index][1]))
         maskremap100 = np.where(mask_raw == 100, 0, mask_raw)
         maskremap200 = np.where(maskremap100 == 200, 1, maskremap100)
         mask = torch.from_numpy(np.vstack(maskremap200).astype(float))
 
-        if self.augmentation:
-            image, mask = self.augment_image(image, mask)
+        if cls.augmentation:
+            image, mask = cls.augment_image(image, mask)
 
         #assert image.size == mask.size, \
         #    'Image and mask {name} should be the same size, but are {img.size} and {mask.size}'
-        if self.return_type == "dict":
+        
+        if cls.return_type == "dict":
             return {'image': image, 'mask': mask}
-        elif self.return_type == "values":
+        elif cls.return_type == "values":
             mask = mask[None, :]
             return image, mask
 
@@ -241,7 +256,7 @@ class CustomImageAugmentDataset(Dataset):
             augmented_image = torch.rot90(augmented_image, k=-1, dims=[1, 2])
             augmented_mask = torch.rot90(augmented_mask, k=-1, dims=[0, 1])
 
-        if False:#aug_probabilities[5]: # Random crop (and resize)
+        if False: # aug_probabilities[5]: # Random crop (and resize)
             augment_function = transforms.Compose([transforms.RandomCrop(size=256),
                                                    transforms.Resize(512)])
             augmented_image, augmented_mask = augment_function(augmented_image), augment_function(augmented_mask)
@@ -254,11 +269,26 @@ class CustomImageAugmentDataset(Dataset):
         return augmented_image, augmented_mask
 
     
+def create_dataloaders(train_dataset, val_dataset, batch_size, workers):
+    """Creates dataloaders for the separate train and validation datasets.
+    Inputs: train_dataset = training dataset class with augmentation.
+            val_dataset = validation dataset class with no augmentation.
+            batch_size = dataloader batch size.
+            workers = number of parallel workers.
+    Outputs: train_loader = training dataset loader.
+             val_loader = validation dataset loader.
+    """
+    loader_args = dict(batch_size=batch_size, num_workers=workers, pin_memory=True)
+    train_loader = DataLoader(train_dataset, shuffle=True, **loader_args)
+    val_loader = DataLoader(val_dataset, shuffle=False, drop_last=True, **loader_args)
+
+    return train_loader, val_loader
+
+    
 def create_checkpoint_dir(path_checkpoint, img_type, model_type):
     """ A function that checks for a custom directory based on a model type, image type and if
     that directory does not exist, creates it and returns the value for use in checkpoint saving.
     Input img_type can be sar or modis. Includes the datetime in the string name.""" 
-    
     
     now = datetime.now()
     dt_string = now.strftime("%d%m%Y_%H%M%S")
