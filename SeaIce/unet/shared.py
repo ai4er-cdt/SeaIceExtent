@@ -39,8 +39,8 @@ temp_binary = Path(r"{}/temp/binary".format(program_path))
 temp_preprocessed = Path(r"{}/temp/preprocessed".format(program_path))
 temp_probabilities = Path(r"{}/temp/probabilities".format(program_path))
 temp_tiled = Path(r"{}/temp/tiled".format(program_path))
-model_sar = Path(r"{}/models/sar_model_example.pth".format(program_path))
-model_modis = Path(r"{}/models/modis_model_example.pth".format(program_path))
+model_sar = Path(r"{}/models/sar_model.pth".format(program_path))
+model_modis = Path(r"{}/models/modis_model.pth".format(program_path))
 temp_folders = [temp_files, temp_buffer, temp_binary, temp_preprocessed, temp_probabilities, temp_tiled]
 
 

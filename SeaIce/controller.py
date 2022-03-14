@@ -84,7 +84,7 @@ def preprocess_prediction(image_path, image_type, resolution, log_scale, tile_si
    tiling.tile_prediction_image(image_path, image_type, temp_tiled, tile_size)
 
 
-def new_image_prediction(image_path, log_scale):
+def new_image_prediction(image_path, log_scale=False):
     """Controls pipeline of taking in a new image and passing it through prediction procedure.
        Parameter: image_path: (string) file path to tiff image to be predicted, or path of folder containing tiff images to be predicted.
        Output: two png images next to the original image's location(s); one for classes and one for probabilities. 
@@ -105,6 +105,9 @@ def new_image_prediction(image_path, log_scale):
     for i in range(len(image_paths)):
         image = image_paths[i]
         filename = image_names[i]
+        # Make sure we don't try and classify labels!
+        if "labels" in filename:
+            continue
         filename = filename.split(".")[0]
         image_path = r'{}'.format(image)
         # Find out if the image is modis or sar.
@@ -121,7 +124,7 @@ def new_image_prediction(image_path, log_scale):
         # Tile and do any necessary resizing.
         preprocess_prediction(image_path, image_type, 40, log_scale, 1024)
         # Pass the tiles into the model.
-        make_predictions(model, "raw", image_type, temp_tiled, temp_binary, temp_probabilities, save = True)
+        make_predictions(model, "raw", image_type, temp_tiled, temp_binary, temp_probabilities, metrics = True, save = True)
         # Construct a mosaic of tiles to match the original image.
         out_path = name_file("{}_predicted_classes".format(filename), ".png", folder)
         tiling.reconstruct_from_tiles(temp_binary, out_path)

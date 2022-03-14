@@ -10,8 +10,10 @@ import os
 prefix = "G:"
 #prefix = "/mnt/g"
 
-data = Path(r"{}/Shared drives/2021-gtc-sea-ice/data".format(prefix))
-training_root = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata'.format(prefix))
+drive = Path(r"{}/Shared drives/2021-gtc-sea-ice".format(prefix))
+data = Path(r"{}/data".format(drive)
+predictions = Path(r"{}/prediction/test_images".format(drive))
+training_root = Path(r'{}/trainingdata'.format(drive))
 training_tiles, test_tiles = [], [] 
 tile_sizes = [256, 512, 768, 1024]
 for size in tile_sizes:
@@ -75,5 +77,4 @@ def test_split(folder):
 all_folder_names, all_folder_paths = get_contents(data, "_", None)
 
 #make_training_data(all_folder_names, all_folder_paths, training_tiles)
-controller.new_image_prediction(r"G:\Shared drives\2021-gtc-sea-ice\prediction\sar\s1_20220121T001624.tif", True)
-#controller.new_image_prediction(r"G:\Shared drives\2021-gtc-sea-ice\prediction\modis\Antarctica_r05c01.2012296.terra.367.250m.clipped.tif", False)
+controller.new_image_prediction(predictions)
