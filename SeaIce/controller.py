@@ -90,7 +90,7 @@ def new_image_prediction(image_path, log_scale=False):
        Output: two png images next to the original image's location(s); one for classes and one for probabilities. 
     """
     # Check if the provided path is to a folder or an individual image.
-    if image_path.endswith(".tif"):
+    if str(image_path).endswith(".tif"):
         # Individual image.
         image_paths = [image_path]
         image_path = image_path[::-1]

@@ -11,7 +11,7 @@ prefix = "G:"
 #prefix = "/mnt/g"
 
 drive = Path(r"{}/Shared drives/2021-gtc-sea-ice".format(prefix))
-data = Path(r"{}/data".format(drive)
+data = Path(r"{}/data".format(drive))
 predictions = Path(r"{}/prediction/test_images".format(drive))
 training_root = Path(r'{}/trainingdata'.format(drive))
 training_tiles, test_tiles = [], [] 
@@ -74,7 +74,17 @@ def test_split(folder):
             os.rename(r"{}/{}".format(folder, tile), r"{}/train/{}".format(folder, tile))
 
 
-all_folder_names, all_folder_paths = get_contents(data, "_", None)
+def move_labels_for_test():
+    test_tile_names, test_tile_paths = get_contents(test_tiles[3])
+    import shutil
+    for tile in range(len(test_tile_names)):
+        tile_name = test_tile_names[tile]
+        if "labels" in tile_name: 
+            new_path = Path(r"{}/{}".format(predictions, tile_name))
+            print(new_path)
+            shutil.copyfile(test_tile_paths[tile], new_path)
 
+
+#all_folder_names, all_folder_paths = get_contents(data, "_", None)
 #make_training_data(all_folder_names, all_folder_paths, training_tiles)
 controller.new_image_prediction(predictions)

@@ -103,7 +103,6 @@ def make_predictions(model_path, unet_type, image_type, dir_in, dir_out_bin, dir
     if viz:
         import matplotlib.pyplot as plt
     if metrics:
-        from sklearn.metrics import precision_score, accuracy_score
         img_list = create_npy_list(dir_in, image_type)
     else:
         _, img_list = get_contents(dir_in, ".npy", "suffix")
