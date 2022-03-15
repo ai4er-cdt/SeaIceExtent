@@ -14,11 +14,13 @@ def load_model(model_path, unet_type, image_type):
        Returns: the model instance loaded into PyTorch, ready for eval().
     """
     if image_type == "modis":
+        classes = 1
         channels = 3
     elif image_type == "sar":
+        classes = 2
         channels = 1
     if unet_type == "raw":
-        model = UNet(n_channels=channels, n_classes=2, bilinear=True)
+        model = UNet(n_channels=channels, n_classes=classes, bilinear=True)
     elif unet_type == "pretrained":
         model = smp.Unet(encoder_name='resnet34', encoder_weights='imagenet', decoder_use_batchnorm=True,
                  decoder_attention_type=None, in_channels=channels, classes=1, encoder_depth=5)
@@ -99,12 +101,13 @@ def predict_img(net,
         return F.one_hot(full_mask.argmax(dim=0), net.n_classes).permute(2, 0, 1).numpy(), full_mask
     
 
-def make_predictions(model_path, unet_type, image_type, dir_in, dir_out_bin, dir_out_prob, log = False, metrics = False, viz = False, save = False):
+def make_predictions(model_path, unet_type, image_type, dir_in, dir_out_bin=None, dir_out_prob=None, log = False, metrics = False, viz = False, save = False):
     if viz:
         import matplotlib.pyplot as plt
     if metrics:
-        from sklearn.metrics import precision_score, accuracy_score
         img_list = create_npy_list(dir_in, image_type)
+        # Build up all the metrics to get an average for the whole image.
+        all_precision, all_recall, all_accuracy = [], [], []
     else:
         _, img_list = get_contents(dir_in, ".npy", "suffix")
     
@@ -125,10 +128,12 @@ def make_predictions(model_path, unet_type, image_type, dir_in, dir_out_bin, dir
         img = torch.from_numpy(np.vstack(npimg).astype(int))
         if image_type == "sar":
             img = img[None,:]
+            out_threshold = 0.5
         elif image_type == "modis":
             img = torch.permute(img, (2, 0, 1))
+            out_threshold = 0.8
         
-        mask_bin, mask_prob = predict_img(net=net, full_img=img, out_threshold=0.5, device=processor)
+        mask_bin, mask_prob = predict_img(net=net, full_img=img, out_threshold=out_threshold, device=processor)
 
         if metrics:
             #print(gt_remap.shape, mask[0].shape)
@@ -144,21 +149,29 @@ def make_predictions(model_path, unet_type, image_type, dir_in, dir_out_bin, dir
             recall = TP / (TP+FN)
             accuracy = (TP+TN) / N
             print("Precision: {}, Recall: {}, Accuracy: {}".format(precision, recall, accuracy))
-        
+            # Build up all the metrics to get an average for the whole image.
+            all_precision.append(precision) if not np.isnan(precision) else all_precision.append(0)
+            all_recall.append(recall) if not np.isnan(recall) else all_recall.append(0)
+            all_accuracy.append(accuracy) if not np.isnan(accuracy) else all_accuracy.append(0)
         if viz:
              logging.info(f'Visualizing results for image {filename}, close to continue...')
              plot_img_and_mask(img.squeeze(), mask_bin, image_type)
-
         if save:
              filename = filename[::-1]
              filename = filename.split("\\", 1)[0]
              filename = filename[::-1]
              filename = filename.split(".")[0]
              out_filename = name_file(filename, ".npy", dir_out_bin)
-             print("predicted binary classification", filename)
              np.save(out_filename, mask_bin)
              out_filename = name_file(filename, ".npy", dir_out_prob)
-             print("predicted probabilities", filename)
+             print("predicted", filename)
              np.save(out_filename, mask_prob)
              logging.info(f'Mask saved to {out_filename}')
+    if metrics:
+        num_tiles = len(img_list)
+        total_precision = sum(all_precision) / num_tiles
+        total_recall = sum(all_recall) / num_tiles
+        total_accuracy = sum(all_accuracy) / num_tiles
+        return total_precision, total_recall, total_accuracy
+
 

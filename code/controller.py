@@ -58,7 +58,8 @@ def preprocess_training(shape_file_path, folder_name, modis_paths = None, sar_pa
    
     # Tile    
    tiling.tile_training_images(labels_path, out_path, tile_size, step_size, folder_name, modis_file_path, sar_path)
-   delete_temp_files()
+  
+   delete_temp_files(temp_folders)
 
 
 def preprocess_prediction(image_path, image_type, resolution, log_scale, tile_size):
@@ -84,13 +85,13 @@ def preprocess_prediction(image_path, image_type, resolution, log_scale, tile_si
    tiling.tile_prediction_image(image_path, image_type, temp_tiled, tile_size)
 
 
-def new_image_prediction(image_path, log_scale):
+def new_image_prediction(image_path, save=False, metrics=False, log_scale=False):
     """Controls pipeline of taking in a new image and passing it through prediction procedure.
        Parameter: image_path: (string) file path to tiff image to be predicted, or path of folder containing tiff images to be predicted.
        Output: two png images next to the original image's location(s); one for classes and one for probabilities. 
     """
     # Check if the provided path is to a folder or an individual image.
-    if image_path.endswith(".tif"):
+    if str(image_path).endswith(".tif"):
         # Individual image.
         image_paths = [image_path]
         image_path = image_path[::-1]
@@ -118,16 +119,21 @@ def new_image_prediction(image_path, log_scale):
             # name rebanded image path.
             image_path = name_file("rebanded", ".tif", folder)
             rebanding.select_bands(open_image, image_path)
+        del open_image
         # Tile and do any necessary resizing.
         preprocess_prediction(image_path, image_type, 40, log_scale, 1024)
         # Pass the tiles into the model.
-        make_predictions(model, "raw", image_type, temp_tiled, temp_binary, temp_probabilities, save = True)
-        # Construct a mosaic of tiles to match the original image.
-        out_path = name_file("{}_predicted_classes".format(filename), ".png", folder)
-        tiling.reconstruct_from_tiles(temp_binary, out_path)
-        out_path = name_file("{}_predicted_probabilities".format(filename), ".png", folder)
-        tiling.reconstruct_from_tiles(temp_probabilities, out_path)
+        if save:
+            make_predictions(model, "raw", image_type, temp_tiled, temp_binary, temp_probabilities, metrics = metrics, save = save)
+            # Construct a mosaic of tiles to match the original image.
+            out_path = name_file("{}_predicted_classes".format(filename), ".png", folder)
+            tiling.reconstruct_from_tiles(temp_binary, image_type, out_path)
+            out_path = name_file("{}_predicted_probabilities".format(filename), ".png", folder)
+            tiling.reconstruct_from_tiles(temp_probabilities, image_type, out_path)        
+        elif metrics:
+            precision, recall, accuracy = make_predictions(model, "raw", image_type, temp_tiled, temp_binary, temp_probabilities, metrics = metrics, save = save)
+            # Save the metrics.
+            out_path = name_file("{}_results".format(filename), ".json", folder)
+            save_metrics(precision, recall, accuracy, model, out_path)
         # Clean up.
-        delete_temp_files()
-        del open_image
-
+        delete_temp_files(temp_folders)

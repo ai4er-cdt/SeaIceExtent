@@ -6,13 +6,13 @@ helper tasks for working with the data as it was originally presented to the Sea
 """
 
 # Moves data around and writes output.
-import json
 import rasterio
 import os
 import fiona
 import numpy as np
 from osgeo import ogr, gdal
 from PIL import Image
+import json
 from sklearn.preprocessing import StandardScaler
 
 
@@ -28,8 +28,8 @@ temp_binary = r"{}/temp/binary".format(program_path)
 temp_preprocessed = r"{}/temp/preprocessed".format(program_path)
 temp_probabilities = r"{}/temp/probabilities".format(program_path)
 temp_tiled = r"{}/temp/tiled".format(program_path)
-model_sar = r"{}/models/sar_model_example.pth".format(program_path)
-model_modis = r"{}/models/modis_model_example.pth".format(program_path)
+model_sar = r"{}/models/sar_model.pth".format(program_path)
+model_modis = r"{}/models/modis_model.pth".format(program_path)
 temp_folders = [temp_files, temp_buffer, temp_binary, temp_preprocessed, temp_probabilities, temp_tiled]
 
 
@@ -76,10 +76,10 @@ def name_file(out_name, file_type, out_path = temp_files):
     return file_name
 
 
-def delete_temp_files():
+def delete_temp_files(location):
     """Remove temporary files when no longer needed.
     """
-    for folder in temp_folders:
+    for folder in location:
         os.chdir(folder)
         for temp_file in os.listdir():
             os.remove(temp_file)
@@ -198,6 +198,17 @@ def hdf_to_tif():
     del new_tif
 
 
+def save_metrics(precision, recall, accuracy, model_path, out_path):
+    """Save results of a complete image prediction in a json file with the image."""
+    results_info = {"Precision" : precision,
+                    "Recall" : recall,
+                    "Accuracy" : accuracy,
+                    "Tile size" : 1024,
+                    "Model" : str(model_path)}
+    with open(out_path, mode='w') as json_file:
+        json_file.write(json.dumps(results_info, indent=4))
+
+
 create_temp_folders()
-delete_temp_files()
+delete_temp_files(temp_folders)
 os.chdir(program_path)

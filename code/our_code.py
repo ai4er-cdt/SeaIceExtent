@@ -10,8 +10,10 @@ import os
 prefix = "G:"
 #prefix = "/mnt/g"
 
-data = Path(r"{}/Shared drives/2021-gtc-sea-ice/data".format(prefix))
-training_root = Path(r'{}/Shared drives/2021-gtc-sea-ice/trainingdata'.format(prefix))
+drive = Path(r"{}/Shared drives/2021-gtc-sea-ice".format(prefix))
+data = Path(r"{}/data".format(drive))
+predictions = Path(r"{}/prediction/test_images".format(drive))
+training_root = Path(r'{}/trainingdata'.format(drive))
 training_tiles, test_tiles = [], [] 
 tile_sizes = [256, 512, 768, 1024]
 for size in tile_sizes:
@@ -72,8 +74,18 @@ def test_split(folder):
             os.rename(r"{}/{}".format(folder, tile), r"{}/train/{}".format(folder, tile))
 
 
-all_folder_names, all_folder_paths = get_contents(data, "_", None)
+def move_labels_for_test():
+    test_tile_names, test_tile_paths = get_contents(test_tiles[3])
+    import shutil
+    for tile in range(len(test_tile_names)):
+        tile_name = test_tile_names[tile]
+        if "labels" in tile_name: 
+            new_path = Path(r"{}/{}".format(predictions, tile_name))
+            print(new_path)
+            shutil.copyfile(test_tile_paths[tile], new_path)
 
+
+#all_folder_names, all_folder_paths = get_contents(data, "_", None)
 #make_training_data(all_folder_names, all_folder_paths, training_tiles)
-controller.new_image_prediction(r"G:\Shared drives\2021-gtc-sea-ice\prediction\sar\s1_20220121T001624.tif", True)
-#controller.new_image_prediction(r"G:\Shared drives\2021-gtc-sea-ice\prediction\modis\Antarctica_r05c01.2012296.terra.367.250m.clipped.tif", False)
+controller.new_image_prediction(predictions, save=True)
+

@@ -88,14 +88,14 @@ def tile_training_images(labels_path, out_path, tile_size, step_size, date_name,
 def tile_prediction_image(image_path, image_type, out_path, tile_size): 
     """Divide image into tiles and save the tiles and their metadata.
        Parameters: image_path: (string) file path of image.
-                   image_type: (string) modis or sar.
+                   image_type: (string) labels, modis or sar.
                    out_path: (string) path to directory to write output.
                    tile_size: (int) number of pixels in length or width of square tile.
     """
     step_size = tile_size
     if image_type == "modis":
         window_shape = (tile_size, tile_size, 3)
-    elif image_type == "sar":
+    else:
         window_shape = (tile_size, tile_size)
     #scale_tif(image_path) # Standardise input values. Don't do this unless the model was trained with the same scaling.
     image_window = tif_to_window(image_path, window_shape, step_size)
@@ -114,8 +114,8 @@ def tile_prediction_image(image_path, image_type, out_path, tile_size):
                 tile_name = "0{}".format(tile_name)
                 if tile_count < 10:
                     tile_name = "0{}".format(tile_name)
-            # Save the tiles.            
-            image_name = name_file("row{}_col{}".format(row_name, tile_name), ".npy", out_path)
+            # Save the tiles. 
+            image_name = name_file("{}_row{}_col{}".format(image_type, row_name, tile_name), ".npy", out_path)
             np.save(image_name, tile_image)
 
 
@@ -128,8 +128,8 @@ def tif_to_window(tif_path, window_shape, step_size):
        Returns: image_window: (sliding window) for tiling.
 
     """
-    Image.MAX_IMAGE_PIXELS = 900000000
     try:
+        Image.MAX_IMAGE_PIXELS = 900000000
         image_tif = Image.open(tif_path)
         image_array = np.asarray(image_tif)
     except:
@@ -140,7 +140,7 @@ def tif_to_window(tif_path, window_shape, step_size):
     return image_window
 
 
-def reconstruct_from_tiles(tiles_path, out_path):
+def reconstruct_from_tiles(tiles_path, image_type, out_path):
     """Piece together a mosaic image from tiles ordered by row and col.
        Parameters: 
             tiles_path: (string) directory containing numpy tiles.
@@ -162,7 +162,8 @@ def reconstruct_from_tiles(tiles_path, out_path):
             file_num = (row * num_cols) + col
             tile_file = file_names[file_num]
             tile_array = np.load(tile_file)
-            tile_array = tile_array[0]
+            if image_type == "sar":
+                tile_array = tile_array[0]
             if len(row_array) == 0:
                 row_array = tile_array
             else:
