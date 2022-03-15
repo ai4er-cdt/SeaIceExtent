@@ -210,5 +210,5 @@ def save_metrics(precision, recall, accuracy, model_path, out_path):
 
 
 create_temp_folders()
-delete_temp_files(temp_folders)
+#delete_temp_files(temp_folders)
 os.chdir(program_path)

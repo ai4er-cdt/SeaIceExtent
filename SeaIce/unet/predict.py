@@ -128,10 +128,12 @@ def make_predictions(model_path, unet_type, image_type, dir_in, dir_out_bin=None
         img = torch.from_numpy(np.vstack(npimg).astype(int))
         if image_type == "sar":
             img = img[None,:]
+            out_threshold = 0.5
         elif image_type == "modis":
             img = torch.permute(img, (2, 0, 1))
+            out_threshold = 0.8
         
-        mask_bin, mask_prob = predict_img(net=net, full_img=img, out_threshold=0.5, device=processor)
+        mask_bin, mask_prob = predict_img(net=net, full_img=img, out_threshold=out_threshold, device=processor)
 
         if metrics:
             #print(gt_remap.shape, mask[0].shape)
@@ -148,9 +150,9 @@ def make_predictions(model_path, unet_type, image_type, dir_in, dir_out_bin=None
             accuracy = (TP+TN) / N
             print("Precision: {}, Recall: {}, Accuracy: {}".format(precision, recall, accuracy))
             # Build up all the metrics to get an average for the whole image.
-            all_precision.append(precision) 
-            all_recall.append(recall) 
-            all_accuracy.append(accuracy)
+            all_precision.append(precision) if not np.isnan(precision) else all_precision.append(0)
+            all_recall.append(recall) if not np.isnan(recall) else all_recall.append(0)
+            all_accuracy.append(accuracy) if not np.isnan(accuracy) else all_accuracy.append(0)
         if viz:
              logging.info(f'Visualizing results for image {filename}, close to continue...')
              plot_img_and_mask(img.squeeze(), mask_bin, image_type)

@@ -88,15 +88,8 @@ def move_labels_for_test():
 #all_folder_names, all_folder_paths = get_contents(data, "_", None)
 #make_training_data(all_folder_names, all_folder_paths, training_tiles)
 print("ready")
-#controller.new_image_prediction(predictions, save=True)
-from unet.predict import make_predictions
-from preprocessing.data_handling import save_metrics
-program_path = os.getcwd()
-if not program_path.endswith("SeaIce"):
-    os.chdir(r"{}/SeaIce".format(program_path))
-    program_path = os.getcwd()
-model_sar = Path(r"{}/models/sar_model.pth".format(program_path))
-model_modis = Path(r"{}/models/modis_model.pth".format(program_path))            
-p, r, a = make_predictions(model_modis, "raw", "modis", Path(r"{}/prediction/test_tiles".format(drive)), metrics=True)
-out_path = r"G:\Shared drives\2021-gtc-sea-ice\prediction\test_images\2011-01-29_072859_modis_results.json"
-save_metrics(p, r, a, model_modis, out_path)
+#from preprocessing.tiling import reconstruct_from_tiles
+#reconstruct_from_tiles(r"C:\Users\sophi\SeaIceExtent\SeaIce\temp\probabilities", 
+#                       r"G:\Shared drives\2021-gtc-sea-ice\prediction\test_images\2011-01-29_072859_modis_predicted_probabilities.tif")
+
+controller.new_image_prediction(predictions, save=True)
