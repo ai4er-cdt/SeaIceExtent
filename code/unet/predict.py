@@ -156,7 +156,6 @@ def make_predictions(model_path, unet_type, image_type, dir_in, dir_out_bin=None
         if viz:
              logging.info(f'Visualizing results for image {filename}, close to continue...')
              plot_img_and_mask(img.squeeze(), mask_bin, image_type)
-
         if save:
              filename = filename[::-1]
              filename = filename.split("\\", 1)[0]

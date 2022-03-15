@@ -106,5 +106,5 @@ def create_temp_folders():
 
 
 create_temp_folders()
-#delete_temp_files(temp_folders)
+delete_temp_files(temp_folders)
 os.chdir(program_path)

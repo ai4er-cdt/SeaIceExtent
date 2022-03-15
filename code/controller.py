@@ -58,6 +58,7 @@ def preprocess_training(shape_file_path, folder_name, modis_paths = None, sar_pa
    
     # Tile    
    tiling.tile_training_images(labels_path, out_path, tile_size, step_size, folder_name, modis_file_path, sar_path)
+  
    delete_temp_files(temp_folders)
 
 
@@ -136,7 +137,3 @@ def new_image_prediction(image_path, save=False, metrics=False, log_scale=False)
             save_metrics(precision, recall, accuracy, model, out_path)
         # Clean up.
         delete_temp_files(temp_folders)
-        
-
-
-
