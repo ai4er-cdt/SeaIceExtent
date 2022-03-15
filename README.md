@@ -42,4 +42,4 @@ Imagery from Google Maps, 2022
 ```
 
 ## Contributors
-AI4ER CDT Students Madeline Lisaius, Jonathan Roberts and Sophie Turner have all contributed equally to all aspects of this project.  
+[AI4ER CDT](https://ai4er-cdt.esc.cam.ac.uk) Students Madeline Lisaius, Jonathan Roberts and Sophie Turner have all contributed equally to all aspects of this project.  

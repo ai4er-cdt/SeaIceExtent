@@ -1,9 +1,0 @@
-{
-  "ExpandedNodes": [
-    "",
-    "\\preprocessing",
-    "\\unet"
-  ],
-  "SelectedNode": "\\unet\\predict.py",
-  "PreviewInSolutionExplorer": false
-}
