@@ -88,8 +88,4 @@ def move_labels_for_test():
 #all_folder_names, all_folder_paths = get_contents(data, "_", None)
 #make_training_data(all_folder_names, all_folder_paths, training_tiles)
 #controller.new_image_prediction(predictions, save=True)
-from unet.predict import make_predictions
-make_predictions(r"C:\Users\sophi\SeaIceExtent\code\models\sar_model.pth", "raw", "sar", 
-                 r"G:\Shared drives\2021-gtc-sea-ice\trainingdata\tiled1024\test", metrics=True)
-
 
