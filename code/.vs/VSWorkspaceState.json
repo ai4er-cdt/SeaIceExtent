@@ -2,8 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\preprocessing",
+    "\\trainpredict",
     "\\unet"
   ],
-  "SelectedNode": "\\our_code.py",
+  "SelectedNode": "\\preprocessing\\manage_our_repo.py",
   "PreviewInSolutionExplorer": false
 }
