@@ -40,7 +40,7 @@ Imagery from Google Maps, 2022
 │
 └──  Notes              <- For markdown files associated with our project.
 ```
-
+![program structure](images/program structure.PNG?raw=true "Program structure")
 
 ## Preprocessing Pipeline
 ![preprocessing flowchart](images/PreprocessingFlowchart.PNG?raw=true "Preprocessing flowchart")
