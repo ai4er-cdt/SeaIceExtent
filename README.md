@@ -14,6 +14,7 @@ AI4EO GTC 2021/2. Repository for group 2: detecting sea ice extent in visible/ S
 
 - [Description](#description)
 - [GitHub Organization](#github-organization)
+- [Workflow](#workflow)
 - [Contributors](#contributors)
 
 
@@ -47,13 +48,18 @@ Imagery from Google Maps, 2022
 └── images               <- For storing image files used in the project.
 ```
 
-![programstructure](images/program_structure2.JPG?raw=true "Program structure")
 
+## Workflow
 
-
-## Preprocessing Pipeline
+First, data provided (documented in the FAIR data statment) are preprocessed for use in our models:
 
 ![preprocessingflowchart](images/PreprocessingFlowchart2.JPG?raw=true "Preprocessing flowchart")
+
+
+Next, we train and optimize a U-Net architecture for each the Sentinel-1 and MODIS data:
+
+
+Finally, segment new images for the sea ice boundary:
 
 
 ## Contributors
@@ -78,3 +84,4 @@ University of Cambridge:
 - AI for the study of Environmental Risks (AI4ER), UKRI Centre for Doctoral Training, Cambridge.
 - British Antarctic Survey
 
+![programstructure](images/program_structure2.JPG?raw=true "Program structure")
