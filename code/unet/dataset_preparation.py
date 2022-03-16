@@ -45,7 +45,13 @@ def permute_tile_sizes():
 def create_npy_list(images, img_string):
     """A function that returns a list of the names of the SAR/MODIS and labelled .npy files in a directory. These lists can
     then be used as an argument for the Dataset class instantiation. The function also checks that the specified directory 
-    contains matching sar or MODIS/labelled pairs -- specifically, a label.npy file for each image file."""
+    contains matching sar or MODIS/labelled pairs -- specifically, a label.npy file for each image file.
+    Parameters:
+        images: directory containing the images and labels.
+        img_string: image type (e.g. 'sar' or 'modis'.
+    Returns:
+        img_label_pairs: img-label pairs in a tuple.
+    """
     if type(images) == list:
         img_names, label_names = [], []
         for each_file in images:
@@ -72,8 +78,10 @@ def create_npy_list(images, img_string):
 
 def small_sample(dataset):
     """A 100 MB sample of the dataset for faster code development.
-       Parameter: dataset: (list) file paths of all data in the set.
-       Returns: small_set: (list) 100 MB of those files, randomly selected.
+       Parameter:
+            dataset: (list) file paths of all data in the set.
+       Returns:
+            small_set: (list) 100 MB of those files, randomly selected.
     """
     random.shuffle(dataset)
     small_set, i, num_bytes = [], 0, 0
@@ -93,12 +101,12 @@ def small_sample(dataset):
 
 def split_data(dataset, val_percent, batch_size, workers):
     """Split dataset into training and validation sets.
-       Parameters: 
+        Parameters:
             dataset: (list) paths of all numpy tile files in set.
             val_percent: (numerical type) % of data to use for validation.
             batch_size: (int) number of tiles per batch.
             workers: (int) parallelism factor (CPU or GPU).
-       Returns:
+        Returns:
             n_val: (int) number of tiles in validation set.
             n_train: (int) number of tiles in training set.
             train_loader: (dataloader object) to train with.
@@ -118,12 +126,14 @@ def split_data(dataset, val_percent, batch_size, workers):
 
 def split_img_list(img_list, val_percent):
     """Splits the img list pairs (created in create_npy_list) into separate sets for training and validation.
-    Inputs: img_list = a 2-column list containing the image-label pairs.
+        Parameters:
+            img_list = a 2-column list containing the image-label pairs.
             val_percent = percentage of entire dataset used for validation.
-    Outputs: train_img_list = list containing the img_list for the training data.
-             val_img_list = list containing the img_list for the validation data.
-             n_train = number of images in the training dataset.
-             n_val = number of images in the validation dataset.
+        Returns:
+            train_img_list = list containing the img_list for the training data.
+            val_img_list = list containing the img_list for the validation data.
+            n_train = number of images in the training dataset.
+            n_val = number of images in the validation dataset.
     """
     random.seed(2022)
 
@@ -159,18 +169,18 @@ class CustomImageDataset(Dataset):
     the list_npy_filenames function). The __getitem__ method pairs up corresponding image-label .npy file pairs. This
     dataset can then be input to a dataloader. return_type = "values" or "dict"."""
     
-    def __init__(cls, paths, is_single_band, return_type):
-        cls.paths = paths
-        cls.is_single_band = is_single_band
-        cls.return_type = return_type
+    def __init__(self, paths, is_single_band, return_type):
+        self.paths = paths
+        self.is_single_band = is_single_band
+        self.return_type = return_type
     
-    def __getitem__(cls, index):
-        image = torch.from_numpy(np.vstack(np.load(cls.paths[index][0])).astype(float))
-        if cls.is_single_band:
+    def __getitem__(self, index):
+        image = torch.from_numpy(np.vstack(np.load(self.paths[index][0])).astype(float))
+        if self.is_single_band:
             image = image[None,:]
         else:
             image = torch.permute(image, (2, 0, 1))
-        mask_raw = (np.load(cls.paths[index][1]))
+        mask_raw = (np.load(self.paths[index][1]))
         maskremap100 = np.where(mask_raw == 100, 0, mask_raw)
         maskremap200 = np.where(maskremap100 == 200, 1, maskremap100)
         mask = torch.from_numpy(np.vstack(maskremap200).astype(float))
@@ -178,14 +188,14 @@ class CustomImageDataset(Dataset):
         #assert image.size == mask.size, \
         #    'Image and mask {name} should be the same size, but are {img.size} and {mask.size}'
         
-        if cls.return_type == "dict":
+        if self.return_type == "dict":
             return {'image': image, 'mask': mask}
-        elif cls.return_type == "values":
+        elif self.return_type == "values":
             mask = mask[None, :]
             return image, mask
 
-    def __len__(cls):
-        return len(cls.paths) 
+    def __len__(self):
+        return len(self.paths)
 
 
 class CustomImageAugmentDataset(Dataset):
@@ -196,35 +206,35 @@ class CustomImageAugmentDataset(Dataset):
     flip, 90 degree rotation (anti-clockwise & clockwise), 180 degree rotation, random crop. Multiple augmentations are
     applied in sequence. This dataset can then be input to a dataloader."""
 
-    def __init__(cls, paths, is_single_band, return_type, augmentation):
-        cls.paths = paths
-        cls.is_single_band = is_single_band
-        cls.return_type = return_type
-        cls.augmentation = augmentation
+    def __init__(self, paths, is_single_band, return_type, augmentation):
+        self.paths = paths
+        self.is_single_band = is_single_band
+        self.return_type = return_type
+        self.augmentation = augmentation
 
-    def __len__(cls):
-        return len(cls.paths)
+    def __len__(self):
+        return len(self.paths)
 
-    def __getitem__(cls, index):
-        image = torch.from_numpy(np.vstack(np.load(cls.paths[index][0])).astype(float))
-        if cls.is_single_band:
+    def __getitem__(self, index):
+        image = torch.from_numpy(np.vstack(np.load(self.paths[index][0])).astype(float))
+        if self.is_single_band:
             image = image[None,:]
         else:
             image = torch.permute(image, (2, 0, 1))
-        mask_raw = (np.load(cls.paths[index][1]))
+        mask_raw = (np.load(self.paths[index][1]))
         maskremap100 = np.where(mask_raw == 100, 0, mask_raw)
         maskremap200 = np.where(maskremap100 == 200, 1, maskremap100)
         mask = torch.from_numpy(np.vstack(maskremap200).astype(float))
 
-        if cls.augmentation:
-            image, mask = cls.augment_image(image, mask)
+        if self.augmentation:
+            image, mask = self.augment_image(image, mask)
 
         #assert image.size == mask.size, \
         #    'Image and mask {name} should be the same size, but are {img.size} and {mask.size}'
         
-        if cls.return_type == "dict":
+        if self.return_type == "dict":
             return {'image': image, 'mask': mask}
-        elif cls.return_type == "values":
+        elif self.return_type == "values":
             mask = mask[None, :]
             return image, mask
 

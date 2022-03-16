@@ -1,4 +1,5 @@
-Notes on papers read to inform the sea ice group team challenge. 
+# Notes on papers read to inform the sea ice group team challenge. 
+These papers were read in December 2021 and January 2022 to inform the SeaIce group's approach.
 Format: please use citation in APA format and place alphabetically by author's last name in file. Use a bullet point with initials to add comments of take-aways from paper.
 
 
