@@ -46,11 +46,13 @@ Imagery from Google Maps, 2022
 │
 └── images               <- For storing image files used in the project.
 ```
-![program structure](images/program_structure.PNG?raw=true "Program structure")
+![programstructure](images/program_structure2.JPG?raw=true "Program structure")
 
 ## Preprocessing Pipeline
-![preprocessing flowchart](images/PreprocessingFlowchart.PNG?raw=true "Preprocessing flowchart")
+
+![preprocessingflowchart](images/PreprocessingFlowchart2.JPG?raw=true "Preprocessing flowchart")
 
 
 ## Contributors
+
 [AI4ER CDT](https://ai4er-cdt.esc.cam.ac.uk) Students Madeline Lisaius, Jonathan Roberts and Sophie Turner have all contributed equally to all aspects of this project.  
