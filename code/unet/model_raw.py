@@ -1,7 +1,7 @@
 """ Implementation of model """
 from shared import *
 from evaluation import evaluate, dice_loss
-from predict import make_predictions
+from trainpredict.predict import make_predictions
 from dataset_preparation import *
 from network_structure import UNet
 import argparse
