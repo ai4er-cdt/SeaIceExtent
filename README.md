@@ -29,16 +29,22 @@ Imagery from Google Maps, 2022
 ## GitHub Organization
 ```
 ├── LICENSE
-├── README.md          <- The top-level README for developers using this project.
+├── README.md          <- The top-level README for developers using this project and visitors to the |                         repository curious about the work.
 |
-├── SeaIce             <- Python modules for training our model and implementing prediction           
-|   |                     functionality.
-│   ├── preprocessing  <- Notebooks for initial exploration.
-│   └── unet           <- Polished notebooks for presentations or intermediate results.
+├── code               <- Python modules for training our model and implementing prediction           
+|   |                     functionality, plus some supporting scripts
+│   ├── preprocessing  <- modules used to pre-process the data and prepare for use in models.
+│   ├── unet           <- modules that form the structure of the U-Net functionality.
+│   └── trainpredict   <- modules and scripts for training and tuning the U-Nets as well as for 
+│                         segmenting or "predicting" sea ice segmentation on new images.
 │
-├── Exploratory        <- Scripts and modules used for exploring our data and testing models.
+├── Exploratory        <- Historic scripts and modules used for exploring our data and testing 
+│                         models.
 │
-└──  Notes              <- For markdown files associated with our project.
+├──  Notes              <- For markdown files associated with our project and notes to guide use of 
+│                          certain systems such as JASMIN HPC. 
+│
+└── images               <- For storing image files used in the project.
 ```
 ![program structure](images/program_structure.PNG?raw=true "Program structure")
 
