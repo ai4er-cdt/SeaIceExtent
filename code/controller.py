@@ -1,3 +1,10 @@
+"""This is the controller module for the Sea Ice Extent GTC Project train and predict step.
+
+This module contains functions for tasks such as preprocessing data for use with training and
+prediction functionalities, and controls the new image prediction functionality.
+"""
+
+
 from preprocessing.data_handling import *
 from preprocessing import stitching, resizing, clipping, relabelling, tiling, rebanding
 from unet.predict import make_predictions
