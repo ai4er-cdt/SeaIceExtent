@@ -46,7 +46,10 @@ Imagery from Google Maps, 2022
 │
 └── images               <- For storing image files used in the project.
 ```
+
 ![programstructure](images/program_structure2.JPG?raw=true "Program structure")
+
+
 
 ## Preprocessing Pipeline
 
@@ -55,4 +58,23 @@ Imagery from Google Maps, 2022
 
 ## Contributors
 
-[AI4ER CDT](https://ai4er-cdt.esc.cam.ac.uk) Students Madeline Lisaius, Jonathan Roberts and Sophie Turner have all contributed equally to all aspects of this project.  
+[AI4ER CDT](https://ai4er-cdt.esc.cam.ac.uk) Students Madeline Lisaius, Jonathan Roberts and Sophie Turner have all contributed equally to all aspects of this project. Further details on all people involved are included below:
+
+Project Core Members:
+- Lisaius, Madeline. *(AI4ER Cohort-2021, University of Cambridge)*
+- Roberts, Jonathan. *(AI4ER Cohort-2021, University of Cambridge)*
+- Turner, Sophie. *(AI4ER Cohort-2021, University of Cambridge)*
+
+Technical Support Members:
+- Rogers, Martin. *(AI Lab, British Antarctic Survey (BAS), Cambridge)*
+- Stokholm, Andreas. *(PhD Student, National Space Institute Geodesy and Earth Observation)*
+
+Domain Support Members:
+- Flemming, Andrew. *(British Antarctic Survey (BAS), Cambridge)*
+- Rogers, Martin. *(AI Lab, British Antarctic Survey (BAS), Cambridge)*
+
+### Organisations:
+University of Cambridge:
+- AI for the study of Environmental Risks (AI4ER), UKRI Centre for Doctoral Training, Cambridge.
+- British Antarctic Survey
+
