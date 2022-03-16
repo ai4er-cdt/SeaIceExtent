@@ -41,5 +41,10 @@ Imagery from Google Maps, 2022
 └──  Notes              <- For markdown files associated with our project.
 ```
 
+
+## Preprocessing Pipeline
+![preprocessing flowchart](images/PreprocessingFlowchart.PNG?raw=true "Preprocessing flowchart")
+
+
 ## Contributors
 [AI4ER CDT](https://ai4er-cdt.esc.cam.ac.uk) Students Madeline Lisaius, Jonathan Roberts and Sophie Turner have all contributed equally to all aspects of this project.  
