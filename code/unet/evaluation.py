@@ -49,15 +49,15 @@ def evaluate(net, dataloader, device, epsilon, loss_function="CE"):
                 mask_pred = (torch.sigmoid(mask_pred) > 0.5).float()
                 mask_true = mask_true[:, None, :, :]
                 # compute the Dice score
-                dice_score += dice_coeff(mask_pred, mask_true, reduce_batch_first=False, epsilon=epsilon) + \
+                dice_score += (1 - dice_coeff(mask_pred, mask_true, reduce_batch_first=False, epsilon=epsilon)) + \
                               criterion(mask_pred, mask_true)
             else:
 
                 mask_true = F.one_hot(mask_true, net.n_classes).permute(0, 3, 1, 2).float()
                 mask_pred = F.one_hot(mask_pred.argmax(dim=1), net.n_classes).permute(0, 3, 1, 2).float()
                 # compute the Dice score, ignoring background
-                dice_score += multiclass_dice_coeff(mask_pred[:, 1:, ...], mask_true[:, 1:, ...],
-                                                    reduce_batch_first=False, epsilon=epsilon) + criterion(mask_pred,
+                dice_score += (1 - multiclass_dice_coeff(mask_pred[:, 1:, ...], mask_true[:, 1:, ...],
+                                                    reduce_batch_first=False, epsilon=epsilon)) + criterion(mask_pred,
                                                                                                            mask_true)
     net.train()
     print(num_val_batches)
