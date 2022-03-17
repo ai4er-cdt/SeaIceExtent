@@ -6,6 +6,8 @@ We used Sentinel-1 and MODIS data, two freely available satellite data sources, 
 
 We used Python, an open access programming language for all of our scripts save a few exceptions including our slurm batch script and notes for connecting with high performance computing (HPC) resources through bash. We used the JASMIN (https://jasmin.ac.uk/) HPC for parameter optimization and training our model. JASMIN is available for free use by researchers in the UK - we acknowledge that this is not accessible to many. We also used SNAP, QGIS and Google Earth Engine as additional tools for exploration and visualization throughout the project. 
 
+There are numerous instances in the codebase in which randomness was required -- e.g. for splitting datasets or performing augmentations. To ensure reproducibility, whenever this functionality was required, a random 'seed' was specified. These are available in the code.
+
 For JASMIN, we used:
 GPU Pytorch: Pytorch Stable (1.10.2), CUDA 11.3. [Linux pip installation command for JASMIN: pip3 install torch==1.10.2+cu113 torchvision==0.11.3+cu113 torchaudio==0.10.2+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html]
 
