@@ -194,6 +194,7 @@ def train_and_validate(config=None, amp=False, device=torch.device('cuda')):
             wandb.log({"Epoch Loss, Training": avg_epoch_training_loss, "Epoch Loss, Validation": val_score,
                        "Epoch": epoch + 1}, step=global_step)
 
+            # Updating best epoch if loss score is lower than current best
             if epoch == 0:
                 best_run_loss_val = val_score
                 best_epoch = epoch
@@ -208,6 +209,7 @@ def train_and_validate(config=None, amp=False, device=torch.device('cuda')):
                                                            config.learning_rate, config.batch_size, config.weight_decay)
                 torch.save(net.state_dict(), dir_checkpoint + f'/checkpoint_epoch{epoch + 1}.pth')
 
+        # Logging the training and validations losses for the entire run
         wandb.log({"Run Loss, Training": run_loss_train / config.epochs, "Run Loss, Validation": best_run_loss_val,
                    "Run Best Epoch": best_epoch}, step=global_step)
 
@@ -262,7 +264,7 @@ if __name__ == '__main__':
 
     sweep_id = wandb.sweep(sweep_config, project="jasmin_gpu_15_03_tuning")
 
-    # Number of runs 
+    # Number of runs
     n_tuning = 1000
 
     # Initialising the wandb agent
