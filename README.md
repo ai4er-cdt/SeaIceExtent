@@ -59,7 +59,7 @@ Our code is organized in the following structure:
 
 First, data provided (documented in the FAIR data statment) are preprocessed for use in our models:
 
-![preprocessingflowchart](images/PreprocessingFlowchart2.jpg?raw=true "Preprocessing flowchart")
+![preprocessingflowchart](images/PreprocessingFlowchart.png?raw=true "Preprocessing flowchart")
 
 
 
@@ -95,6 +95,6 @@ Domain Support Members:
 ### Organisations:
 University of Cambridge:
 - AI for the study of Environmental Risks (AI4ER), UKRI Centre for Doctoral Training, Cambridge.
-- British Antarctic Survey
+- British Antarctic Survey (BAS), Cambridge.
 
 
