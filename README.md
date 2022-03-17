@@ -51,15 +51,19 @@ Imagery from Google Maps, 2022
 
 ## Workflow
 
+Our code is organized in the following structure:
+
+![programstructure](images/program_structure.png?raw=true "Program structure")
+
+
+
 First, data provided (documented in the FAIR data statment) are preprocessed for use in our models:
 
 ![preprocessingflowchart](images/PreprocessingFlowchart2.jpg?raw=true "Preprocessing flowchart")
 
 
 
-Next, we train and optimize a U-Net architecture for each the Sentinel-1 and MODIS data. Our workflow and the structure of the U-Net are shown below:
-
-![programstructure](images/program_structure.png?raw=true "Program structure")
+Next, we train and optimize a U-Net architecture for each the Sentinel-1 and MODIS data. We prepare the images seperately and then train seperate U-Net structures using the JASMIN HPC. The structure of the U-Net is shown below:
 
 [![unet](images/unet.png?raw=true "U-Net Structure")](https://arxiv.org/abs/1505.04597)
 From the original U-Net paper [U-Net: Convolutional Networks for Biomedical Image Segmentation](https://arxiv.org/abs/1505.04597) by Olaf Ronneberger, Philipp Fischer, Thomas Brox.
