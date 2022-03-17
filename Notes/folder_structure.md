@@ -1,5 +1,3 @@
-JR
-
 Folder structure overview of the provided data directory. The level increases with depth in the folder structure.
 
 # Level 0: *iceExtent*
