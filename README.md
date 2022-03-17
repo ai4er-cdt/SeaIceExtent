@@ -60,7 +60,7 @@ Our code is organized in the following structure:
 
 First, data provided (documented in the FAIR data statment) are preprocessed for use in our models:
 
-![preprocessingflowchart](images/preprocessing flowchart.jpg?raw=true "Preprocessing flowchart")
+![preprocessingflowchart](images/preprocessing_flowchart.jpg?raw=true "Preprocessing flowchart")
 
 
 
