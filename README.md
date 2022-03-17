@@ -30,7 +30,8 @@ Imagery from Google Maps, 2022
 ## GitHub Organization
 ```
 ├── LICENSE
-├── README.md          <- The top-level README for developers using this project and visitors to the |                         repository curious about the work.
+├── README.md          <- The top-level README for developers using this project and visitors to the 
+|                         repository curious about the work.
 |
 ├── code               <- Python modules for training our model and implementing prediction           
 |   |                     functionality, plus some supporting scripts
@@ -51,13 +52,19 @@ Imagery from Google Maps, 2022
 
 ## Workflow
 
+Our code is organized in the following structure:
+
+![programstructure](images/program_structure.png?raw=true "Program structure")
+
+
+
 First, data provided (documented in the FAIR data statment) are preprocessed for use in our models:
 
-![preprocessingflowchart](images/PreprocessingFlowchart2.jpg?raw=true "Preprocessing flowchart")
+![preprocessingflowchart](images/PreprocessingFlowchart.png?raw=true "Preprocessing flowchart")
 
 
 
-Next, we train and optimize a U-Net architecture for each the Sentinel-1 and MODIS data:
+Next, we train and optimize a U-Net architecture for each the Sentinel-1 and MODIS data. We prepare the images seperately and then train seperate U-Net structures using the JASMIN HPC. The structure of the U-Net is shown below:
 
 [![unet](images/unet.png?raw=true "U-Net Structure")](https://arxiv.org/abs/1505.04597)
 From the original U-Net paper [U-Net: Convolutional Networks for Biomedical Image Segmentation](https://arxiv.org/abs/1505.04597) by Olaf Ronneberger, Philipp Fischer, Thomas Brox.
@@ -66,7 +73,7 @@ From the original U-Net paper [U-Net: Convolutional Networks for Biomedical Imag
 
 Finally, segment new images for the sea ice boundary. Here we have included a successful image segmentation for SAR imagery, however the model performs to varying degrees.
 
-![segmentation](images/prediction.jpg?raw=true "Segmentation example")
+![segmentation](images/prediction.JPG?raw=true "Segmentation example")
 
 
 ## Contributors
@@ -89,6 +96,6 @@ Domain Support Members:
 ### Organisations:
 University of Cambridge:
 - AI for the study of Environmental Risks (AI4ER), UKRI Centre for Doctoral Training, Cambridge.
-- British Antarctic Survey
+- British Antarctic Survey (BAS), Cambridge.
 
-![programstructure](images/program_structure2.JPG?raw=true "Program structure")
+
