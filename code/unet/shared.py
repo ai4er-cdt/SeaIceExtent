@@ -20,8 +20,8 @@ prefix = "/mnt/g" # Maddy
 
 # Allow imports to function the same in different environments
 program_path = os.getcwd()
-if not program_path.endswith("SeaIce"):
-    os.chdir(r"{}/SeaIce".format(program_path))
+if not program_path.endswith("code"):
+    os.chdir(r"{}/code".format(program_path))
     program_path = os.getcwd()
 
 #processor = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

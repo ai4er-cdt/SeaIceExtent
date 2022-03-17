@@ -18,8 +18,8 @@ from sklearn.preprocessing import StandardScaler
 
 # Allow imports to function the same in different environments
 program_path = os.getcwd()
-if not program_path.endswith("SeaIce"):
-    os.chdir(r"{}/SeaIce".format(program_path))
+if not program_path.endswith("code"):
+    os.chdir(r"{}/code".format(program_path))
     program_path = os.getcwd()
 
 temp_files = r"{}/temp/temporary_files".format(program_path)

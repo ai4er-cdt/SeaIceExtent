@@ -121,7 +121,7 @@ def make_predictions(model_path, unet_type, image_type, dir_in, dir_out_bin=None
             gt100 = np.where(gt_npy == 100, 0, gt_npy)
             gt200 = np.where(gt100 == 200, 1, gt100)
             gt_remap = np.vstack(gt200).astype(int)
-            #print(gt_remap)
+            
         logging.info(f'\nPredicting image {filename} ...')
         if log: npimg = unlog_img(np.load(filename))
         else: npimg = np.load(filename)
@@ -136,19 +136,20 @@ def make_predictions(model_path, unet_type, image_type, dir_in, dir_out_bin=None
         mask_bin, mask_prob = predict_img(net=net, full_img=img, out_threshold=out_threshold, device=processor)
 
         if metrics:
-            #print(gt_remap.shape, mask[0].shape)
-            #print(np.unique(gt_remap), np.unique(mask[0]))
-            #print(accuracy_score(gt_remap, mask[0], average = 'micro'), precision_score(gt_remap, mask[0]))
             N = gt_remap.shape[0] * gt_remap.shape[1]
-            #accuracy = (gt_remap == mask).sum() / N
-            TP = ((mask_bin[0] == 1) & (gt_remap == 1)).sum()
-            TN = ((mask_bin[0] == 0) & (gt_remap == 0)).sum()
-            FP = ((mask_bin[0] == 1) & (gt_remap == 0)).sum()
-            FN = ((mask_bin[0] == 0) & (gt_remap == 1)).sum()
+            if image_type == "modis":
+                compare_with = mask_bin
+            if image_type == "sar":
+                compare_with = mask_bin[1]
+            TP = ((compare_with == 1) & (gt_remap == 1)).sum()
+            TN = ((compare_with == 0) & (gt_remap == 0)).sum()
+            FP = ((compare_with == 1) & (gt_remap == 0)).sum()
+            FN = ((compare_with == 0) & (gt_remap == 1)).sum()
             precision = TP / (TP+FP)
             recall = TP / (TP+FN)
             accuracy = (TP+TN) / N
-            print("Precision: {}, Recall: {}, Accuracy: {}".format(precision, recall, accuracy))
+            print(recall)
+#            print("Precision: {}, Recall: {}, Accuracy: {}".format(precision, recall, accuracy))
             # Build up all the metrics to get an average for the whole image.
             all_precision.append(precision) if not np.isnan(precision) else all_precision.append(0)
             all_recall.append(recall) if not np.isnan(recall) else all_recall.append(0)

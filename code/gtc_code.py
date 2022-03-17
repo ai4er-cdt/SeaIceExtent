@@ -88,4 +88,3 @@ def move_labels_for_test():
 #all_folder_names, all_folder_paths = get_contents(data, "_", None)
 #make_training_data(all_folder_names, all_folder_paths, training_tiles)
 #controller.new_image_prediction(predictions, save=True)
-
