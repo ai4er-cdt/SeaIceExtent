@@ -57,7 +57,9 @@ First, data provided (documented in the FAIR data statment) are preprocessed for
 
 
 
-Next, we train and optimize a U-Net architecture for each the Sentinel-1 and MODIS data:
+Next, we train and optimize a U-Net architecture for each the Sentinel-1 and MODIS data. Our workflow and the structure of the U-Net are shown below:
+
+![programstructure](images/program_structure.png?raw=true "Program structure")
 
 [![unet](images/unet.png?raw=true "U-Net Structure")](https://arxiv.org/abs/1505.04597)
 From the original U-Net paper [U-Net: Convolutional Networks for Biomedical Image Segmentation](https://arxiv.org/abs/1505.04597) by Olaf Ronneberger, Philipp Fischer, Thomas Brox.
@@ -66,7 +68,7 @@ From the original U-Net paper [U-Net: Convolutional Networks for Biomedical Imag
 
 Finally, segment new images for the sea ice boundary. Here we have included a successful image segmentation for SAR imagery, however the model performs to varying degrees.
 
-![segmentation](images/prediction.jpg?raw=true "Segmentation example")
+![segmentation](images/prediction.JPG?raw=true "Segmentation example")
 
 
 ## Contributors
@@ -91,4 +93,4 @@ University of Cambridge:
 - AI for the study of Environmental Risks (AI4ER), UKRI Centre for Doctoral Training, Cambridge.
 - British Antarctic Survey
 
-![programstructure](images/program_structure2.JPG?raw=true "Program structure")
+
