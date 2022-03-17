@@ -30,7 +30,8 @@ Imagery from Google Maps, 2022
 ## GitHub Organization
 ```
 ├── LICENSE
-├── README.md          <- The top-level README for developers using this project and visitors to the |                         repository curious about the work.
+├── README.md          <- The top-level README for developers using this project and visitors to the 
+|                         repository curious about the work.
 |
 ├── code               <- Python modules for training our model and implementing prediction           
 |   |                     functionality, plus some supporting scripts
