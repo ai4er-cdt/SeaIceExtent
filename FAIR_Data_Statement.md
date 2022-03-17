@@ -1,18 +1,20 @@
-Placeholder for notes on our data and processes' adherence to the FAIR data principles.
-
 We aspired to FAIR data principles of Findability, Accessibility, Interoperability, and Reuse. More can be found here: https://www.go-fair.org/fair-principles/
 
 We used Sentinel-1 and MODIS data, two freely available satellite data sources, that were downloaded by researchers at the British Antarctic Survey (BAS) at an unknown time. We were provided Sentinel-1 data in raw reflectance of the hh band and MODIS in the bands 3, 6 and 7 at 250m resolution and the names of the provided tiles are listed below. We were also provided sea-ice boundary polygons that were created by researchers at BAS at an unknown time.
 
-We used Python, an open access programming language for all of our scripts save a few exceptions including our slurm batch script and notes for connecting with high performance computing (HPC) resources through bash. We used the JASMIN (https://jasmin.ac.uk/) HPC for parameter optimization and training our model. JASMIN is available for free use by researchers in the UK - we acknowledge that this is not accessible to many. We also used SNAP, QGIS and Google Earth Engine as additional tools for exploration and visualization throughout the project. 
+We used Python, an open access programming language for all of our scripts save a few exceptions including our slurm batch script and notes for connecting with high performance computing (HPC) resources through bash. We used the [JASMIN](https://jasmin.ac.uk/) HPC for parameter optimization and training our model. JASMIN is available for free use by researchers in the UK - we acknowledge that this is not accessible to many. We also used SNAP, QGIS and Google Earth Engine as additional tools for exploration and visualization throughout the project. 
 
 There are numerous instances in the codebase in which randomness was required -- e.g. for splitting datasets or performing augmentations. To ensure reproducibility, whenever this functionality was required, a random 'seed' was specified. These are available in the code.
 
 For JASMIN, we used:
-GPU Pytorch: Pytorch Stable (1.10.2), CUDA 11.3. [Linux pip installation command for JASMIN: pip3 install torch==1.10.2+cu113 torchvision==0.11.3+cu113 torchaudio==0.10.2+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html]
+GPU Pytorch: Pytorch Stable (1.10.2), CUDA 11.3. 
+Linux pip installation command for JASMIN: 
+```Linux pip installation command for JASMIN: pip3 install torch==1.10.2+cu113 torchvision==0.11.3+cu113 torchaudio==0.10.2+cu113 -f``` 
+[Wheel can be downloaded here.](https://download.pytorch.org/whl/cu113/torch_stable.html)
 
-Sentinel-1 Images:
-WSM_SS_20110113_021245_1528_2
+[Sentinel-1](https://sentinel.esa.int/web/sentinel/missions/sentinel-1) Images:
+
+WSM_SS_20110113_021245_1528_2 
 WSM_SS_20110114_063311_8263_4
 WSM_SS_20110115_055843_2010_3
 WSM_SS_20110118_122137_2781_3
@@ -51,7 +53,8 @@ RS2_SS_20130206_035347_SCWA_HH_1
 RS2_SS_20130206_035454_SCWA_HH_1
 RS2_SS_20130211_062725_SCWA_HH_1
 
-MODIS Imges:
+[MODIS](https://earthdata.nasa.gov/earth-observation-data/near-real-time/download-nrt-data/modis-nrt) Imges:
+
 MODIS_20110113_021245_2
 MODIS_20110114_063311_4
 MODIS_20110115_055843_3
