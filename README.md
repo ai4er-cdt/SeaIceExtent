@@ -64,7 +64,9 @@ From the original U-Net paper [U-Net: Convolutional Networks for Biomedical Imag
 
 
 
-Finally, segment new images for the sea ice boundary:
+Finally, segment new images for the sea ice boundary. Here we have included a successful image segmentation for SAR imagery, however the model performs to varying degrees.
+
+![segmentation](images/prediction.jpg?raw=true "Segmentation example")
 
 
 ## Contributors
