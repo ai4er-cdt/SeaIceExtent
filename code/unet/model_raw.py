@@ -34,8 +34,8 @@ def train_net(net, device, image_type, dir_img,
     
     # Create dataset
     img_list = create_npy_list(dir_img, image_type)
-    # Use this if you want a smaller dataset just to test things with.
-    img_list = small_sample(img_list) # Comment this line out if you want the full set.
+    # Use this if you want a smaller dataset just to test things with:
+    #img_list = small_sample(img_list) # Comment this line out if you want the full set.
 
     dataset = CustomImageDataset(img_list, False, "dict")
     

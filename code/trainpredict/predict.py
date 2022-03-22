@@ -124,10 +124,9 @@ def make_predictions(model_path, unet_type, image_type, dir_in, dir_out_bin=None
         img = torch.from_numpy(np.vstack(npimg).astype(int))
         if image_type == "sar":
             img = img[None,:]
-            out_threshold = 0.8
         elif image_type == "modis":
             img = torch.permute(img, (2, 0, 1))
-            out_threshold = 0.8
+        out_threshold = 0.8
         
         mask_bin, mask_prob = predict_img(net=net, full_img=img, out_threshold=out_threshold, device=processor)
 
@@ -136,7 +135,7 @@ def make_predictions(model_path, unet_type, image_type, dir_in, dir_out_bin=None
             if image_type == "modis":
                 compare_with = mask_bin
             if image_type == "sar":
-                compare_with = mask_bin[1] #########################################################
+                compare_with = mask_bin[1] 
             TP = ((compare_with == 1) & (gt_remap == 1)).sum()
             TN = ((compare_with == 0) & (gt_remap == 0)).sum()
             FP = ((compare_with == 1) & (gt_remap == 0)).sum()
@@ -144,8 +143,6 @@ def make_predictions(model_path, unet_type, image_type, dir_in, dir_out_bin=None
             precision = TP / (TP+FP)
             recall = TP / (TP+FN)
             accuracy = (TP+TN) / N
-            print(recall)
-#            print("Precision: {}, Recall: {}, Accuracy: {}".format(precision, recall, accuracy))
             # Build up all the metrics to get an average for the whole image.
             all_precision.append(precision) if not np.isnan(precision) else all_precision.append(0)
             all_recall.append(recall) if not np.isnan(recall) else all_recall.append(0)

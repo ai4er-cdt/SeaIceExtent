@@ -228,10 +228,7 @@ class CustomImageAugmentDataset(Dataset):
 
         if self.augmentation:
             image, mask = self.augment_image(image, mask)
-
-        #assert image.size == mask.size, \
-        #    'Image and mask {name} should be the same size, but are {img.size} and {mask.size}'
-        
+      
         if self.return_type == "dict":
             return {'image': image, 'mask': mask}
         elif self.return_type == "values":
