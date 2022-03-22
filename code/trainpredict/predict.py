@@ -94,11 +94,7 @@ def predict_img(net,
         ])
 
         full_mask = tf(probs.cpu()).squeeze()
-
-    if net.n_classes == 1:
-        return (full_mask > out_threshold).numpy(), full_mask
-    else:
-        return F.one_hot(full_mask.argmax(dim=0), net.n_classes).permute(2, 0, 1).numpy(), full_mask
+    return (full_mask > out_threshold).numpy(), full_mask
     
 
 def make_predictions(model_path, unet_type, image_type, dir_in, dir_out_bin=None, dir_out_prob=None, log = False, metrics = False, viz = False, save = False):
@@ -128,7 +124,7 @@ def make_predictions(model_path, unet_type, image_type, dir_in, dir_out_bin=None
         img = torch.from_numpy(np.vstack(npimg).astype(int))
         if image_type == "sar":
             img = img[None,:]
-            out_threshold = 0.5
+            out_threshold = 0.8
         elif image_type == "modis":
             img = torch.permute(img, (2, 0, 1))
             out_threshold = 0.8
@@ -140,7 +136,7 @@ def make_predictions(model_path, unet_type, image_type, dir_in, dir_out_bin=None
             if image_type == "modis":
                 compare_with = mask_bin
             if image_type == "sar":
-                compare_with = mask_bin[1]
+                compare_with = mask_bin[1] #########################################################
             TP = ((compare_with == 1) & (gt_remap == 1)).sum()
             TN = ((compare_with == 0) & (gt_remap == 0)).sum()
             FP = ((compare_with == 1) & (gt_remap == 0)).sum()

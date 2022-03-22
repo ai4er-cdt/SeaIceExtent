@@ -140,7 +140,7 @@ def tif_to_window(tif_path, window_shape, step_size):
     return image_window
 
 
-def reconstruct_from_tiles(tiles_path, image_type, out_path):
+def reconstruct_from_tiles(tiles_path, image_type):
     """Piece together a mosaic image from tiles ordered by row and col.
        Parameters: 
             tiles_path: (string) directory containing numpy tiles.
@@ -163,7 +163,7 @@ def reconstruct_from_tiles(tiles_path, image_type, out_path):
             tile_file = file_names[file_num]
             tile_array = np.load(tile_file)
             if image_type == "sar":
-                tile_array = tile_array[0]
+                tile_array = tile_array[1]
             if len(row_array) == 0:
                 row_array = tile_array
             else:
@@ -172,8 +172,8 @@ def reconstruct_from_tiles(tiles_path, image_type, out_path):
             full_array = row_array
         else:
             full_array = np.concatenate((full_array, row_array), axis=0)
-    full_image = mask_to_image(full_array)
-    full_image.save(out_path)
+    return full_array
+    
 
 
         

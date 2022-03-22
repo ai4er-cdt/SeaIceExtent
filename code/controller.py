@@ -128,10 +128,14 @@ def new_image_prediction(image_path, save=False, metrics=False, log_scale=False)
         if save:
             make_predictions(model, "raw", image_type, temp_tiled, temp_binary, temp_probabilities, metrics = metrics, save = save)
             # Construct a mosaic of tiles to match the original image.
-            out_path = name_file("{}_predicted_classes".format(filename), ".png", folder)
-            tiling.reconstruct_from_tiles(temp_binary, image_type, out_path)
             out_path = name_file("{}_predicted_probabilities".format(filename), ".png", folder)
-            tiling.reconstruct_from_tiles(temp_probabilities, image_type, out_path)        
+            mosaic = tiling.reconstruct_from_tiles(temp_probabilities, image_type) 
+            full_image = mask_to_image(mosaic)
+            full_image.save(out_path)
+            out_path = name_file("{}_predicted_classes".format(filename), ".png", folder)
+            mosaic = tiling.reconstruct_from_tiles(temp_binary, image_type) 
+            full_image = mask_to_image(mosaic)
+            full_image.save(out_path)
         elif metrics:
             precision, recall, accuracy = make_predictions(model, "raw", image_type, temp_tiled, temp_binary, temp_probabilities, metrics = metrics, save = save)
             # Save the metrics.
